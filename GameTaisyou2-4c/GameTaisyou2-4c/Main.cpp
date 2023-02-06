@@ -2,6 +2,7 @@
 #include "common.h"
 #include"SceneManager.h"
 #include"GameMainScene.h"
+#include"PadInput.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -29,6 +30,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         sceneMng.Draw();
         ScreenFlip();  //裏画面の培養を表画面に反映
+
+        PAD_INPUT::UpdateKey();
     }
 
     DxLib_End();  //DXライブラリ使用の終了処理

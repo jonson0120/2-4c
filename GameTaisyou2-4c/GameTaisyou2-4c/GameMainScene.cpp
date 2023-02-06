@@ -6,34 +6,49 @@
 GameMainScene::GameMainScene()
 {
 	MakeMap();
+	player.SetMapData(MapData);
+
 	LoadDivGraph("images/Block.png", 2, 2, 1, 160, 160, MapImg);
+
+	time = 0;
+
+	CameraX = 0;
+	CameraY = 0;
 
 }
 
 AbstractScene* GameMainScene::Update() 
 {
-	
+	player.Update();
+	CameraX = player.GetX();
+	CameraY = player.GetY();
+
+	time++;
 	return this;
 }
 
 void GameMainScene::Draw() const
 {
-	for (int i = 0; i < 12; i++)
+
+	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
-		for (int j = 0; j < 13; j++)
+		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			DrawGraph(160 * j, 160 * i, MapImg[MapData[i][j]], TRUE);
+			DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
+	DrawFormatString(0, 0, 0xffffff, "%d", time);
+
+	player.Draw();
 }
 
 void GameMainScene::MakeMap() 
 {
-	for (int i = 0; i < 12; i++) 
+	for (int i = 0; i < MAP_HEIGHT; i++) 
 	{
-		for (int j = 0; j < 13; j++)
+		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (j == 12 || j == 0)
+			if (j == MAP_WIDTH - 1 || j == 0)
 			{
 				MapData[i][j] = 0;
 			}
@@ -42,7 +57,7 @@ void GameMainScene::MakeMap()
 				MapData[i][j] = 1;
 			}
 
-			if (i == 11 || i == 0)
+			if (i == MAP_HEIGHT - 1 || i == 0)
 			{
 				MapData[i][j] = 0;
 			}

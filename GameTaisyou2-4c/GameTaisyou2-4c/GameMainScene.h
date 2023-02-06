@@ -2,11 +2,18 @@
 #pragma once
 #include "AbstractScene.h"
 #include"common.h"
+#include"Player.h"
 class GameMainScene : public AbstractScene
 {
 private:
-	int MapData[12][13];	//マップデータ
+	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 	int MapImg[2];			//マップ画像
+
+	int time;
+	Player player;
+
+	int CameraX;
+	int CameraY;
 
 public:
 	GameMainScene();
