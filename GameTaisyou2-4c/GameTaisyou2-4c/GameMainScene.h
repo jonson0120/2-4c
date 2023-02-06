@@ -4,6 +4,10 @@
 #include"common.h"
 class GameMainScene : public AbstractScene
 {
+private:
+	int MapData[12][13];	//マップデータ
+	int MapImg[2];			//マップ画像
+
 public:
 	GameMainScene();
 	//デストラクト
@@ -16,4 +20,6 @@ public:
 
 	//描画に関するころを実装する
 	virtual void Draw()const override;
+
+	void MakeMap();
 };
