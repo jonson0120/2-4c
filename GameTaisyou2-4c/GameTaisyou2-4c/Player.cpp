@@ -9,7 +9,12 @@ Player::Player() {
 	x = 500;
 	y = 500;
 
+	Width = 32;
+	Height = 32;
+
 	speed = 8;
+	fall = 16;
+	jump = 0;
 
 	JoypadX = 0;
 	JoypadY = 0;
@@ -19,31 +24,59 @@ Player::Player() {
 void Player::Update() {
 	InitPad();
 
-	float Gravity = 16;
-
+		//‰¡ˆÚ“®
 		if (JoypadX >= MARGIN) {
 			x += speed;
+			while (!MapData[y / 160][(x + Width / 2) / 160])x--;
 		}
 		if (JoypadX <= -MARGIN) {
 			x -= speed;
+			while (!MapData[y / 160][(x - Width / 2) / 160])x++;
 		}
 
-		//y += Gravity;
+		//—Ž‰º‚ÆƒWƒƒƒ“ƒv
+		float fallinit = 16;
+		y += fall;
+
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_A))
+		{
+			if (jump < 1)
+			{
+				fall = -fallinit;
+				jump++;
+			}
+		}
+
+		if (fall != fallinit) 
+		{
+			fall += (fallinit * 2) / 45;
+			if (fall > fallinit)
+			{
+				fall = fallinit;
+			}
+		}
+
+		while (!MapData[(y + Width / 2) / 160][(x - Width / 2) / 160])
+		{
+			y--;
+			jump = 0;
+		}
 }
 
 void Player::Draw() const {
-	DrawBoxAA(SCREEN_WIDTH / 2 - 16, SCREEN_HEIGHT / 2 - 16, SCREEN_WIDTH / 2 + 16, SCREEN_HEIGHT / 2 + 16, 0xff0000, TRUE);
+	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2) , SCREEN_HEIGHT / 2 - (Height / 2), 
+			  SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
+
 	DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
-
-	DrawFormatString(0, 75, 0xffffff, "%d", GetX() / 160);
 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			DrawFormatString(50 + 10 * j, 50 + 10 * i, 0xffffff, "%d", MapData[i][j]);
+			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
+			else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
 		}
 	}
 }
