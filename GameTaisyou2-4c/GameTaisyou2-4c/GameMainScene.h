@@ -3,6 +3,7 @@
 #include "AbstractScene.h"
 #include"common.h"
 #include"Player.h"
+#include"Enemy.h"
 class GameMainScene : public AbstractScene
 {
 private:
@@ -11,6 +12,7 @@ private:
 
 	int time;
 	Player player;
+	Enemy enemy;
 
 	int CameraX;
 	int CameraY;
