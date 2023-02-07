@@ -6,7 +6,7 @@ class Enemy
 {
 private:
 	int image;	//画像
-
+	int EnemyImage = LoadGraph("images/slime1.png");
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
 

@@ -7,6 +7,7 @@ GameMainScene::GameMainScene()
 {
 	MakeMap();
 	player.SetMapData(MapData);
+	enemy.SetMapData(MapData);
 
 	LoadDivGraph("images/Block.png", 2, 2, 1, 160, 160, MapImg);
 
@@ -20,6 +21,7 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	player.Update();
+	enemy.Update();
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 

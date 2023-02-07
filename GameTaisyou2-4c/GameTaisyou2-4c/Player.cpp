@@ -56,7 +56,7 @@ void Player::Update() {
 			}
 		}
 
-		while (!MapData[(y + Width / 2) / 160][(x - Width / 2) / 160])
+		while (!MapData[(y + Height / 2) / 160][(x - Width / 2) / 160])
 		{
 			y--;
 			jump = 0;
