@@ -1,22 +1,22 @@
-#pragma once
+ï»¿#pragma once
 #include"DxLib.h"
 #include"common.h"
 
 class Player
 {
 private:
-	int image;	//‰æ‘œ
+	int image;	//ç”»åƒ
 
-	int x, y;		//X,YÀ•W
-	int Width, Height;	//ƒvƒŒƒCƒ„[‚‚³
+	int x, y;		//X,Yåº§æ¨™
+	int Width, Height;	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é«˜ã•
 
-	float speed;	//ˆÚ“®‘¬“x
-	float fall;	//—‰º‘¬“x
-	int jump;	//ƒWƒƒƒ“ƒv‰ñ”
+	float speed;	//ç§»å‹•é€Ÿåº¦
+	float fall;	//è½ä¸‹é€Ÿåº¦
+	int jump;	//ã‚¸ãƒ£ãƒ³ãƒ—å›æ•°
 
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//ƒ}ƒbƒvƒf[ƒ^
+	int MapData[MAP_HEIGHT][MAP_WIDTH];	//ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿
 
-	int JoypadX, JoypadY;	//ƒpƒbƒh“ü—Í’l
+	int JoypadX, JoypadY;	//ãƒ‘ãƒƒãƒ‰å…¥åŠ›å€¤
 
 public:
 

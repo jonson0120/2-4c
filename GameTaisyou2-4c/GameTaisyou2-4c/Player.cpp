@@ -1,4 +1,4 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include"DxLib.h"
 #include"PadInput.h"
 #include"common.h"
@@ -24,7 +24,7 @@ Player::Player() {
 void Player::Update() {
 	InitPad();
 
-		//‰¡ˆÚ“®
+		//æ¨ªç§»å‹•
 		if (JoypadX >= MARGIN) {
 			x += speed;
 			while (!MapData[y / 160][(x + Width / 2) / 160])x--;
@@ -34,7 +34,7 @@ void Player::Update() {
 			while (!MapData[y / 160][(x - Width / 2) / 160])x++;
 		}
 
-		//—‰º‚ÆƒWƒƒƒ“ƒv
+		//è½ä¸‹ã¨ã‚¸ãƒ£ãƒ³ãƒ—
 		float fallinit = 16;
 		y += fall;
 
@@ -83,7 +83,7 @@ void Player::Draw() const {
 
 void Player::InitPad() {
 
-	//ƒXƒeƒBƒbƒN
+	//ã‚¹ãƒ†ã‚£ãƒƒã‚¯
 	JoypadX = PAD_INPUT::GetPadThumbLX();
 	JoypadY = PAD_INPUT::GetPadThumbLY();
 
