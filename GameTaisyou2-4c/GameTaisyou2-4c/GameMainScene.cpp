@@ -2,6 +2,7 @@
 #include"GameMainScene.h"
 #include"KeyManager.h"
 #include"AbstractScene.h"
+#include"UI.h"
 
 GameMainScene::GameMainScene()
 {
@@ -20,6 +21,7 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
+	
 	player.Update();
 	enemy.Update();
 	CameraX = player.GetX();
@@ -41,6 +43,7 @@ void GameMainScene::Draw() const
 	}
 	DrawFormatString(0, 0, 0xffffff, "%d", time);
 
+	ui.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
 }
