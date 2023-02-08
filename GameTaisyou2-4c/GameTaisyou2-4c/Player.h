@@ -14,6 +14,8 @@ private:
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
 
+	int PImages[2];
+
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 	int JoypadX, JoypadY;	//パッド入力値

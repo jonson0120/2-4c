@@ -16,6 +16,8 @@ Player::Player() {
 	fall = 16;
 	jump = 0;
 
+    LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
+
 	JoypadX = 0;
 	JoypadY = 0;
 
@@ -64,8 +66,9 @@ void Player::Update() {
 }
 
 void Player::Draw() const {
-	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2) , SCREEN_HEIGHT / 2 - (Height / 2), 
-			  SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
+	DrawRotaGraph(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2), 1.0f, 0, PImages[0], TRUE, FALSE);
+	//DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2) , SCREEN_HEIGHT / 2 - (Height / 2), 
+			  //SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
 	DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
