@@ -15,7 +15,7 @@ private:
 	int jump;	//ジャンプ回数
 
 	int PImages[2];
-
+	bool TurnFlg;
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 	int JoypadX, JoypadY;	//パッド入力値

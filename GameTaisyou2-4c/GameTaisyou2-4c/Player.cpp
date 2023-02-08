@@ -21,6 +21,7 @@ Player::Player() {
 	JoypadX = 0;
 	JoypadY = 0;
 
+	TurnFlg=false;
 }
 
 void Player::Update() {
@@ -30,10 +31,12 @@ void Player::Update() {
 		if (JoypadX >= MARGIN) {
 			x += speed;
 			while (!MapData[y / 160][(x + Width / 2) / 160])x--;
+			TurnFlg = FALSE;
 		}
 		if (JoypadX <= -MARGIN) {
 			x -= speed;
 			while (!MapData[y / 160][(x - Width / 2) / 160])x++;
+			TurnFlg = TRUE;
 		}
 
 		//落下とジャンプ
@@ -66,7 +69,7 @@ void Player::Update() {
 }
 
 void Player::Draw() const {
-	DrawRotaGraph(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2), 1.0f, 0, PImages[0], TRUE, FALSE);
+	DrawRotaGraph(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2)-10 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 	//DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2) , SCREEN_HEIGHT / 2 - (Height / 2), 
 			  //SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
