@@ -1,34 +1,29 @@
 ﻿#pragma once
 #include"DxLib.h"
 #include"common.h"
-
-class Player
+#include"Player.h"
+class Enemy
 {
 private:
 	int image;	//画像
-
-	int x, y;		//X,Y座標
-	int Width, Height;	//プレイヤー高さ
+	int EnemyImage = LoadGraph("images/slime1.png");
+	int enex, eney;		//X,Y座標
+	int Width, Height;	//敵の高さ
 
 	float speed;	//移動速度
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
 
-	int PImages[2];
-	bool TurnFlg;
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
-
-	int JoypadX, JoypadY;	//パッド入力値
 
 public:
 
-	void InitPad();
-	Player();
+	Enemy();
 	void Update();
-	void Draw() const;
+	void Draw(int x,int y) const;
 
-	int GetX()const { return x; }
-	int GetY()const { return y; }
+	int GetX()const { return enex; }
+	int GetY()const { return eney; }
 
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
@@ -36,4 +31,3 @@ public:
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
 };
-
