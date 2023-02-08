@@ -27,27 +27,24 @@ void Player::Update() {
 		//横移動
 		if (JoypadX >= MARGIN) {
 			x += speed;
-			while (!MapData[y / 160][(x + Width / 2) / 160])x--;
 		}
 		if (JoypadX <= -MARGIN) {
 			x -= speed;
-			while (!MapData[y / 160][(x - Width / 2) / 160])x++;
 		}
+		while (!MapData[y / 160][(x + Width / 2) / 160])x--;
+		while (!MapData[y / 160][(x - Width / 2) / 160])x++;
 
 		//落下とジャンプ
 		float fallinit = 16;
-		y += fall;
 
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_A))
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 		{
-			if (jump < 1)
-			{
-				fall = -fallinit;
-				jump++;
-			}
+			fall = -fallinit;
+			jump++;	
 		}
 
-		if (fall != fallinit) 
+
+		if (fall < fallinit)
 		{
 			fall += (fallinit * 2) / 45;
 			if (fall > fallinit)
@@ -56,19 +53,33 @@ void Player::Update() {
 			}
 		}
 
-		while (!MapData[(y + Width / 2) / 160][(x - Width / 2) / 160])
+		y += fall;
+
+		while (!MapData[(y - Width / 2) / 160][(x - Width / 2) / 160] ||
+			   !MapData[(y - Width / 2) / 160][(x + Width / 2) / 160])
+		{
+			y++;
+			if (0 > fall)fall = 0;
+		}
+
+		while (!MapData[(y + Width / 2) / 160][(x - Width / 2) / 160] ||
+			   !MapData[(y + Width / 2) / 160][(x + Width / 2) / 160])
 		{
 			y--;
 			jump = 0;
+			if (fall > 0)fall = 0;
 		}
+
 }
 
 void Player::Draw() const {
-	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2) , SCREEN_HEIGHT / 2 - (Height / 2), 
+	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
 			  SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
 	DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
+
+	DrawFormatString(0, 60, 0xffffff, "%d", (int)fall);
 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
