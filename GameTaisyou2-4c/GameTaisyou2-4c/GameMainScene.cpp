@@ -20,8 +20,8 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
-	player.Update();
 	enemy.Update();
+	player.Update();
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
@@ -41,8 +41,8 @@ void GameMainScene::Draw() const
 	}
 	DrawFormatString(0, 0, 0xffffff, "%d", time);
 
-	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
+	player.Draw();
 }
 
 void GameMainScene::MakeMap() 
