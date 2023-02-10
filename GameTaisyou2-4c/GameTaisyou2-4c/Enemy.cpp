@@ -11,7 +11,9 @@ Enemy::Enemy() {
 	Width = 64;
 	Height = 64;
 
-	speed = 0;
+	direction = 0;
+
+	speed = 6;
 	fall = 16;
 	jump = 0;
 
@@ -27,6 +29,30 @@ void Enemy::Update() {
 	{
 		eney--;
 		jump = 0;
+	}
+
+	//エネミーの移動処理
+	enex += speed;
+	if (direction == 0)
+	{
+		direction = GetRand(60) + 60;
+		speed *= -1;
+	}
+	else
+	{
+		direction--;
+	}
+
+	if (!MapData[eney / 160][(enex + Width / 2) / 160]) 
+	{
+		while (!MapData[eney / 160][(enex + Width / 2) / 160])enex--;
+		speed *= -1;
+	}
+
+	if (!MapData[eney / 160][(enex - Width / 2) / 160])
+	{
+		while (!MapData[eney / 160][(enex - Width / 2) / 160])enex++;
+		speed *= -1;
 	}
 }
 
