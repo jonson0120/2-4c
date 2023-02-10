@@ -20,6 +20,7 @@ Player::Player() {
 
 	Attack = 0;
 	Equip = dagger;
+	Yinput = NONE;
 	Combo = 0;
 	range[0] = { 24,44 };
 
@@ -46,6 +47,20 @@ void Player::Update() {
 		}
 		while (!MapData[y / 160][(x + Width / 2) / 160])x--;
 		while (!MapData[y / 160][(x - Width / 2) / 160])x++;
+
+		//上下入力の更新
+		if (JoypadY >= MARGIN * 2.5)
+		{
+			if (Attack < 1)Yinput = UP;
+		}
+		else if (JoypadY <= -MARGIN * 2.5) 
+		{
+			if (Attack < 1)Yinput = DOWN;
+		}
+		else 
+		{
+			if (Attack < 1)Yinput = NONE;
+		}
 
 		//落下とジャンプ
 		float fallinit = 16;
@@ -95,7 +110,7 @@ void Player::Update() {
 					Attack++;
 					Combo++;
 				}
-				else if (Combo == 1 && 10 < Attack)
+				else if (Combo == 1 && 10 < Attack && Yinput != UP)
 				{
 					Attack = 1;
 					Combo++;
@@ -132,7 +147,7 @@ void Player::Draw() const {
 	DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 60, 0xffffff, "%d", Attack);
+	DrawFormatString(0, 60, 0xffffff, "%d", Yinput);
 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -181,54 +196,79 @@ void Player::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
 void Player::DrawDagger()const
 {
 	float size = 0.3;
-	switch (Combo)
+	if (Yinput == UP) 
 	{
-	case 1:
 		switch (TurnFlg)
 		{
 		case true:
-			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack),
-				size, (3.14 / 180) * (315 - ((90 / 10) * Attack)), Weapon, true, true);
-			else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
-				size, (3.14 / 180) * (315 - 90), Weapon, true, true);
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack), SCREEN_HEIGHT / 2 - Height,
+				size, (3.14 / 180) * (-45 + ((90 / 10) * Attack)), Weapon, true, false);
+			else if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10)), SCREEN_HEIGHT / 2 - Height,
+				size, (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10))), Weapon, true, true);
 			break;
 
-		case false:
-			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack),
-				size, (3.14 / 180) * (45 + ((90 / 10) * Attack)), Weapon, true, false);
-			else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
-				size, (3.14 / 180) * (45 + 90), Weapon, true, false);
+			case false:
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack), SCREEN_HEIGHT / 2 - Height,
+				size, (3.14 / 180) * (45 - ((90 / 10) * Attack)), Weapon, true, true);
+			else if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10)), SCREEN_HEIGHT / 2 - Height,
+				size, (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10))), Weapon, true, false);	
+			break;
+			default:
+				break;
+			}
+
+	}
+	else
+	{
+		switch (Combo)
+		{
+		case 1:
+			switch (TurnFlg)
+			{
+			case true:
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack),
+					size, (3.14 / 180) * (315 - ((90 / 10) * Attack)), Weapon, true, true);
+				else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
+					size, (3.14 / 180) * (315 - 90), Weapon, true, true);
+				break;
+
+			case false:
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack),
+					size, (3.14 / 180) * (45 + ((90 / 10) * Attack)), Weapon, true, false);
+				else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
+					size, (3.14 / 180) * (45 + 90), Weapon, true, false);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2:
+			switch (TurnFlg)
+			{
+			case true:
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
+					size, (3.14 / 180) * (225 + ((90 / 10) * Attack)), Weapon, true, false);
+				else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
+					size, (3.14 / 180) * (315), Weapon, true, false);
+				break;
+
+			case false:
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
+					size, (3.14 / 180) * (135 - ((90 / 10) * Attack)), Weapon, true, true);
+				else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
+					size, (3.14 / 180) * (45), Weapon, true, true);
+				break;
+
+			default:
+				break;
+			}
 			break;
 
 		default:
 			break;
 		}
-		break;
-
-	case 2:
-		switch (TurnFlg)
-		{
-		case true:
-			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
-				size, (3.14 / 180) * (225 + ((90 / 10) * Attack)), Weapon, true, false);
-			else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
-				size, (3.14 / 180) * (315), Weapon, true, false);
-			break;
-
-		case false:
-			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
-				size, (3.14 / 180) * (135 - ((90 / 10) * Attack)), Weapon, true, true);
-			else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
-				size, (3.14 / 180) * (45), Weapon, true, true);
-			break;
-
-		default:
-			break;
-		}
-		break;
-
-	default:
-		break;
 	}
 }
 
@@ -236,7 +276,22 @@ void Player::DrawDagger()const
 void Player::DaggerAtk() 
 {
 	Attack++;
-	if (25 < Attack)
+	if (Yinput == UP)
+	{
+		if (20 < Attack) {
+			Attack = 0;
+			Combo = 0;
+		}
+	}
+	else if (Combo == 1)
+	{
+		if (35 < Attack)
+		{
+			Attack = 0;
+			Combo = 0;
+		}
+	}
+	else if(20 < Attack)
 	{
 		Attack = 0;
 		Combo = 0;

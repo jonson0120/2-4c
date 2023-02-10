@@ -8,6 +8,13 @@ enum weapons
 	dagger //0
 };
 
+enum Input_UpDown
+{
+	NONE,	//0
+	UP,		//1
+	DOWN	//2
+};
+
 struct Range
 {
 	int X;
@@ -30,10 +37,12 @@ private:
 
 	int PImages[2];
 	bool TurnFlg;
+	
 
 	int Weapon;		//武器画像
 	enum weapons Equip;		//装備している武器
 	Range range[1];	//攻撃範囲
+	Input_UpDown Yinput;	//上下入力
 	int Combo;		//コンボ数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
