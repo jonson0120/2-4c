@@ -19,6 +19,9 @@ Player::Player() {
 	jump = 0;
 
 	Attack = 0;
+	Equip = dagger;
+	Combo = 0;
+	range[0] = { 24,44 };
 
     LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
 	Weapon = LoadGraph("images/Dagger.png");
@@ -35,11 +38,11 @@ void Player::Update() {
 		//横移動
 		if (JoypadX >= MARGIN) {
 			x += speed;
-			TurnFlg = FALSE;
+			if (Attack < 1)TurnFlg = FALSE;
 		}
 		if (JoypadX <= -MARGIN) {
 			x -= speed;
-			TurnFlg = TRUE;
+			if (Attack < 1)TurnFlg = TRUE;
 		}
 		while (!MapData[y / 160][(x + Width / 2) / 160])x--;
 		while (!MapData[y / 160][(x - Width / 2) / 160])x++;
@@ -82,14 +85,40 @@ void Player::Update() {
 
 
 		//攻撃
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
 		{
-			Attack++;
+			switch (Equip)
+			{
+			case dagger:
+				if (Combo == 0)
+				{
+					Attack++;
+					Combo++;
+				}
+				else if (Combo == 1 && 10 < Attack)
+				{
+					Attack = 1;
+					Combo++;
+				}
+				break;
+
+			default:
+				break;
+			}
+
 		}
 
 		if (Attack) 
 		{
-			DaggerAtk();
+			switch (Equip)
+			{
+			case dagger:
+				DaggerAtk();
+				break;
+
+			default:
+				break;
+			}
 		}
 }
 
@@ -117,7 +146,15 @@ void Player::Draw() const {
 
 	if (Attack) 
 	{
-		DrawDagger();
+		switch (Equip)
+		{
+		case dagger:
+			DrawDagger();
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
@@ -144,21 +181,52 @@ void Player::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
 void Player::DrawDagger()const
 {
 	float size = 0.3;
-	switch (TurnFlg)
+	switch (Combo)
 	{
-	case true:
-		if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2)  / 20 * Attack),
-										size, (3.14 / 180) * (315 - ((90 / 20) * Attack)), Weapon, true, true);
-		else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
-			size, (3.14 / 180) * (315 - 90), Weapon, true, true);
+	case 1:
+		switch (TurnFlg)
+		{
+		case true:
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack),
+				size, (3.14 / 180) * (315 - ((90 / 10) * Attack)), Weapon, true, true);
+			else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
+				size, (3.14 / 180) * (315 - 90), Weapon, true, true);
+			break;
+
+		case false:
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack),
+				size, (3.14 / 180) * (45 + ((90 / 10) * Attack)), Weapon, true, false);
+			else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
+				size, (3.14 / 180) * (45 + 90), Weapon, true, false);
+			break;
+
+		default:
+			break;
+		}
 		break;
 
-	case false:
-		if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) , SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * Attack),
-										size, (3.14 / 180) * (45 + ((90 / 20) * Attack)), Weapon, true, false);
-		else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
-			size, (3.14 / 180) * (45 + 90), Weapon, true, false);
+	case 2:
+		switch (TurnFlg)
+		{
+		case true:
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
+				size, (3.14 / 180) * (225 + ((90 / 10) * Attack)), Weapon, true, false);
+			else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
+				size, (3.14 / 180) * (315), Weapon, true, false);
+			break;
+
+		case false:
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
+				size, (3.14 / 180) * (135 - ((90 / 10) * Attack)), Weapon, true, true);
+			else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
+				size, (3.14 / 180) * (45), Weapon, true, true);
+			break;
+
+		default:
+			break;
+		}
 		break;
+
 	default:
 		break;
 	}
@@ -168,14 +236,18 @@ void Player::DrawDagger()const
 void Player::DaggerAtk() 
 {
 	Attack++;
-	if (25 < Attack)Attack = 0;
+	if (25 < Attack)
+	{
+		Attack = 0;
+		Combo = 0;
+	}
 }
 
 bool Player::HitAttack(int EneX, int EneY, int EneW, int EneH) {
 	if (Attack) 
 	{
-	
-	
+
 	}
+
 	return false;
 }

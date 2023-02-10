@@ -5,7 +5,13 @@
 
 enum weapons 
 {
-	dagger
+	dagger //0
+};
+
+struct Range
+{
+	int X;
+	int Y;
 };
 
 class Player
@@ -21,12 +27,14 @@ private:
 	int jump;	//ジャンプ回数
 
 	int Attack;		//攻撃フラグ
-	int Range[1];	//攻撃範囲
 
 	int PImages[2];
 	bool TurnFlg;
 
 	int Weapon;		//武器画像
+	enum weapons Equip;		//装備している武器
+	Range range[1];	//攻撃範囲
+	int Combo;		//コンボ数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 

@@ -32,7 +32,7 @@ void Enemy::Update() {
 	}
 
 	//エネミーの移動処理
-	enex += speed;
+	//enex += speed;
 	if (direction == 0)
 	{
 		direction = GetRand(60) + 60;
