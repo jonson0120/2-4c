@@ -43,9 +43,10 @@ void GameMainScene::Draw() const
 	}
 	DrawFormatString(0, 0, 0xffffff, "%d", time);
 
-	ui.Draw();
+	
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
+	ui.Draw();
 }
 
 void GameMainScene::MakeMap() 
