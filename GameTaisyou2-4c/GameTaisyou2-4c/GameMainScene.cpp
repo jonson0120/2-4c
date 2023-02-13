@@ -21,7 +21,7 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	player.Update();
-	enemy.Update();
+	enemy.Update(player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 

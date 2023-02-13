@@ -21,7 +21,7 @@ private:
 public:
 
 	Enemy();
-	void Update();
+	void Update(Player player);
 	void Draw(int x,int y) const;
 
 	int GetX()const { return enex; }
