@@ -3,12 +3,13 @@
 #include"Enemy.h"
 #include"common.h"
 
-enum weapons 
+enum struct weapons 
 {
-	dagger //0
+	dagger, //0
+	mace	//1
 };
 
-enum Input_UpDown
+enum struct Inp_UD
 {
 	NONE,	//0
 	UP,		//1
@@ -39,10 +40,10 @@ private:
 	bool TurnFlg;
 	
 
-	int Weapon;		//武器画像
+	int Weapon[2];		//武器画像
 	enum weapons Equip;		//装備している武器
-	Range range[1];	//攻撃範囲
-	Input_UpDown Yinput;	//上下入力
+	Range range[2];	//攻撃範囲
+	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
@@ -56,7 +57,6 @@ public:
 	void Update();
 	void Draw() const;
 
-	void DrawDagger()const;
 
 	int GetX()const { return x; }
 	int GetY()const { return y; }
@@ -66,7 +66,11 @@ public:
 
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
+	void DrawDagger()const;
+	void DrawMace()const;
+
 	void DaggerAtk();
+	void MaceAtk();
 
 	bool HitAttack(int EneX, int EneY, int EneW, int EneH);
 };
