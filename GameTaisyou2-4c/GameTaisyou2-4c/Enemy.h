@@ -2,6 +2,7 @@
 #include"DxLib.h"
 #include"common.h"
 #include"Player.h"
+
 class Enemy
 {
 private:
@@ -9,6 +10,7 @@ private:
 	int EnemyImage = LoadGraph("images/slime1.png");
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
+	int direction;	//敵の向き
 
 	float speed;	//移動速度
 	float fall;	//落下速度
@@ -29,5 +31,4 @@ public:
 	int GetHeight()const { return Height; }
 
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
-
 };
