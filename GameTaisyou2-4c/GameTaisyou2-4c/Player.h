@@ -22,10 +22,18 @@ struct Range
 	int Y;
 };
 
+struct Stat
+{
+	int Hp;
+	float Power;
+};
+
 class Player
 {
 private:
 	int image;	//画像
+
+	Stat stat;	//ステータス
 
 	int x, y;		//X,Y座標
 	int Width, Height;	//プレイヤー高さ

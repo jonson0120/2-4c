@@ -8,6 +8,9 @@
 Player::Player() {
 	image = 0;
 
+	stat.Hp = 10;
+	stat.Power = 0;
+
 	x = 500;
 	y = 500;
 
@@ -27,8 +30,8 @@ Player::Player() {
 	range[1] = { 24,44 };
 
     LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
+	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/Dagger.png");
-	Weapon[2] = LoadGraph("images/Dagger.png");
 
 	JoypadX = 0;
 	JoypadY = 0;
@@ -124,7 +127,7 @@ void Player::Update() {
 			break;
 
 		case weapons::mace:		//メイス：ボタン長押しタイプ
-			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B))
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
 			{
 				Attack++;
 			}
@@ -163,7 +166,7 @@ void Player::Draw() const {
 	DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 60, 0xffffff, "%d", Attack);
+	DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -293,14 +296,14 @@ void Player::DrawDagger()const
 	}
 }
 
-//攻撃描画：短剣
+//攻撃描画：メイス
 void Player::DrawMace()const
 {
-	int stX, stY;		//振りかぶる前の座標
-	int finX, finY;		//振りかぶった後の座標
-	int Dis;			//体の中心からの距離
+	double stX = 0, stY = 0;		//振りかぶる前の座標
+	double finX = 0, finY = 0;		//振りかぶった後の座標
+	double Dis = 0;			//体の中心からの距離
 
-	float stAng, finAng;	//振りかぶる角度
+	double stAng, finAng = 0;	//振りかぶる角度
 
 	//上記の値を計算
 	switch (TurnFlg)
@@ -308,71 +311,74 @@ void Player::DrawMace()const
 	case true:
 		if (Attack < 20)
 		{
-			stAng = 90;
-			finAng = -20;
-			stX = SCREEN_WIDTH / 2 - (Width * 2);
-			stY = SCREEN_HEIGHT / 2;
-			Dis = SCREEN_WIDTH / 2 - (SCREEN_WIDTH / 2 - (Width * 2));
-
-			finX = Dis * cos(stAng - finAng);
-			finY = Dis * sin(stAng - finAng);
-		}
-		else if (Attack < 40)
-		{
-			stAng = 90;
-			finAng = -45;
-			stX = SCREEN_WIDTH / 2 - (Width * 2);
-			stY = SCREEN_HEIGHT / 2;
-			Dis = SCREEN_WIDTH / 2 - (SCREEN_WIDTH / 2 - (Width * 2));
-
-			finX = Dis * cos(stAng - finAng);
-			finY = Dis * sin(stAng - finAng);
-		}
-		else
-		{
-			stAng = 90;
-			finAng = -70;
-			stX = SCREEN_WIDTH / 2 - (Width * 2);
-			stY = SCREEN_HEIGHT / 2;
-			Dis = SCREEN_WIDTH / 2 - (SCREEN_WIDTH / 2 - (Width * 2));
-
-			finX = Dis * cos(stAng - finAng);
-			finY = Dis * sin(stAng - finAng);
-		}
-		break;
-	case false:
-		if (Attack < 20)
-		{
 			stAng = -90;
 			finAng = 20;
-			stX = SCREEN_WIDTH / 2 + (Width * 2);
+			stX = SCREEN_WIDTH / 2;
 			stY = SCREEN_HEIGHT / 2;
-			Dis = SCREEN_WIDTH / 2 - (SCREEN_WIDTH / 2 - (Width * 2));
+			Dis = Width * 2;
 
-			finX = Dis * cos(stAng - finAng);
-			finY = Dis * sin(stAng - finAng);
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
 		}
 		else if (Attack < 40)
 		{
 			stAng = -90;
 			finAng = 45;
-			stX = SCREEN_WIDTH / 2 + (Width * 2);
+			stX = SCREEN_WIDTH / 2;
 			stY = SCREEN_HEIGHT / 2;
-			Dis = SCREEN_WIDTH / 2 - (SCREEN_WIDTH / 2 - (Width * 2));
+			Dis = Width * 2;
 
-			finX = Dis * cos(stAng - finAng);
-			finY = Dis * sin(stAng - finAng);
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
 		}
 		else
 		{
 			stAng = -90;
 			finAng = 70;
-			stX = SCREEN_WIDTH / 2 + (Width * 2);
+			stX = SCREEN_WIDTH / 2;
 			stY = SCREEN_HEIGHT / 2;
-			Dis = SCREEN_WIDTH / 2 - (SCREEN_WIDTH / 2 - (Width * 2));
+			Dis = Width * 2;
 
-			finX = Dis * cos(stAng - finAng);
-			finY = Dis * sin(stAng - finAng);
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+		}
+		break;
+	case false:
+		if (Attack < 20)
+		{
+			stAng = 90;
+			finAng = -20;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 2;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else if (Attack < 40)
+		{
+			stAng = 90;
+			finAng = -45;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 2;;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			stAng = 90;
+			finAng = -70;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 2;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
 		}
 		break;
 
@@ -380,18 +386,20 @@ void Player::DrawMace()const
 		break;
 	}
 
-	DrawRotaGraph(finX, finY, 1, (3.14 / 180) * finAng, Weapon[1], true, false, false);
+	DrawRotaGraph(finX, finY, 0.5, (3.14 / 180) * finAng, Weapon[1], true, false);
 }
 
 //攻撃：短剣
 void Player::DaggerAtk() 
 {
 	Attack++;
+	stat.Power = 1;
 	if (Yinput == Inp_UD::UP)	//上方向入力
 	{
 		if (20 < Attack) {	//攻撃終了
 			Attack = 0;
 			Combo = 0;
+			stat.Power = 0;
 		}
 	}
 	else if (Combo == 1)	//上入力なし
@@ -400,21 +408,25 @@ void Player::DaggerAtk()
 		{
 			Attack = 0;
 			Combo = 0;
+			stat.Power = 0;
 		}
 	}
 	else if(20 < Attack)	//攻撃終了
 	{
 		Attack = 0;
 		Combo = 0;
+		stat.Power = 0;
 	}
 }
 
 //攻撃：メイス
 void Player::MaceAtk()
 {
-	if (60 < Attack) 
+	stat.Power = Attack / 20 + 1;
+
+	if (59 < ++Attack) 
 	{
-		Attack = 60;
+		Attack = 59;
 	}
 }
 
