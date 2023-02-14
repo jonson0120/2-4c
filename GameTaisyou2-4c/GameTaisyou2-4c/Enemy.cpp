@@ -33,18 +33,6 @@ void Enemy::Update(Player player)
 		jump = 0;
 	}
 
-	//エネミーの移動処理
-	//enex += speed;
-	//if (direction == 0)
-	//{
-	//	direction = GetRand(60) + 60;
-	//	speed *= -1;
-	//}
-	//else
-	//{
-	//	direction--;
-	//}
-
 	//壁に当たったら跳ね返る
 	if (!MapData[eney / 160][(enex + Width / 2) / 160])
 	{

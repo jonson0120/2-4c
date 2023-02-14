@@ -19,7 +19,6 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-
 	Enemy();
 	void Update(Player player);
 	void Draw(int x,int y) const;
