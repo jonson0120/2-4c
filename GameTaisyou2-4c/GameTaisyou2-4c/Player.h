@@ -42,7 +42,7 @@ private:
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
 
-	int Attack;		//攻撃フラグ
+	float Attack;		//攻撃フラグ
 
 	int PImages[2];
 	bool TurnFlg;
