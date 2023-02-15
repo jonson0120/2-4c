@@ -24,13 +24,22 @@ Enemy::Enemy()
 void Enemy::Update(Player player)
 {
 	//落下とジャンプ
-	float fallinit = 16;
+	float fallinit = 12;
 	eney += fall;
 
 	while (!MapData[(eney + Height / 2) / 160][(enex - Width / 2) / 160])
 	{
 		eney--;
 		jump = 0;
+	}
+
+	if (fall < fallinit)
+	{
+		fall += (fallinit * 2) / 45;
+		if (fall > fallinit)
+		{
+			fall = fallinit;
+		}
 	}
 
 	//壁に当たったら跳ね返る
@@ -57,15 +66,11 @@ void Enemy::Update(Player player)
 		enex += speed;
 	}
 
-	if (eney >= player.GetY())
+	if (eney >= player.GetY() && fall >= fallinit)
 	{
-		eney -= jump;
+		fall *= -1;
 	}
 
-	if (eney <= player.GetY())
-	{
-		eney += jump;
-	}
 }
 
 void Enemy::Draw(int x,int y) const
@@ -73,6 +78,8 @@ void Enemy::Draw(int x,int y) const
 	//敵の表示
 	DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EnemyImage,TRUE);
+
+	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 			  //enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
