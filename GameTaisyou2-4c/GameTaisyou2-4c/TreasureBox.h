@@ -1,8 +1,8 @@
 #pragma once
-class Box
+class TreasureBox
 {
 private:
-	int DaggerImage;//短剣のイメージ画像変数
+	int TreasureImage;//短剣のイメージ画像変数
 
 
 public:

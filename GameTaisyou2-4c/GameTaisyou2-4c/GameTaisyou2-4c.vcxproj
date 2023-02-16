@@ -154,7 +154,7 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameMainScene.cpp" />
-    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PadInput.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -166,7 +166,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameMainScene.h" />
-    <ClInclude Include="Box.h" />
+    <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="PadInput.h" />
     <ClInclude Include="Player.h" />
