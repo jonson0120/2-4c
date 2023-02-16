@@ -178,7 +178,7 @@ void Player::Update() {
 void Player::Draw() const {
 	
 	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
-			  SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
+		SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
 	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - (Height / 2) +6 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
@@ -201,6 +201,7 @@ void Player::Draw() const {
 	default:
 		break;
 	}
+
 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -667,10 +668,86 @@ void Player::MaceAtk()
 	}
 }
 
-bool Player::HitAttack(int EneX, int EneY, int EneW, int EneH) {
-	if (Attack) 
-	{
+bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
+	if (Attack && Attack < 10)
+	{
+		int WeaponX = 0;
+		int WeaponY = 0;
+		int RangeX = 0;
+		int RangeY = 0;
+		float Rad = 0;
+
+		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+
+		switch (Combo)
+		{
+		case 1:
+			switch (TurnFlg)
+			{
+			case true:
+					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack);
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack));
+				break;
+
+			case false:
+			
+					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack);
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack));
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2:
+			switch (TurnFlg)
+			{
+			case true:
+					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack);
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack));
+				break;
+
+			case false:
+					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack);
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack));
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		
+		int DisX = EneX - WeaponX;
+		int DisY = EneY - WeaponY;
+
+		int Dis = sqrt(DisX * DisX + DisY * DisY);
+
+		EneX += Dis * cos(Rad);
+		EneY += Dis * sin(Rad);
+
+		if (WeaponX - RangeX < EneX && WeaponY - RangeY < EneY && EneX < WeaponX + RangeX && EneY < WeaponY + RangeY) 
+		{
+			return true;
+		}
 	}
 
 	return false;
