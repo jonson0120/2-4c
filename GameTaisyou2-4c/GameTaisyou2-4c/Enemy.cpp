@@ -59,8 +59,12 @@ void Enemy::Update() {
 void Enemy::Draw(int x,int y) const {
 	//敵の表示
 	DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EImages[0],TRUE);
-
+		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EImages[0],false);
+	
+	DrawFormatString(0, 80, 0xffffff, "%d", enex - x + (SCREEN_WIDTH / 2));
+	DrawFormatString(0, 95, 0xffffff, "%d", eney - y + (SCREEN_HEIGHT / 2));
+	DrawFormatString(0, 110, 0xffffff, "%d", enex);
+	DrawFormatString(0, 125, 0xffffff, "%d", eney);
 }
 
 void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {

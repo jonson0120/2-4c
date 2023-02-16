@@ -26,6 +26,7 @@ private:
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
 
+
 	int Attack;		//攻撃フラグ
 
 	int PImages[2];
@@ -55,10 +56,12 @@ public:
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
 
+	weapons GetEquip()const { return Equip; }
+
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
 	void DaggerAtk();
 
-	bool HitAttack(int EneX, int EneY, int EneW, int EneH);
+	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 };
 

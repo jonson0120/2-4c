@@ -17,6 +17,8 @@ private:
 	int CameraX;
 	int CameraY;
 
+	int hit = 0;
+
 public:
 	GameMainScene();
 	//デストラクト

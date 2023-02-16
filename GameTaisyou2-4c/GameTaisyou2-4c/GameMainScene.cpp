@@ -25,7 +25,14 @@ AbstractScene* GameMainScene::Update()
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
-	player.HitAttack(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight());
+	switch (player.GetEquip())
+	{
+	case dagger:
+		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+
+	default:
+		break;
+	}
 
 	time++;
 	return this;
@@ -41,7 +48,7 @@ void GameMainScene::Draw() const
 			DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
-	DrawFormatString(0, 0, 0xffffff, "%d", time);
+	DrawFormatString(0, 0, 0xffffff, "%d", hit);
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
 }
