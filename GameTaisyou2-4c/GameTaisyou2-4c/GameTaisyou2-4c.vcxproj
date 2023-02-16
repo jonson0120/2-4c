@@ -157,6 +157,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PadInput.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="potion.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="UI.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="PadInput.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="potion.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>

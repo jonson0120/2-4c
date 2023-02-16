@@ -106,14 +106,14 @@ void Player::Draw() const {
 	DrawFormatString(0, 60, 0xffffff, "%d", Attack);
 
 
-	for (int i = 0; i < MAP_HEIGHT; i++)
+	/*for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
 			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
 			else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
 		}
-	}
+	}*/
 
 	if (Attack) 
 	{

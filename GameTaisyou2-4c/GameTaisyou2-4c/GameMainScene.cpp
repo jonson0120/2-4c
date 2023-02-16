@@ -21,7 +21,7 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
-
+	ui.Update();
 	enemy.Update();
 	player.Update();
 	CameraX = player.GetX();
@@ -43,9 +43,11 @@ void GameMainScene::Draw() const
 	}
 	DrawFormatString(0, 0, 0xffffff, "%d", time);
 
+
+	ui.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
 	player.Draw();
-	ui.Draw();
+	
 
 }
 
