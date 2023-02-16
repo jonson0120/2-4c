@@ -4,6 +4,8 @@
 #include"common.h"
 #include"Player.h"
 #include"Enemy.h"
+#include"UI.h"
+
 class GameMainScene : public AbstractScene
 {
 private:
@@ -13,6 +15,7 @@ private:
 	int time;
 	Player player;
 	Enemy enemy;
+	UI ui;
 
 	int CameraX;
 	int CameraY;
