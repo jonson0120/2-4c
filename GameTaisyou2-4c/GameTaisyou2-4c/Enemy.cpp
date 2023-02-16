@@ -17,6 +17,7 @@ Enemy::Enemy() {
 	fall = 16;
 	jump = 0;
 
+	LoadDivGraph("images/Enemy.png", 5, 16, 16, 32, 32, EImages);
 }
 
 void Enemy::Update() {
@@ -24,7 +25,6 @@ void Enemy::Update() {
 	//落下とジャンプ
 	float fallinit = 16;
 	eney += fall;
-
 	while (!MapData[(eney + Height / 2) / 160][(enex - Width / 2) / 160])
 	{
 		eney--;
@@ -59,10 +59,12 @@ void Enemy::Update() {
 void Enemy::Draw(int x,int y) const {
 	//敵の表示
 	DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EnemyImage,TRUE);
-
-	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			  //enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
+		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EImages[0],false);
+	
+	DrawFormatString(0, 80, 0xffffff, "%d", enex - x + (SCREEN_WIDTH / 2));
+	DrawFormatString(0, 95, 0xffffff, "%d", eney - y + (SCREEN_HEIGHT / 2));
+	DrawFormatString(0, 110, 0xffffff, "%d", enex);
+	DrawFormatString(0, 125, 0xffffff, "%d", eney);
 }
 
 void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
