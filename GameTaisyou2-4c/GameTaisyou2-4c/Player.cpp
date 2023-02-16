@@ -182,20 +182,20 @@ void Player::Draw() const {
 
 	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - (Height / 2) +6 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
-	DrawFormatString(0, 30, 0xffffff, "%d", GetX());
-	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
+	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
+	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
+	//DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
 
-	DrawString(100, 0, "LBで武器切り替え(暫定)", 0xff0000);
+	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
 	switch (Equip)
 	{
 	case weapons::dagger:	//短剣
-		DrawString(100, 15, "装備：短剣", 0xffffff);
+		DrawString(0, 130, "装備：短剣", 0xffffff);
 		break;
 
 	case weapons::mace:		//メイス
-		DrawString(100, 15, "装備：メイス", 0xffffff);
+		DrawString(0, 130, "装備：メイス", 0xffffff);
 		break;
 
 	default:
@@ -204,14 +204,14 @@ void Player::Draw() const {
 
 
 
-	for (int i = 0; i < MAP_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAP_WIDTH; j++)
-		{
-			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
-			else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-		}
-	}
+	//for (int i = 0; i < MAP_HEIGHT; i++)
+	//{
+	//	for (int j = 0; j < MAP_WIDTH; j++)
+	//	{
+	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
+	//		else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+	//	}
+	//}
 
 	//攻撃描画
 	if (Attack) 

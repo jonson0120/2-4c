@@ -30,7 +30,7 @@ AbstractScene* GameMainScene::Update()
 
 	switch (player.GetEquip())
 	{
-	case dagger:
+	case weapons::dagger:
 		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 
 	default:
@@ -52,7 +52,7 @@ void GameMainScene::Draw() const
 		}
 	}
 	
-	DrawFormatString(0, 0, 0xffffff, "%d", hit);
+	//DrawFormatString(0, 0, 0xffffff, "%d", hit);
 	ui.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());

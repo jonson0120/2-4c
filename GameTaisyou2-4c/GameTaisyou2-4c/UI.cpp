@@ -71,9 +71,9 @@ void UI::Update()
 void UI::Draw() const
 {
 
-	DrawFormatString(0, 200, GetColor(255, 255, 255), "%d", PotionCount);
-	DrawFormatString(0, 300, GetColor(255, 255, 255), "%.1f", PlayerHP);
-	DrawFormatString(0, 400, GetColor(255, 255, 255), "%d", Damage);
+	//DrawFormatString(0, 200, GetColor(255, 255, 255), "%d", PotionCount);
+	//DrawFormatString(0, 300, GetColor(255, 255, 255), "%.1f", PlayerHP);
+	//DrawFormatString(0, 400, GetColor(255, 255, 255), "%d", Damage);
 
 	//ポーション使用時の●
 	DrawCircle(140, 75, 5, GetColor(255, 0, 0), TRUE);
