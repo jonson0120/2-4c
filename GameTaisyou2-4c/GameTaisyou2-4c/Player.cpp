@@ -22,7 +22,7 @@ Player::Player() {
 	jump = 0;
 
 	Attack = 0;
-	Equip = weapons::mace;
+	Equip = weapons::dagger;
 
 	Yinput = Inp_UD::NONE;
 	Combo = 0;
@@ -41,7 +41,6 @@ Player::Player() {
 
 void Player::Update() {
 	InitPad();
-	Equip = weapons::mace;
 
 		//横移動
 		if (JoypadX >= MARGIN) {
@@ -67,6 +66,26 @@ void Player::Update() {
 		else 
 		{
 			if (Attack < 1)Yinput = Inp_UD::NONE;
+		}
+
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
+		{
+			switch (Equip) 
+			{
+			case weapons::dagger:
+				Equip = weapons::mace;
+				Attack = 0;
+				Combo = 0;
+				stat.Power = 0;
+				break;
+
+			case weapons::mace:
+				Equip = weapons::dagger;
+				Attack = 0;
+				Combo = 0;
+				stat.Power = 0;
+				break;
+			}
 		}
 
 		//落下とジャンプ
@@ -167,6 +186,21 @@ void Player::Draw() const {
 	DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
 	DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
+
+	DrawString(100, 0, "LBで武器切り替え(暫定)", 0xff0000);
+	switch (Equip)
+	{
+	case weapons::dagger:	//短剣
+		DrawString(100, 15, "装備：短剣", 0xffffff);
+		break;
+
+	case weapons::mace:		//メイス
+		DrawString(100, 15, "装備：メイス", 0xffffff);
+		break;
+
+	default:
+		break;
+	}
 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
