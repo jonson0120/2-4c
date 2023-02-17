@@ -11,15 +11,16 @@ Player::Player() {
 	stat.Hp = 10;
 	stat.Power = 0;
 
-	x = 500;
-	y = 500;
+	x = 160 + 80;
+	y = 160 * 9 - 80;
 
 	Width = 32;
 	Height = 48;
 
-	speed = 8;
+	speedinit = 8;
 	fall = 16;
 	jump = 0;
+	wall = 0;
 
 	Attack = 0;
 	Equip = weapons::dagger;
@@ -42,15 +43,48 @@ Player::Player() {
 void Player::Update() {
 	InitPad();
 
+	float speed = speedinit;
+
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_RIGHT_SHOULDER))
+	{
+		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
+		{
+			fall = 0;
+			jump = 0;
+			wall = 1;
+			speed *= 0.7;
+		}
+
+		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
+		{
+			fall = 0;
+			jump = 0;
+			wall = 2;
+			speed *= 0.7;
+		}
+
+		if ((wall == 3 || !MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] ||
+						  !MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160]))
+		{
+			fall = 0;
+			jump = 0;
+			if(JoypadY >= MARGIN) wall = 3;
+			speed *= 0.7;
+		}
+	}
+	else wall = 0;
+
 		//横移動
 		if (JoypadX >= MARGIN) {
-			x += speed;
+			if (wall != 1 && wall != 2)x += speed;
 			if (Attack < 1)TurnFlg = FALSE;
 		}
 		if (JoypadX <= -MARGIN) {
-			x -= speed;
+			if (wall != 1 && wall != 2) x -= speed;
 			if (Attack < 1)TurnFlg = TRUE;
 		}
+
+
 		while (!MapData[y / 160][(x + Width / 2) / 160])x--;
 		while (!MapData[y / 160][(x - Width / 2) / 160])x++;
 
@@ -91,23 +125,36 @@ void Player::Update() {
 		//落下とジャンプ
 		float fallinit = 16;
 
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
+		if (wall == 0)
 		{
-			fall = -fallinit;
-			jump++;	
-		}
-
-
-		if (fall < fallinit)
-		{
-			fall += (fallinit * 2) / 45;
-			if (fall > fallinit)
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 			{
-				fall = fallinit;
+				fall = -fallinit;
+				jump++;
 			}
-		}
 
-		y += fall;
+
+			if (fall < fallinit)
+			{
+				fall += (fallinit * 2) / 45;
+				if (fall > fallinit)
+				{
+					fall = fallinit;
+				}
+			}
+
+			y += fall;
+		}
+		else if (wall == 1 || wall == 2)
+		{
+			if (-MARGIN >= JoypadY) {
+				y += speed;
+			}
+			else if (JoypadY >= MARGIN) {
+				y -= speed;
+			}
+			else y++;
+		}
 
 		while (!MapData[(y - Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y - Height / 2) / 160][(x + Width / 2) / 160])
@@ -185,7 +232,7 @@ void Player::Draw() const {
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	//DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
+	DrawFormatString(0, 360, 0xffffff, "%d", wall);
 
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
 	switch (Equip)
@@ -204,14 +251,14 @@ void Player::Draw() const {
 
 
 
-	//for (int i = 0; i < MAP_HEIGHT; i++)
-	//{
-	//	for (int j = 0; j < MAP_WIDTH; j++)
-	//	{
-	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
-	//		else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-	//	}
-	//}
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xff0000, "9");
+			else DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+		}
+	}
 
 	//攻撃描画
 	if (Attack) 

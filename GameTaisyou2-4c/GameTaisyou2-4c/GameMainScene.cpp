@@ -59,8 +59,59 @@ void GameMainScene::Draw() const
 
 }
 
-void GameMainScene::MakeMap() 
+void GameMainScene::MakeMap()
 {
+	int map_parts[16][2][2] = {
+		{{0,0},
+		 {0,0}},
+
+		{{1,0},
+		 {0,0}},
+
+		{{1,1},
+		 {0,0}},
+
+		{{1,1},
+		 {1,0}},
+
+		{{1,1},
+		 {1,1}},
+
+		{{0,1},
+		 {1,1}},
+
+		{{0,0},
+		 {1,1}},
+
+		{{0,0},
+		 {0,1}},
+
+		{{0,0},
+		 {1,0}},
+
+		{{0,0},
+		 {1,1}},
+
+		{{0,0},
+		 {0,1}},
+
+		{{1,0},
+		 {1,1}},
+
+		{{1,1},
+		 {0,1}},
+
+		{{1,1},
+		 {1,0}},
+
+		{{1,0},
+		 {0,1}},
+
+		{{0,1},
+		 {1,0}},
+	
+	};
+
 	for (int i = 0; i < MAP_HEIGHT; i++) 
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -80,4 +131,16 @@ void GameMainScene::MakeMap()
 			}
 		}
 	}
+
+	/*for (int i = 1; i < MAP_HEIGHT - 1; i += 2)
+	{
+		for (int j = 1; j < MAP_WIDTH - 1; j += 2)
+		{
+			int parts = GetRand(16 - 1);
+			MapData[i][j] = map_parts[parts][0][0];
+			MapData[i + 1][j] = map_parts[parts][1][0];
+			MapData[i][j + 1] = map_parts[parts][0][1];
+			MapData[i + 1][j + 1] = map_parts[parts][1][1];
+		}
+	}*/
 }
