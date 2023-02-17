@@ -6,7 +6,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
-    SetMainWindowText("シューティングゲーム");  //タイトル設定
+    SetMainWindowText("ここにゲーム名");  //タイトル設定
     SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_COLOR_BIT_16);
 
