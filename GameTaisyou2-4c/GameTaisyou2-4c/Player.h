@@ -38,6 +38,9 @@ private:
 	int x, y;		//X,Y座標
 	int Width, Height;	//プレイヤー高さ
 
+	int a = 0, b = 0;
+	int c = 0, d = 0;
+
 	float speed;	//移動速度
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
@@ -46,6 +49,7 @@ private:
 
 	int PImages[2];
 	bool TurnFlg;
+	bool FalseFlg;
 	
 
 	int Weapon[2];		//武器画像
@@ -83,5 +87,6 @@ public:
 	void MaceAtk();
 
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
+	bool HitMace(int EneX, int EneY, int EneW, int EneH);
 };
 

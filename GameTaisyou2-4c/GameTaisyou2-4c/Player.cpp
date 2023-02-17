@@ -27,7 +27,7 @@ Player::Player() {
 	Yinput = Inp_UD::NONE;
 	Combo = 0;
 	range[0] = { 24,44 };
-	range[1] = { 24,44 };
+	range[1] = { 26,75 };
 
     LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
 	Weapon[0] = LoadGraph("images/Dagger.png");
@@ -187,6 +187,7 @@ void Player::Draw() const {
 
 	//DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
 
+
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
 	switch (Equip)
 	{
@@ -204,14 +205,14 @@ void Player::Draw() const {
 
 
 
-	//for (int i = 0; i < MAP_HEIGHT; i++)
-	//{
-	//	for (int j = 0; j < MAP_WIDTH; j++)
-	//	{
-	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
-	//		else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-	//	}
-	//}
+	/*for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
+			else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+		}
+	}*/
 
 	//攻撃描画
 	if (Attack) 
@@ -230,6 +231,8 @@ void Player::Draw() const {
 			break;
 		}
 	}
+	DrawCircle(a, b, 3, 0x00ff00, true);
+	DrawCircle(c, d, 3, 0x0000ff, true);
 }
 
 void Player::InitPad() {
@@ -678,6 +681,9 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 		int RangeY = 0;
 		float Rad = 0;
 
+		float gap = 0;
+		float top = Height * 1.1;
+
 		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
 		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
@@ -687,20 +693,20 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 			switch (TurnFlg)
 			{
 			case true:
-					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack) + gap);
 				break;
 
 			case false:
 			
-					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack) + gap);
 				break;
 
 			default:
@@ -712,19 +718,19 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 			switch (TurnFlg)
 			{
 			case true:
-					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack) + gap);
 				break;
 
 			case false:
-					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack) + gap);
 				break;
 
 			default:
@@ -739,10 +745,15 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 		int DisX = EneX - WeaponX;
 		int DisY = EneY - WeaponY;
 
-		int Dis = sqrt(DisX * DisX + DisY * DisY);
+		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
 		EneX += Dis * cos(Rad);
 		EneY += Dis * sin(Rad);
+
+		a = EneX;
+		b = EneY;
+		c = WeaponX;
+		d = WeaponY;
 
 		if (WeaponX - RangeX < EneX && WeaponY - RangeY < EneY && EneX < WeaponX + RangeX && EneY < WeaponY + RangeY) 
 		{
@@ -750,5 +761,241 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 		}
 	}
 
+	return false;
+}
+
+bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
+
+	if (stat.Power)
+	{
+		float size = 0.2;
+
+		double stX = 0, stY = 0;		//振りかぶる前の座標
+		double finX = 0, finY = 0;		//振りかぶった後の座標
+		double Dis = 0;			//体の中心からの距離
+
+		int RangeX = 0;
+		int RangeY = 0;
+
+		float Rad = 0;
+
+		double stAng, finAng = 0;	//振りかぶる角度
+
+		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+																			
+			int power = stat.Power;
+			switch (power)
+			{
+			case 1:
+				switch (TurnFlg)
+				{
+				case true:
+					if (10 < Attack)
+					{
+						stAng = -90;
+						finAng = -135 + (155 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = -90;
+						finAng = -135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+
+				case false:
+					if (10 < Attack)
+					{
+						stAng = 90;
+						finAng = 135 - (155 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = 90;
+						finAng = 135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
+
+			case 2:
+				switch (TurnFlg)
+				{
+				case true:
+					if (10 < Attack)
+					{
+						stAng = -90;
+						finAng = -135 + (180 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = -90;
+						finAng = -135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+
+				case false:
+					if (10 < Attack)
+					{
+						stAng = 90;
+						finAng = 135 - (180 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = 90;
+						finAng = 135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
+
+			case 3:
+				switch (TurnFlg)
+				{
+				case true:
+					if (10 < Attack)
+					{
+						stAng = -90;
+						finAng = -135 + (205 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = -90;
+						finAng = -135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+
+				case false:
+					if (10 < Attack)
+					{
+						stAng = 90;
+						finAng = 135 - (205 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = 90;
+						finAng = 135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+						Dis = Width * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
+
+			default:
+				break;
+			}
+
+
+		int DisX = EneX - (int)finX;
+		int DisY = EneY - (int)finY;
+
+		Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+		Rad = (3.14 / 180) * (finAng + 135);
+		EneX += Dis * cos(Rad);
+		EneY += Dis * sin(Rad);
+
+		a = EneX;
+		b = EneY;
+		c = finX;
+		d = finY;
+
+		if (finX - RangeX < EneX && finY - RangeY < EneY && EneX < finX + RangeX && EneY < finY + RangeY)
+		{
+			return true;
+		}
+		
+	}
 	return false;
 }

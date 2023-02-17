@@ -32,7 +32,9 @@ AbstractScene* GameMainScene::Update()
 	{
 	case weapons::dagger:
 		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
-
+		break;
+	case weapons::mace:
+		if (player.HitMace(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 	default:
 		break;
 	}
@@ -52,10 +54,10 @@ void GameMainScene::Draw() const
 		}
 	}
 	
-	//DrawFormatString(0, 0, 0xffffff, "%d", hit);
+	DrawFormatString(200, 200, 0xffffff, "%d", hit);
 	ui.Draw();
+	enemy.Draw(player.GetX(), player.GetY());
 	player.Draw();
-	enemy.Draw(player.GetX(),player.GetY());
 
 }
 
