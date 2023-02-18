@@ -2,9 +2,17 @@
 #include"DxLib.h"
 #include"PadInput.h"
 
+
+
 UI::UI()
 {
+
+	
+
 	DaggerImage = LoadGraph("images/Dagger.png");
+	MaceImage = LoadGraph("images/mace.png");
+
+	Equip = weapons::dagger;
 
 	PotionImage1 = LoadGraph("images/potion2.png");
 	PotionImage2 = LoadGraph("images/potion2.png");
@@ -15,7 +23,7 @@ UI::UI()
 	PlayerHP = 60;
 	MaxHP=510;
 
-	flag = false;
+	potionflag = false;
 
 	PlayerHP = 110+((MaxHP - 110) / 100 * PlayerHP);
 	
@@ -26,12 +34,29 @@ UI::UI()
 void UI::Update() 
 {
 	
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
+	{
+		switch (Equip)
+		{
+		case weapons::dagger:
+			Equip = weapons::mace;
+			break;
+
+		case weapons::mace:
+			Equip = weapons::dagger;
+			break;
+		}
+	}
+	
+
+
+
 	if ( 0< PotionCount)
 	{
-		flag = true;
+		potionflag = true;
 	}
 
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_LEFT) && flag==true)
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_LEFT) && potionflag==true)
 	{
 
 		PotionCount=0;
@@ -80,6 +105,7 @@ void UI::Draw() const
 	DrawCircle(195, 75, 5, GetColor(255, 0, 0), TRUE);
 	DrawCircle(250, 75, 5, GetColor(255, 0, 0), TRUE);
 
+	
 	//ポーション画像の表示
 	{
 
@@ -99,9 +125,20 @@ void UI::Draw() const
 	}
 	
 
+
+	
 	//武器
 	DrawCircle(50, 50, 50, GetColor(255, 255, 255), TRUE);
-	DrawRotaGraph(50, 50, 0.5, 0, DaggerImage, TRUE);
+	switch (Equip)
+	{
+	case weapons::dagger:
+		DrawRotaGraph(50, 50, 0.5, 0, DaggerImage, TRUE);
+		break;
+	case weapons::mace:
+		DrawRotaGraph(50, 50, 0.2, 0, MaceImage, TRUE);
+		break;
+	}
+
 
 	//HP赤
 	DrawBox(110,10,510,50,GetColor(255,0,0),TRUE);
@@ -113,4 +150,5 @@ void UI::Draw() const
 	DrawBox(110, 10, MaxHP, 50, GetColor(255,255, 255), FALSE);
 
 }
+
 
