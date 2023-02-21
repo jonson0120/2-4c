@@ -31,7 +31,7 @@ Player::Player() {
 
     LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
 	Weapon[0] = LoadGraph("images/Dagger.png");
-	Weapon[1] = LoadGraph("images/mace.png");
+	Weapon[1] = LoadGraph("images/mace2.png");
 
 	JoypadX = 0;
 	JoypadY = 0;
@@ -242,7 +242,7 @@ void Player::InitPad() {
 	JoypadY = PAD_INPUT::GetPadThumbLY();
 
 }
-
+//マップデータ
 void Player::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -670,7 +670,7 @@ void Player::MaceAtk()
 		}
 	}
 }
-
+//当たり判定：短剣
 bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 	if (Attack && Attack < 10)
@@ -760,7 +760,7 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 	return false;
 }
-
+//当たり判定：メイス
 bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
 	if (stat.Power)
@@ -773,7 +773,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
 			double stX = 0, stY = 0;		//振りかぶる前の座標
 			double finX = 0, finY = 0;		//振りかぶった後の座標
-			double Dis = Width * (2 + i);
+			double Dis = Width * (2 + i); //メイスの当たり判定
 			int RangeX = 0;
 			int RangeY = 0;
 
