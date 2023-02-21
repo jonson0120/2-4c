@@ -1,5 +1,4 @@
 ﻿#include "Enemy.h"
-#include "Player.h"
 #include "DxLib.h"
 #include "common.h"
 
@@ -21,7 +20,7 @@ Enemy::Enemy()
 
 }
 
-void Enemy::Update(Player player)
+void Enemy::Update()
 {
 	//落下とジャンプ
 	float fallinit = 12;
@@ -56,17 +55,17 @@ void Enemy::Update(Player player)
 	}
 
 	//プレイヤー追尾
-	if (enex >= player.GetX())
+	if (enex >= player->GetX())
 	{
 		enex -= speed;
 	}
 
-	if (enex <= player.GetX())
+	if (enex <= player->GetX())
 	{
 		enex += speed;
 	}
 
-	if (eney >= player.GetY() && fall >= fallinit)
+	if (eney >= player->GetY() && fall >= fallinit)
 	{
 		fall *= -1;
 	}

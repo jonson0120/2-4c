@@ -12,6 +12,8 @@ private:
 	int Width, Height;	//敵の高さ
 	int direction;	//敵の向き
 
+	Player* player;
+
 	float speed;	//移動速度
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
@@ -20,11 +22,11 @@ private:
 
 public:
 	Enemy();
-	void Update(Player player);
+	void Update();
 	void Draw(int x,int y) const;
 
-	int GetX()const { return enex; }
-	int GetY()const { return eney; }
+	int E_GetX()const { return enex; }
+	int E_GetY()const { return eney; }
 
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }

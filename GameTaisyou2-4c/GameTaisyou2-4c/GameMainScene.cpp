@@ -21,13 +21,13 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	player.Update();
-	enemy.Update(player);
+	enemy.Update();
 
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
-	player.HitAttack(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight());
-
+	player.HitAttack(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight());
+	
 	time++;
 	return this;
 }
