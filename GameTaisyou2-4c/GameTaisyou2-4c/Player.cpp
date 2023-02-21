@@ -747,15 +747,12 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
-		EneX += Dis * cos(Rad);
-		EneY += Dis * sin(Rad);
-
 		a = EneX;
 		b = EneY;
 		c = WeaponX;
 		d = WeaponY;
 
-		if (WeaponX - RangeX < EneX && WeaponY - RangeY < EneY && EneX < WeaponX + RangeX && EneY < WeaponY + RangeY) 
+		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
 		{
 			return true;
 		}
@@ -768,22 +765,23 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
 	if (stat.Power)
 	{
-		float size = 0.2;
+		for (int i = 0; i < 2; i++) {
+			float size = 0.2;
 
-		double stX = 0, stY = 0;		//振りかぶる前の座標
-		double finX = 0, finY = 0;		//振りかぶった後の座標
-		double Dis = 0;			//体の中心からの距離
+			double stX = 0, stY = 0;		//振りかぶる前の座標
+			double finX = 0, finY = 0;		//振りかぶった後の座標
+			double Dis = Width * (2 + i);
 
-		int RangeX = 0;
-		int RangeY = 0;
+			int RangeX = 0;
+			int RangeY = 0;
 
-		float Rad = 0;
+			float Rad = 0;
 
-		double stAng, finAng = 0;	//振りかぶる角度
+			double stAng, finAng = 0;	//振りかぶる角度
 
-		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
-		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
-																			
+			EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+			EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+
 			int power = stat.Power;
 			switch (power)
 			{
@@ -799,7 +797,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -812,7 +809,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -828,7 +824,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -841,7 +836,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -861,7 +855,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -874,7 +867,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -890,7 +882,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -903,7 +894,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -923,7 +913,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -936,7 +925,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -952,7 +940,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -965,7 +952,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 						stY = SCREEN_HEIGHT / 2;
 						RangeX = range[1].X / 2;
 						RangeY = range[1].Y / 2;
-						Dis = Width * 2;
 
 						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -978,24 +964,22 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 			}
 
 
-		int DisX = EneX - (int)finX;
-		int DisY = EneY - (int)finY;
+			int DisX = EneX - (int)finX;
+			int DisY = EneY - (int)finY;
 
-		Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
-		Rad = (3.14 / 180) * (finAng + 135);
-		EneX += Dis * cos(Rad);
-		EneY += Dis * sin(Rad);
+			Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+			Rad = (3.14 / 180) * (finAng + 135);
 
-		a = EneX;
-		b = EneY;
-		c = finX;
-		d = finY;
+			a = EneX;
+			b = EneY;
+			c = finX;
+			d = finY;
 
-		if (finX - RangeX < EneX && finY - RangeY < EneY && EneX < finX + RangeX && EneY < finY + RangeY)
-		{
-			return true;
+			if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
+			{
+				return true;
+			}
 		}
-		
 	}
 	return false;
 }
