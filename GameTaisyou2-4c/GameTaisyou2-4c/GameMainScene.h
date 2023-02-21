@@ -10,7 +10,9 @@ class GameMainScene : public AbstractScene
 {
 private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
+	int CheckData[MAP_HEIGHT][MAP_WIDTH];	//空間チェック用マップデータ
 	int MapImg[2];			//マップ画像
+	int Space;				//空間の数
 
 	int time;
 	Player player;
@@ -36,4 +38,5 @@ public:
 	virtual void Draw()const override;
 
 	void MakeMap();
+	int CheckSpace(int y, int x, int* cnt);
 };

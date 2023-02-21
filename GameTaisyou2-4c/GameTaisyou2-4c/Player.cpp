@@ -15,7 +15,7 @@ Player::Player() {
 	y = 160 * 9 - 80;
 
 	Width = 32;
-	Height = 48;
+	Height = 56;
 
 	speedinit = 8;
 	fall = 16;
@@ -30,7 +30,7 @@ Player::Player() {
 	range[0] = { 24,44 };
 	range[1] = { 24,44 };
 
-    LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
+    LoadDivGraph("images/Player.png", 2, 2, 1, 54, 56, PImages);
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace.png");
 
@@ -52,7 +52,14 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			wall = 1;
-			speed *= 0.7;
+			if (!Attack)speed *= 0.5;
+			else speed = 0;
+
+			if (MapData[(y - Height / 2) / 160][(x - 1 - Width / 2) / 160]&&
+				MapData[(y + Height / 2) / 160][(x - 1 - Width / 2) / 160])
+			{
+				wall = 0;
+			}
 		}
 
 		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
@@ -60,7 +67,14 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			wall = 2;
-			speed *= 0.7;
+			if (!Attack)speed *= 0.5;
+			else speed = 0;
+
+			if (MapData[(y - Height / 2) / 160][(x + 1 + Width / 2) / 160]&&
+				MapData[(y + Height / 2) / 160][(x + 1 + Width / 2) / 160])
+			{
+				wall = 0;
+			}
 		}
 
 		if ((wall == 3 || !MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] ||
@@ -69,7 +83,15 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			if(JoypadY >= MARGIN) wall = 3;
-			speed *= 0.7;
+
+			if (!Attack)speed *= 0.5;
+			else speed = 0;
+
+			if (MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] &&
+				MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160])
+			{
+				wall = 0;
+			}
 		}
 	}
 	else wall = 0;
@@ -171,7 +193,6 @@ void Player::Update() {
 			if (fall > 0)fall = 0;
 		}
 
-
 		//攻撃
 		switch (Equip)
 		{
@@ -227,7 +248,7 @@ void Player::Draw() const {
 	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
 		SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
-	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - (Height / 2) +6 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
+	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
