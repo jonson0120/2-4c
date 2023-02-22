@@ -10,7 +10,7 @@ GameMainScene::GameMainScene()
 	player.SetMapData(MapData);
 	enemy.SetMapData(MapData);
 
-	LoadDivGraph("images/Block.png", 2, 2, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
 
@@ -48,7 +48,7 @@ void GameMainScene::Draw() const
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (MapData[i][j] != 2) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
+			if (MapData[i][j] < 4) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
 	
@@ -176,11 +176,17 @@ void GameMainScene::MakeMap()
 	};
 	parts_max = sizeof(map_parts) / sizeof(*map_parts);
 
+	//出口生成チェック
+	bool MakeExit = false;
+
+	int Space;				//空間の数
+
 	//マップデータ作成
 	do {
 
-		//空間チェックに使用するデータリセット-------
+		//チェックに使用するデータリセット-------
 		Space = 0;
+		MakeExit = false;
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
 			for (int j = 0; j < MAP_WIDTH; j++)
@@ -231,24 +237,39 @@ void GameMainScene::MakeMap()
 		}
 		//------------------------------------------
 
-
-		//プレイヤーの初期位置を空間にする
+		//プレイヤーの初期位置を足場のある空間にする
 		MapData[player.GetY() / 160][player.GetX() / 160] = 1;
+		MapData[player.GetY() / 160 + 1][player.GetX() / 160] = 0;
 
 		//空間数チェック
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
-		//空間数が一定以下なら再生成
-	} while (Space < 70);
+		//出口を設置
+		for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
+		{
+			for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
+			{
+				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+				{
+					MapData[i][j] = 2;
+					MakeExit = true;
+				}
+			}
+		}
 
+		//空間数が一定以下なら再生成
+	} while (Space < 70 && MakeExit);
+	
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (CheckData[i][j] == 0)MapData[i][j] = 2;
+			if (CheckData[i][j] == 0)MapData[i][j] = 5;
 		}
 	}
+
+	MapData[player.GetY() / 160][player.GetX() / 160] = 3;
 }
 
 int GameMainScene::CheckSpace(int y, int x, int* cnt)
@@ -260,16 +281,16 @@ int GameMainScene::CheckSpace(int y, int x, int* cnt)
 		CheckData[y][x] = 1;
 		(*cnt)++;
 	
-		if (MapData[y + 1][x] == 1 && !CheckData[y + 1][x])CheckSpace(y + 1, x, cnt);
+		if (MapData[y + 1][x] && !CheckData[y + 1][x])CheckSpace(y + 1, x, cnt);
 		else CheckData[y + 1][x] = 1;
 
-		if (MapData[y - 1][x] == 1 && !CheckData[y - 1][x])CheckSpace(y - 1, x, cnt);
+		if (MapData[y - 1][x] && !CheckData[y - 1][x])CheckSpace(y - 1, x, cnt);
 		else CheckData[y - 1][x] = 1;
 
-		if (MapData[y][x + 1] == 1 && !CheckData[y][x + 1])CheckSpace(y, x + 1, cnt);
+		if (MapData[y][x + 1] && !CheckData[y][x + 1])CheckSpace(y, x + 1, cnt);
 		else CheckData[y][x + 1] = 1;
 
-		if (MapData[y][x - 1] == 1 && !CheckData[y][x - 1])CheckSpace(y, x - 1, cnt);
+		if (MapData[y][x - 1] && !CheckData[y][x - 1])CheckSpace(y, x - 1, cnt);
 		else CheckData[y][x - 1] = 1;
 	
 		return 0;

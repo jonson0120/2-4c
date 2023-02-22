@@ -18,6 +18,8 @@ Player::Player() {
 	Height = 56;
 
 	speedinit = 8;
+	speed = 0;
+
 	fall = 16;
 	jump = 0;
 	wall = 0;
@@ -43,7 +45,8 @@ Player::Player() {
 void Player::Update() {
 	InitPad();
 
-	float speed = speedinit;
+	float Maxspeed = speedinit;
+	float CorSpeed = 1;
 
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_RIGHT_SHOULDER))
 	{
@@ -52,8 +55,8 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			wall = 1;
-			if (!Attack)speed *= 0.5;
-			else speed = 0;
+			if (!Attack)CorSpeed *= 0.5;
+			else CorSpeed = 0;
 
 			if (MapData[(y - Height / 2) / 160][(x - 1 - Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x - 1 - Width / 2) / 160])
@@ -67,8 +70,8 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			wall = 2;
-			if (!Attack)speed *= 0.5;
-			else speed = 0;
+			if (!Attack)CorSpeed *= 0.5;
+			else CorSpeed = 0;
 
 			if (MapData[(y - Height / 2) / 160][(x + 1 + Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x + 1 + Width / 2) / 160])
@@ -84,8 +87,8 @@ void Player::Update() {
 			jump = 0;
 			if(JoypadY >= MARGIN) wall = 3;
 
-			if (!Attack)speed *= 0.5;
-			else speed = 0;
+			if (!Attack)CorSpeed *= 0.5;
+			else CorSpeed = 0;
 
 			if (MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] &&
 				MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160])
@@ -98,17 +101,33 @@ void Player::Update() {
 
 		//横移動
 		if (JoypadX >= MARGIN) {
-			if (wall != 1 && wall != 2)x += speed;
+			if (wall != 1 && wall != 2)speed += 0.5;
 			if (Attack < 1)TurnFlg = FALSE;
 		}
-		if (JoypadX <= -MARGIN) {
-			if (wall != 1 && wall != 2) x -= speed;
+		else if (JoypadX <= -MARGIN) {
+			if (wall != 1 && wall != 2)speed -= 0.5;
 			if (Attack < 1)TurnFlg = TRUE;
 		}
+		else 
+		{
+			if (speed < 0)speed++;
+			if (speed > 0)speed--;
+		}
 
+		if (speed < -Maxspeed)speed = -Maxspeed;
+		if (Maxspeed < speed)speed = Maxspeed;
 
-		while (!MapData[y / 160][(x + Width / 2) / 160])x--;
-		while (!MapData[y / 160][(x - Width / 2) / 160])x++;
+		x += speed * CorSpeed;
+		while (!MapData[y / 160][(x + Width / 2) / 160])
+		{
+			x--;
+			speed = 0;
+		}
+		while (!MapData[y / 160][(x - Width / 2) / 160])
+		{
+			x++;
+			speed = 0;
+		}
 
 		//上下入力の更新
 		if (JoypadY >= MARGIN * 2.5)
@@ -170,10 +189,10 @@ void Player::Update() {
 		else if (wall == 1 || wall == 2)
 		{
 			if (-MARGIN >= JoypadY) {
-				y += speed;
+				y += Maxspeed / 2;
 			}
 			else if (JoypadY >= MARGIN) {
-				y -= speed;
+				y -= Maxspeed / 2;
 			}
 			else y++;
 		}
@@ -271,14 +290,15 @@ void Player::Draw() const {
 		break;
 	}
 
-	//for (int i = 0; i < MAP_HEIGHT; i++)
-	//{
-	//	for (int j = 0; j < MAP_WIDTH; j++)
-	//	{
-	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xff0000, "9");
-	//		else DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-	//	}
-	//
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xff0000, "9");
+			else DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+		}
+	}
+	
 
 	//攻撃描画
 	if (Attack) 
