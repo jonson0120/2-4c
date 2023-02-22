@@ -297,8 +297,6 @@ void Player::Draw() const {
 			break;
 		}
 	}
-	DrawCircle(a, b, 3, 0x00ff00, true);
-	DrawCircle(c, d, 3, 0x0000ff, true);
 }
 
 void Player::InitPad() {
@@ -813,10 +811,6 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
-		a = EneX;
-		b = EneY;
-		c = WeaponX;
-		d = WeaponY;
 
 		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
 		{
@@ -1035,11 +1029,6 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
 			Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 			Rad = (3.14 / 180) * (finAng + 135);
-
-			a = EneX;
-			b = EneY;
-			c = finX;
-			d = finY;
 
 			if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
 			{
