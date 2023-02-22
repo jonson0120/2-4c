@@ -1,4 +1,4 @@
-#include"DxLib.h"
+ï»¿#include"DxLib.h"
 #include"GameMainScene.h"
 #include"KeyManager.h"
 #include"AbstractScene.h"
@@ -59,10 +59,10 @@ void GameMainScene::Draw() const
 
 }
 
-//ƒ}ƒbƒv¶¬
+//ãƒãƒƒãƒ—ç”Ÿæˆ
 void GameMainScene::MakeMap()
 {
-	//•ÇE‹óŠÔƒpƒ^[ƒ“
+	//å£ãƒ»ç©ºé–“ãƒ‘ã‚¿ãƒ¼ãƒ³
 	int parts_max = 0;
 	int map_parts[][3][3] = {
 
@@ -176,10 +176,10 @@ void GameMainScene::MakeMap()
 	};
 	parts_max = sizeof(map_parts) / sizeof(*map_parts);
 
-	//ƒ}ƒbƒvƒf[ƒ^ì¬
+	//ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ä½œæˆ
 	do {
 
-		//‹óŠÔƒ`ƒFƒbƒN‚Ég—p‚·‚éƒf[ƒ^ƒŠƒZƒbƒg-------
+		//ç©ºé–“ãƒã‚§ãƒƒã‚¯ã«ä½¿ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ãƒªã‚»ãƒƒãƒˆ-------
 		Space = 0;
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
@@ -190,14 +190,14 @@ void GameMainScene::MakeMap()
 		}
 		//-------------------------------------------
 		
-		//•Ç¶¬----------------------------------------------------
+		//å£ç”Ÿæˆ----------------------------------------------------
 		for (int i = 1; i < MAP_HEIGHT - 1; i += 3)
 		{
 			for (int j = 1; j < MAP_WIDTH - 1; j += 3)
 			{
-				int parts = GetRand(parts_max - 1);	//g—p‚·‚éƒpƒ^[ƒ“‚ğŒˆ‚ß‚é
+				int parts = GetRand(parts_max - 1);	//ä½¿ç”¨ã™ã‚‹ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’æ±ºã‚ã‚‹
 
-				//ƒpƒ^[ƒ“‚É‰‚¶‚Ä•Ç‚ğì‚é
+				//ãƒ‘ã‚¿ãƒ¼ãƒ³ã«å¿œã˜ã¦å£ã‚’ä½œã‚‹
 				MapData[i][j] = map_parts[parts][0][0];
 				MapData[i + 1][j] = map_parts[parts][1][0];
 				MapData[i + 2][j] = map_parts[parts][2][0];
@@ -213,7 +213,7 @@ void GameMainScene::MakeMap()
 		}
 		//---------------------------------------------------------------
 
-		//ƒ}ƒbƒv’[‚Ì•ÇE“Vˆä-----------------------
+		//ãƒãƒƒãƒ—ç«¯ã®å£ãƒ»å¤©äº•-----------------------
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
 			for (int j = 0; j < MAP_WIDTH; j++)
@@ -232,16 +232,16 @@ void GameMainScene::MakeMap()
 		//------------------------------------------
 
 
-		//ƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’u‚ğ‹óŠÔ‚É‚·‚é
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸä½ç½®ã‚’ç©ºé–“ã«ã™ã‚‹
 		MapData[player.GetY() / 160][player.GetX() / 160] = 1;
 
-		//‹óŠÔ”ƒ`ƒFƒbƒN
+		//ç©ºé–“æ•°ãƒã‚§ãƒƒã‚¯
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
-		//‹óŠÔ”‚ªˆê’èˆÈ‰º‚È‚çÄ¶¬
+		//ç©ºé–“æ•°ãŒä¸€å®šä»¥ä¸‹ãªã‚‰å†ç”Ÿæˆ
 	} while (Space < 70);
 
-	//ŒÇ—§‚µ‚½‹óŠÔ‚ğ–„‚ß‚é
+	//å­¤ç«‹ã—ãŸç©ºé–“ã‚’åŸ‹ã‚ã‚‹
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -254,7 +254,7 @@ void GameMainScene::MakeMap()
 int GameMainScene::CheckSpace(int y, int x, int* cnt)
 {
 		
-		//‘ÎÛƒuƒƒbƒN‚ªŠO˜g‚È‚çˆ—‚ğ”²‚¯‚é
+		//å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ãŒå¤–æ ãªã‚‰å‡¦ç†ã‚’æŠœã‘ã‚‹
 		if (x == 0 || x == MAP_WIDTH - 1 || y == MAP_HEIGHT - 1 || y == 0)return 0;
 	
 		CheckData[y][x] = 1;
