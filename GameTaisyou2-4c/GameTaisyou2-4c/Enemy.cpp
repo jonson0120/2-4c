@@ -55,17 +55,17 @@ void Enemy::Update()
 	}
 
 	//プレイヤー追尾
-	if (enex >= player->GetX())
+	if (enex >= player.GetX())
 	{
 		enex -= speed;
 	}
 
-	if (enex <= player->GetX())
+	if (enex <= player.GetX())
 	{
 		enex += speed;
 	}
 
-	if (eney >= player->GetY() && fall >= fallinit)
+	if (eney >= player.GetY() && fall >= fallinit)
 	{
 		fall *= -1;
 	}

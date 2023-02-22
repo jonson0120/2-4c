@@ -6,17 +6,17 @@
 class Enemy
 {
 private:
-	int image;	//画像
+	int image;			//画像
 	int EnemyImage = LoadGraph("images/slime1.png");
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
-	int direction;	//敵の向き
+	int direction;		//敵の向き
 
-	Player* player;
+	Player player;
 
 	float speed;	//移動速度
-	float fall;	//落下速度
-	int jump;	//ジャンプ回数
+	float fall;		//落下速度
+	int jump;		//ジャンプ回数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
