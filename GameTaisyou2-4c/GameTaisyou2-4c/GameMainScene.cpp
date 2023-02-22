@@ -48,7 +48,7 @@ void GameMainScene::Draw() const
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
+			if (MapData[i][j] != 2) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
 	
@@ -246,7 +246,7 @@ void GameMainScene::MakeMap()
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (CheckData[i][j] == 0)MapData[i][j] = 0;
+			if (CheckData[i][j] == 0)MapData[i][j] = 2;
 		}
 	}
 }
@@ -261,9 +261,16 @@ int GameMainScene::CheckSpace(int y, int x, int* cnt)
 		(*cnt)++;
 	
 		if (MapData[y + 1][x] == 1 && !CheckData[y + 1][x])CheckSpace(y + 1, x, cnt);
+		else CheckData[y + 1][x] = 1;
+
 		if (MapData[y - 1][x] == 1 && !CheckData[y - 1][x])CheckSpace(y - 1, x, cnt);
+		else CheckData[y - 1][x] = 1;
+
 		if (MapData[y][x + 1] == 1 && !CheckData[y][x + 1])CheckSpace(y, x + 1, cnt);
+		else CheckData[y][x + 1] = 1;
+
 		if (MapData[y][x - 1] == 1 && !CheckData[y][x - 1])CheckSpace(y, x - 1, cnt);
+		else CheckData[y][x - 1] = 1;
 	
 		return 0;
 }
