@@ -52,7 +52,7 @@ void GameMainScene::Draw() const
 		}
 	}
 	
-	DrawFormatString(0, 500, 0xff0000, "%d", Space);
+	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
