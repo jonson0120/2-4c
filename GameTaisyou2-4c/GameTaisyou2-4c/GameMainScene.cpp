@@ -1,4 +1,4 @@
-#include"DxLib.h"
+﻿#include"DxLib.h"
 #include"GameMainScene.h"
 #include"KeyManager.h"
 #include"AbstractScene.h"
@@ -32,9 +32,7 @@ AbstractScene* GameMainScene::Update()
 	{
 	case weapons::dagger:
 		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
-		break;
-	case weapons::mace:
-		if (player.HitMace(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+
 	default:
 		break;
 	}
@@ -54,18 +52,17 @@ void GameMainScene::Draw() const
 		}
 	}
 	
-	//DrawFormatString(200, 200, 0xffffff, "%d", hit);
-
+	DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
-	enemy.Draw(player.GetX(), player.GetY());
 	player.Draw();
+	enemy.Draw(player.GetX(),player.GetY());
 
 }
 
-//�}�b�v����
+//マップ生成
 void GameMainScene::MakeMap()
 {
-	//�ǁE��ԃp�^�[��
+	//壁・空間パターン
 	int parts_max = 0;
 	int map_parts[][3][3] = {
 
@@ -179,10 +176,10 @@ void GameMainScene::MakeMap()
 	};
 	parts_max = sizeof(map_parts) / sizeof(*map_parts);
 
-	//�}�b�v�f�[�^�쐬
+	//マップデータ作成
 	do {
 
-		//��ԃ`�F�b�N�Ɏg�p����f�[�^���Z�b�g-------
+		//空間チェックに使用するデータリセット-------
 		Space = 0;
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
@@ -193,14 +190,14 @@ void GameMainScene::MakeMap()
 		}
 		//-------------------------------------------
 		
-		//�ǐ���----------------------------------------------------
+		//壁生成----------------------------------------------------
 		for (int i = 1; i < MAP_HEIGHT - 1; i += 3)
 		{
 			for (int j = 1; j < MAP_WIDTH - 1; j += 3)
 			{
-				int parts = GetRand(parts_max - 1);	//�g�p����p�^�[�������߂�
+				int parts = GetRand(parts_max - 1);	//使用するパターンを決める
 
-				//�p�^�[���ɉ����ĕǂ����
+				//パターンに応じて壁を作る
 				MapData[i][j] = map_parts[parts][0][0];
 				MapData[i + 1][j] = map_parts[parts][1][0];
 				MapData[i + 2][j] = map_parts[parts][2][0];
@@ -216,7 +213,7 @@ void GameMainScene::MakeMap()
 		}
 		//---------------------------------------------------------------
 
-		//�}�b�v�[�̕ǁE�V��-----------------------
+		//マップ端の壁・天井-----------------------
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
 			for (int j = 0; j < MAP_WIDTH; j++)
@@ -235,16 +232,16 @@ void GameMainScene::MakeMap()
 		//------------------------------------------
 
 
-		//�v���C���[�̏����ʒu����Ԃɂ���
+		//プレイヤーの初期位置を空間にする
 		MapData[player.GetY() / 160][player.GetX() / 160] = 1;
 
-		//��Ԑ��`�F�b�N
+		//空間数チェック
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
-		//��Ԑ������ȉ��Ȃ�Đ���
+		//空間数が一定以下なら再生成
 	} while (Space < 70);
 
-	//�Ǘ�������Ԃ𖄂߂�
+	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -257,7 +254,7 @@ void GameMainScene::MakeMap()
 int GameMainScene::CheckSpace(int y, int x, int* cnt)
 {
 		
-		//�Ώۃu���b�N���O�g�Ȃ珈���𔲂���
+		//対象ブロックが外枠なら処理を抜ける
 		if (x == 0 || x == MAP_WIDTH - 1 || y == MAP_HEIGHT - 1 || y == 0)return 0;
 	
 		CheckData[y][x] = 1;
