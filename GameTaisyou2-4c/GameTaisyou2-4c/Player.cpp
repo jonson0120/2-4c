@@ -54,8 +54,8 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			wall = 1;
-			if (!Attack)CorSpeed *= 0.5;
-			else CorSpeed = 0;
+			if (Attack)CorSpeed = 0;
+			else CorSpeed = 0.5;
 
 			if (MapData[(y - Height / 2) / 160][(x - 1 - Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x - 1 - Width / 2) / 160])
@@ -69,8 +69,8 @@ void Player::Update() {
 			fall = 0;
 			jump = 0;
 			wall = 2;
-			if (!Attack)CorSpeed *= 0.5;
-			else CorSpeed = 0;
+			if (Attack)CorSpeed = 0;
+			else CorSpeed = 0.5;
 
 			if (MapData[(y - Height / 2) / 160][(x + 1 + Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x + 1 + Width / 2) / 160])
@@ -86,8 +86,8 @@ void Player::Update() {
 			jump = 0;
 			if(JoypadY >= MARGIN) wall = 3;
 
-			if (!Attack)CorSpeed *= 0.5;
-			else CorSpeed = 0;
+			if (Attack)CorSpeed = 0;
+			else CorSpeed = 0.5;
 
 			if (MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] &&
 				MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160])
@@ -120,7 +120,7 @@ void Player::Update() {
 		if (speed < -Maxspeed)speed = -Maxspeed;
 		if (Maxspeed < speed)speed = Maxspeed;
 
-		if (Attack)CorSpeed = 0.5;
+		if (Attack && !wall)CorSpeed = 0.5;
 		x += speed * CorSpeed;
 		while (!MapData[y / 160][(x + Width / 2) / 160])
 		{
