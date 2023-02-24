@@ -69,23 +69,31 @@ public:
 	void Update();
 	void Draw() const;
 
+	void Spawn();
 
+	//座標取得
 	int GetX()const { return x; }
 	int GetY()const { return y; }
 
+	//サイズ取得
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
 
+	//装備取得
 	weapons GetEquip()const { return Equip; }
 
+	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
+	//武器描画
 	void DrawDagger()const;
 	void DrawMace()const;
 
+	//武器アニメーション管理
 	void DaggerAtk();
 	void MaceAtk();
 
+	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
 };

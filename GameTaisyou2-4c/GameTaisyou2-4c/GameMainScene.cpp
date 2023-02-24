@@ -228,6 +228,7 @@ void GameMainScene::MakeMap()
 				{
 					MapData[i][j] = 0;
 				}
+				//else MapData[i][j] = 1;
 
 				if (i == MAP_HEIGHT - 1 || i == 0)
 				{
@@ -239,6 +240,7 @@ void GameMainScene::MakeMap()
 
 		//プレイヤーの初期位置を足場のある空間にする
 		MapData[player.GetY() / 160][player.GetX() / 160] = 1;
+		MapData[player.GetY() / 160][(player.GetX() / 160) + 1] = 1;
 		MapData[player.GetY() / 160 + 1][player.GetX() / 160] = 0;
 
 		//空間数チェック

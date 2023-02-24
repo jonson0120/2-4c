@@ -11,11 +11,10 @@ Player::Player() {
 	stat.Hp = 10;
 	stat.Power = 0;
 
-	x = 160 + 80;
-	y = 160 * 9 - 80;
-
 	Width = 32;
 	Height = 56;
+
+	Spawn();
 
 	speedinit = 8;
 	speed = 0;
@@ -110,13 +109,18 @@ void Player::Update() {
 		}
 		else 
 		{
-			if (speed < 0)speed++;
-			if (speed > 0)speed--;
+			if (speed < 0 && 0 < ++speed) {
+				speed = 0;
+			}
+			if (0 < speed && --speed < 0) {
+				speed = 0;
+			}
 		}
 
 		if (speed < -Maxspeed)speed = -Maxspeed;
 		if (Maxspeed < speed)speed = Maxspeed;
 
+		if (Attack)CorSpeed = 0.5;
 		x += speed * CorSpeed;
 		while (!MapData[y / 160][(x + Width / 2) / 160])
 		{
@@ -188,10 +192,10 @@ void Player::Update() {
 		}
 		else if (wall == 1 || wall == 2)
 		{
-			if (-MARGIN >= JoypadY) {
+			if (-MARGIN >= JoypadY && !Attack) {
 				y += Maxspeed / 2;
 			}
-			else if (JoypadY >= MARGIN) {
+			else if (JoypadY >= MARGIN && !Attack) {
 				y -= Maxspeed / 2;
 			}
 			else y++;
@@ -317,6 +321,13 @@ void Player::Draw() const {
 			break;
 		}
 	}
+}
+
+void Player::Spawn() {
+	x = BLOCK_SIZE + BLOCK_SIZE / 2;
+	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 2) + 1);
+
+	y += BLOCK_SIZE / 2 - Height / 2;
 }
 
 void Player::InitPad() {
@@ -754,6 +765,7 @@ void Player::MaceAtk()
 		}
 	}
 }
+
 //当たり判定：短剣
 bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
@@ -840,6 +852,7 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 	return false;
 }
+
 //当たり判定：メイス
 bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 

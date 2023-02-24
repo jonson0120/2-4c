@@ -6,3 +6,4 @@
 
 #define MAP_HEIGHT 11
 #define MAP_WIDTH 14
+#define BLOCK_SIZE 160
