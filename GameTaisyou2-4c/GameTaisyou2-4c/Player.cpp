@@ -18,8 +18,10 @@ Player::Player() {
 
 	speedinit = 8;
 	speed = 0;
+	Dodgespd = 0;
 
-	fall = 16;
+	fall = 0;
+	Dodgefall = 0;
 	jump = 0;
 	wall = 0;
 
@@ -37,6 +39,8 @@ Player::Player() {
 
 	JoypadX = 0;
 	JoypadY = 0;
+	TriggerL = 0;
+	TriggerR = 0;
 
 	TurnFlg=false;
 }
@@ -44,19 +48,27 @@ Player::Player() {
 void Player::Update() {
 	InitPad();
 
-	float Maxspeed = speedinit;
-	float CorSpeed = 1;
+	float Maxspeed = speedinit;	//最大速度
+	float CorSpeed = 1;			//移動速度補正
 
-	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_RIGHT_SHOULDER))
+	//壁面移動・Aボタン長押しで処理に入る
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_A))
 	{
+		//壁面移動・左壁
+		//壁面移動中か左側が壁なら入る
 		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
 		{
-			fall = 0;
-			jump = 0;
-			wall = 1;
-			if (Attack)CorSpeed = 0;
-			else CorSpeed = 0.5;
+			if (JoypadX <= -MARGIN) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
 
+				wall = 1;
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//左側が壁でなくなったなら壁面移動を解除
 			if (MapData[(y - Height / 2) / 160][(x - 1 - Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x - 1 - Width / 2) / 160])
 			{
@@ -64,14 +76,21 @@ void Player::Update() {
 			}
 		}
 
+		//壁面移動・右壁
+		//壁面移動中か右側が壁なら入る
 		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
 		{
-			fall = 0;
-			jump = 0;
-			wall = 2;
-			if (Attack)CorSpeed = 0;
-			else CorSpeed = 0.5;
+			if (MARGIN <= JoypadX) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
 
+				wall = 2;
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//右側が壁でなくなったなら壁面移動を解除
 			if (MapData[(y - Height / 2) / 160][(x + 1 + Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x + 1 + Width / 2) / 160])
 			{
@@ -79,16 +98,22 @@ void Player::Update() {
 			}
 		}
 
+		//壁面移動・天井
+		//壁面移動中か上が壁なら入る
 		if ((wall == 3 || !MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] ||
 						  !MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160]))
 		{
-			fall = 0;
-			jump = 0;
-			if(JoypadY >= MARGIN) wall = 3;
+			if (JoypadY >= MARGIN) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
 
-			if (Attack)CorSpeed = 0;
-			else CorSpeed = 0.5;
+				wall = 3;	//上入力されているなら壁面移動になる
+			}
 
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//上が壁でなくなったなら壁面移動を解除
 			if (MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] &&
 				MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160])
 			{
@@ -99,16 +124,19 @@ void Player::Update() {
 	else wall = 0;
 
 		//横移動
+		//スティック入力時
 		if (JoypadX >= MARGIN) {
-			if (wall != 1 && wall != 2)speed += 0.5;
-			if (Attack < 1)TurnFlg = FALSE;
+			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
+			if (Attack < 1)TurnFlg = FALSE;				//向きを変える
 		}
 		else if (JoypadX <= -MARGIN) {
-			if (wall != 1 && wall != 2)speed -= 0.5;
-			if (Attack < 1)TurnFlg = TRUE;
+			if (wall != 1 && wall != 2)speed -= 0.5;	//移動量を減算
+			if (Attack < 1)TurnFlg = TRUE;				//向きを変える
 		}
+		//非スティック入力時
 		else 
 		{
+			//移動速度を0に近づける
 			if (speed < 0 && 0 < ++speed) {
 				speed = 0;
 			}
@@ -117,11 +145,52 @@ void Player::Update() {
 			}
 		}
 
+		//移動速度の最大値を適用
 		if (speed < -Maxspeed)speed = -Maxspeed;
 		if (Maxspeed < speed)speed = Maxspeed;
 
-		if (Attack && !wall)CorSpeed = 0.5;
-		x += speed * CorSpeed;
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0)
+		{
+			float Dodge = 18;
+			if (TurnFlg)
+			{
+				Dodgespd = Dodge;
+				Dodgefall = -Dodge;
+				speed = 0;
+			}
+			else 
+			{
+				Dodgespd = -Dodge;
+				Dodgefall = -Dodge;
+				speed = 0;
+			}
+		}
+
+		//移動速度を0に近づける
+		if (Dodgespd != 0) {
+			if (Dodgespd < 0 && 0 < ++Dodgespd) {
+				Dodgespd = 0;
+			}
+		}
+
+		if (Dodgespd != 0) {
+			if (0 < Dodgespd && --Dodgespd < 0) {
+				Dodgespd = 0;
+			}
+		}
+
+		//移動速度を0に近づける
+		if (Dodgefall != 0) {
+			if (0 <= Dodgefall) {
+				Dodgefall = 0;
+			}
+			else Dodgefall += 2;
+		}
+
+		if (Attack && !wall)CorSpeed = 0.5;	//攻撃中は移動速度を半減
+		x += (speed + Dodgespd) * CorSpeed;				//横軸移動
+
+		//壁で移動を止める
 		while (!MapData[y / 160][(x + Width / 2) / 160])
 		{
 			x--;
@@ -147,6 +216,7 @@ void Player::Update() {
 			if (Attack < 1)Yinput = Inp_UD::NONE;
 		}
 
+		//武器切り替え・攻撃アニメーション・コンボ数をリセット
 		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
 		{
 			switch (Equip) 
@@ -170,25 +240,28 @@ void Player::Update() {
 		//落下とジャンプ
 		float fallinit = 16;
 
+		//非壁面移動時
 		if (wall == 0)
 		{
+			//Aボタン・ジャンプ
 			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 			{
-				fall = -fallinit;
-				jump++;
+				fall = -fallinit;	//落下速度をマイナスにする
+				jump++;				//ジャンプ回数を増やす
 			}
 
-
+			//落下速度管理
 			if (fall < fallinit)
-			{
+			{	
+				//落下速度を増やす
 				fall += (fallinit * 2) / 45;
 				if (fall > fallinit)
 				{
-					fall = fallinit;
+					fall = fallinit;	//落下速度の最大値
 				}
 			}
 
-			y += fall;
+			y += fall + Dodgefall;	//上下移動
 		}
 		else if (wall == 1 || wall == 2)
 		{
@@ -201,6 +274,7 @@ void Player::Update() {
 			else y++;
 		}
 
+		//床で落下が阻まれる
 		while (!MapData[(y - Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y - Height / 2) / 160][(x + Width / 2) / 160])
 		{
@@ -208,6 +282,7 @@ void Player::Update() {
 			if (0 > fall)fall = 0;
 		}
 
+		//天井でジャンプが阻まれる
 		while (!MapData[(y + Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y + Height / 2) / 160][(x + Width / 2) / 160])
 		{
@@ -325,7 +400,7 @@ void Player::Draw() const {
 
 void Player::Spawn() {
 	x = BLOCK_SIZE + BLOCK_SIZE / 2;
-	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 2) + 1);
+	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
 
 	y += BLOCK_SIZE / 2 - Height / 2;
 }
@@ -335,6 +410,10 @@ void Player::InitPad() {
 	//スティック
 	JoypadX = PAD_INPUT::GetPadThumbLX();
 	JoypadY = PAD_INPUT::GetPadThumbLY();
+
+	//トリガー
+	TriggerL = PAD_INPUT::GetPadLeftTrigger();
+	TriggerR = PAD_INPUT::GetPadRightTrigger();
 
 }
 //マップデータ
@@ -733,7 +812,7 @@ void Player::MaceAtk()
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && stat.Power == 0)Attack++;	//ボタン長押し中に力をためる
 	else if (PAD_INPUT::OnRelease(XINPUT_BUTTON_B) && stat.Power == 0)		//離すとためた力に応じて強化
 	{
-		if (Attack < 20)
+		if (Attack < 20 || wall != 0)
 		{
 			stat.Power = 1;
 			Attack = 20;
@@ -750,7 +829,12 @@ void Player::MaceAtk()
 		}
 	}
 
-	if (60 < Attack) 
+	
+	if (wall != 0 && 20 <= Attack)
+	{
+		Attack = 20 - 1;
+	}
+	else if (60 < Attack) 
 	{
 		Attack = 60;
 	}

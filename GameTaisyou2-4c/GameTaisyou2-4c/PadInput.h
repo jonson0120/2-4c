@@ -3,6 +3,7 @@
 
 #define BUTTONS 16
 #define MARGIN 32767*0.25
+#define TRIGGER 255*0.25
 
 enum class PADSTATE
 {
@@ -26,6 +27,8 @@ public:
     static void UpdateKey();
     static int GetPadThumbLX() { return Input.ThumbLX; }
     static int GetPadThumbLY() { return Input.ThumbLY; }
+    static int GetPadLeftTrigger() { return Input.LeftTrigger; }
+    static int GetPadRightTrigger() { return Input.RightTrigger; }
     //ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½uŠÔ
     static bool OnClick(int inputKey)
     {

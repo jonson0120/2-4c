@@ -38,10 +38,12 @@ private:
 	int x, y;		//X,Y座標
 	int Width, Height;	//プレイヤー高さ
 
-	float speedinit;	//移動速度
+	float speedinit;	//移動速度最大
 	float speed;	//移動速度
+	float Dodgespd;	//回避速度
 	
 	float fall;	//落下速度
+	float Dodgefall;	//回避ジャンプ速度
 	int jump;	//ジャンプ回数
 	int wall;	//壁・天井移動 0:地面 1:左壁 2:右壁 3:天井
 
@@ -61,6 +63,7 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 	int JoypadX, JoypadY;	//パッド入力値
+	int TriggerL, TriggerR;	//トリガー入力値
 
 public:
 
