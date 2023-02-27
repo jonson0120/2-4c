@@ -1,6 +1,7 @@
 ﻿#include "Enemy.h"
 #include "DxLib.h"
 #include "common.h"
+#include "Player.h"
 
 Enemy::Enemy()
 {
@@ -15,12 +16,12 @@ Enemy::Enemy()
 	direction = 0;
 
 	speed = 4;
-	fall = 16;
-	jump = 16;
+	fall = 12;
+	jump = 0;
 
 }
 
-void Enemy::Update()
+void Enemy::Update(Player* player)
 {
 	//落下とジャンプ
 	float fallinit = 12;
@@ -54,22 +55,26 @@ void Enemy::Update()
 		speed *= -1;
 	}
 
-	//プレイヤー追尾
-	if (enex >= player.GetX())
+	//プレイヤー認識範囲
+	if (enex + BLOCK_SIZE * 2 >= player->GetX() && enex - BLOCK_SIZE * 2 <= player->GetX() && eney + BLOCK_SIZE * 2 >= player->GetY())
 	{
-		enex -= speed;
-	}
+		//プレイヤー追尾
+		if (enex >= player->GetX())
+		{
+			enex -= speed;
+		}
 
-	if (enex <= player.GetX())
-	{
-		enex += speed;
-	}
+		if (enex <= player->GetX())
+		{
+			enex += speed;
+		}
 
-	if (eney >= player.GetY() && fall >= fallinit)
-	{
-		fall *= -1;
+		if (eney >= player->GetY() && fall >= fallinit && jump == 0)
+		{
+			fall *= -1;
+			jump++;
+		}
 	}
-
 }
 
 void Enemy::Draw(int x,int y) const

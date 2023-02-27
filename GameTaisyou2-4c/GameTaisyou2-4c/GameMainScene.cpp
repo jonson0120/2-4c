@@ -21,7 +21,7 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	player.Update();
-	enemy.Update();
+	enemy.Update(&player);
 
 	CameraX = player.GetX();
 	CameraY = player.GetY();
@@ -63,7 +63,7 @@ void GameMainScene::MakeMap()
 				MapData[i][j] = 1;
 				if (i % 2 == 0 && j % 2 == 0)
 				{
-					MapData[i][j] = 0;
+					MapData[i][j] = 1;
 				}
 			}
 

@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include"DxLib.h"
 #include"common.h"
-#include"Player.h"
+
+class Player;
 
 class Enemy
 {
@@ -12,7 +13,7 @@ private:
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
 
-	Player player;
+	//Player player;
 
 	float speed;	//移動速度
 	float fall;		//落下速度
@@ -22,7 +23,7 @@ private:
 
 public:
 	Enemy();
-	void Update();
+	void Update(Player* player);
 	void Draw(int x,int y) const;
 
 	int E_GetX()const { return enex; }
