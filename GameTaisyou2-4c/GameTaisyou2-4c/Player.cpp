@@ -33,9 +33,10 @@ Player::Player() {
 	range[0] = { 24,44 };
 	range[1] = { 26,75 };
 
-    LoadDivGraph("images/Player.png", 2, 2, 1, 54, 56, PImages);
+	PImages = LoadGraph("images/Player.png");
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace2.png");
+	Weapon[2] = LoadGraph("images/spear.png");
 
 	JoypadX = 0;
 	JoypadY = 0;
@@ -43,6 +44,12 @@ Player::Player() {
 	TriggerR = 0;
 
 	TurnFlg=false;
+
+	//--------------------
+
+	spear_angle = 0;
+
+	//--------------------
 }
 
 void Player::Update() {
@@ -140,9 +147,11 @@ void Player::Update() {
 			if (speed < 0 && 0 < ++speed) {
 				speed = 0;
 			}
+
 			if (0 < speed && --speed < 0) {
 				speed = 0;
 			}
+
 		}
 
 		//移動速度の最大値を適用
@@ -188,6 +197,20 @@ void Player::Update() {
 		}
 
 		if (Attack && !wall)CorSpeed = 0.5;	//攻撃中は移動速度を半減
+
+		//武器種ごとの移動速度補正
+		if (Attack) {
+
+
+			//槍・攻撃中、空中にいなければ移動できない
+			if (Equip == weapons::spear && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+										   !MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160])
+			{
+				//CorSpeed = 0;
+				speed = 0;
+			}
+		}
+
 		x += (speed + Dodgespd) * CorSpeed;				//横軸移動
 
 		//壁で移動を止める
@@ -229,6 +252,13 @@ void Player::Update() {
 				break;
 
 			case weapons::mace:
+				Equip = weapons::spear;
+				Attack = 0;
+				Combo = 0;
+				stat.Power = 0;
+				break;
+
+			case weapons::spear:
 				Equip = weapons::dagger;
 				Attack = 0;
 				Combo = 0;
@@ -318,6 +348,21 @@ void Player::Update() {
 			}
 			break;
 
+		case weapons::spear:		//槍：ボタン単押しタイプ
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
+			{
+				spear_angle = PadangL;
+
+				if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
+				{
+					if (TurnFlg)spear_angle = -90;
+					else spear_angle = 90;
+				}
+
+				Attack++;
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -335,6 +380,10 @@ void Player::Update() {
 				MaceAtk();
 				break;
 
+			case weapons::spear:	//槍：攻撃
+				SpearAtk();
+				break;
+
 			default:
 				break;
 			}
@@ -343,15 +392,14 @@ void Player::Update() {
 
 void Player::Draw() const {
 	
-	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
-		SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
+	//DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
+	//	SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
-	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 360, 0xffffff, "%d", wall);
+	DrawFormatString(0, 360, 0xffffff, "%d", speed);
 
 
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
@@ -363,6 +411,10 @@ void Player::Draw() const {
 
 	case weapons::mace:		//メイス
 		DrawString(0, 130, "装備：メイス", 0xffffff);
+		break;
+
+	case weapons::spear:	//槍
+		DrawString(0, 130, "装備：槍", 0xffffff);
 		break;
 
 	default:
@@ -392,10 +444,16 @@ void Player::Draw() const {
 			DrawMace();
 			break;
 
+		case weapons::spear:	//メイス
+			DrawSpear();
+			break;
+
 		default:
 			break;
 		}
 	}
+
+	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0, PImages, TRUE, TurnFlg);
 }
 
 void Player::Spawn() {
@@ -414,6 +472,15 @@ void Player::InitPad() {
 	//トリガー
 	TriggerL = PAD_INPUT::GetPadLeftTrigger();
 	TriggerR = PAD_INPUT::GetPadRightTrigger();
+
+	//入力角度
+	float angle = atan2((float)JoypadX, (float)JoypadY);
+	if (angle < 0)angle += 3.14;
+
+	angle = angle / 2 / 3.14 * 360;
+	if (JoypadX < 0)angle -= 180;
+
+	PadangL = angle;
 
 }
 //マップデータ
@@ -775,6 +842,73 @@ void Player::DrawMace()const
 	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
 }
 
+//攻撃描画：槍
+void Player::DrawSpear()const
+{
+	float size = 0.2;
+
+	double stX = 0, stY = 0;		//振りかぶる前の座標
+	double finX = 0, finY = 0;		//振りかぶった後の座標
+	double Dis = 0;			//体の中心からの距離
+
+	double finAng = spear_angle;	//攻撃する角度
+	int thrust = 20;	//攻撃距離
+
+	//上記の値を計算
+	switch (TurnFlg)
+	{
+	case true:
+		if (Attack < 8)
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * Attack;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+		}
+		else
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * (8 - (Attack - 8));
+			if (Dis < 0)Dis = 0;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+		}
+		break;
+	case false:
+		if (Attack < 7)
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * Attack;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * (8 - (Attack - 8));
+			if (Dis < 0)Dis = 0;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[2], true, false);
+}
+
 //攻撃：短剣
 void Player::DaggerAtk() 
 {
@@ -838,7 +972,7 @@ void Player::MaceAtk()
 	{
 		Attack = 60;
 	}
-
+	
 	if (stat.Power)
 	{
 		Attack -= 1.0;
@@ -848,6 +982,17 @@ void Player::MaceAtk()
 			stat.Power = 0;
 		}
 	}
+}
+
+//攻撃：槍
+void Player::SpearAtk()
+{
+	if (20 < Attack++)
+	{
+		Attack = 0;
+		stat.Power = 0;
+	}
+	else stat.Power = 2;
 }
 
 //当たり判定：短剣

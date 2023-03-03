@@ -6,7 +6,8 @@
 enum struct weapons 
 {
 	dagger, //0
-	mace	//1
+	mace,	//1
+	spear	//2
 };
 
 enum struct Inp_UD
@@ -49,12 +50,12 @@ private:
 
 	float Attack;	
 
-	int PImages[2];
+	int PImages;
 	bool TurnFlg;
 	bool FalseFlg;
 	
 
-	int Weapon[2];		//武器画像
+	int Weapon[3];		//武器画像
 	enum weapons Equip;		//装備している武器
 	Range range[2];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
@@ -63,7 +64,14 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 	int JoypadX, JoypadY;	//パッド入力値
+	float PadangL;			//パッド入力角度
 	int TriggerL, TriggerR;	//トリガー入力値
+
+	//一部の武器種が使用する変数-----------
+
+	float spear_angle;		//槍・攻撃方向
+
+	//-------------------------------------
 
 public:
 
@@ -91,13 +99,16 @@ public:
 	//武器描画
 	void DrawDagger()const;
 	void DrawMace()const;
+	void DrawSpear()const;
 
 	//武器アニメーション管理
 	void DaggerAtk();
 	void MaceAtk();
+	void SpearAtk();
 
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
+	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 };
 
