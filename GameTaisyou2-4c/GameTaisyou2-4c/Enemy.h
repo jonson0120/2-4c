@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include"DxLib.h"
-#include"common.h"
+#include "DxLib.h"
+#include "common.h"
 
 class Player;
 

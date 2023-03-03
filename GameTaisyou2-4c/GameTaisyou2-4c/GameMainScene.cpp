@@ -31,7 +31,7 @@ AbstractScene* GameMainScene::Update()
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
-		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		if (player.HitDagger(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 
 	default:
 		break;
@@ -267,23 +267,6 @@ void GameMainScene::MakeMap()
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (j == MAP_WIDTH - 1 || j == 0)
-			{
-				MapData[i][j] = 0;
-			}
-			else
-			{
-				MapData[i][j] = 1;
-				if (i % 2 == 0 && j % 2 == 0)
-				{
-					MapData[i][j] = 1;
-				}
-			}
-
-			if (i == MAP_HEIGHT - 1 || i == 0)
-			{
-				MapData[i][j] = 0;
-			}
 			if (CheckData[i][j] == 0)MapData[i][j] = 5;
 		}
 	}
