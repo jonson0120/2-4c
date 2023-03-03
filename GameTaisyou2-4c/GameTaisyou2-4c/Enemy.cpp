@@ -19,6 +19,7 @@ Enemy::Enemy()
 	fall = 12;
 	jump = 0;
 
+	LoadDivGraph("images/Enemy.png", 5, 16, 16, 32, 32, EImages);
 }
 
 void Enemy::Update(Player* player)
@@ -26,7 +27,6 @@ void Enemy::Update(Player* player)
 	//落下とジャンプ
 	float fallinit = 12;
 	eney += fall;
-
 	while (!MapData[(eney + Height / 2) / 160][(enex - Width / 2) / 160])
 	{
 		eney--;
@@ -88,6 +88,7 @@ void Enemy::Draw(int x,int y) const
 
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 			  //enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
+
 }
 
 void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
