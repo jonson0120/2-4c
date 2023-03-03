@@ -7,8 +7,6 @@
 UI::UI()
 {
 
-	
-
 	DaggerImage = LoadGraph("images/Dagger.png");
 	MaceImage = LoadGraph("images/mace.png");
 
@@ -31,9 +29,8 @@ UI::UI()
 	PotionCount = 0;
 }
 
-void UI::Update() 
+void UI::Update()
 {
-	
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
 	{
 		switch (Equip)
@@ -47,65 +44,68 @@ void UI::Update()
 			break;
 		}
 	}
-	
 
-
-
-	if ( 0< PotionCount)
+	if (0 < PotionCount)
 	{
 		potionflag = true;
 	}
 
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_LEFT) && potionflag==true)
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_LEFT) && potionflag == true)
 	{
 
-		PotionCount=0;
+		PotionCount = 0;
 
 	}
 
-	//Xボタンを押すと回復(3回まで使用可能)
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) &&   PotionCount<3)
-	{
 
-		PotionCount++;
-		
-		PlayerHP = PlayerHP +((MaxHP-110)/100*20);
+
+	{
+		//Xボタンを押すと回復(3回まで使用可能)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) && PotionCount < 3)
+		{
+
+			PotionCount++;
+
+			PlayerHP = PlayerHP + ((MaxHP - 110) / 100 * 20);
+		}
+
+		//HPは100以上回復しない
+		if (MaxHP < PlayerHP)
+		{
+			PlayerHP = MaxHP;
+		}
 	}
 
-	//HPは100以上回復しない
-	if (MaxHP <PlayerHP)
 	{
-		PlayerHP = MaxHP;
+		//ダメージ追加(後で消す)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_RIGHT))
+		{
+			Damage = GetRand(100);
+			PlayerHP = PlayerHP - ((MaxHP - 110) / 100 * Damage);
+		}
+
+		//HPは0以下にはならない
+		if (PlayerHP <= 110)
+		{
+			PlayerHP = 110;
+		}
 	}
 
-	//HPは0以下にはならない
-	if (PlayerHP <= 110)
-	{
-		PlayerHP = 110;
-	}
-
-
-	//@
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_RIGHT))
-	{
-		Damage = GetRand(100);
-		PlayerHP = PlayerHP - ((MaxHP - 110) / 100 * Damage);
-	}
 }
 
 void UI::Draw() const
 {
 
-	//DrawFormatString(0, 200, GetColor(255, 255, 255), "%d", PotionCount);
-	//DrawFormatString(0, 300, GetColor(255, 255, 255), "%.1f", PlayerHP);
-	//DrawFormatString(0, 400, GetColor(255, 255, 255), "%d", Damage);
+	/*DrawFormatString(0, 200, GetColor(255, 255, 255), "%d", PotionCount);
+	DrawFormatString(0, 300, GetColor(255, 255, 255), "%.1f", PlayerHP);
+	DrawFormatString(0, 400, GetColor(255, 255, 255), "%d", Damage);*/
 
 	//ポーション使用時の●
 	DrawCircle(140, 75, 5, GetColor(255, 0, 0), TRUE);
 	DrawCircle(195, 75, 5, GetColor(255, 0, 0), TRUE);
 	DrawCircle(250, 75, 5, GetColor(255, 0, 0), TRUE);
 
-	
+
 	//ポーション画像の表示
 	{
 
@@ -124,9 +124,6 @@ void UI::Draw() const
 
 	}
 	
-
-
-	
 	//武器
 	DrawCircle(50, 50, 50, GetColor(255, 255, 255), TRUE);
 	switch (Equip)
@@ -138,7 +135,6 @@ void UI::Draw() const
 		DrawRotaGraph(50, 50, 0.2, 0, MaceImage, TRUE);
 		break;
 	}
-
 
 	//HP赤
 	DrawBox(110,10,510,50,GetColor(255,0,0),TRUE);
