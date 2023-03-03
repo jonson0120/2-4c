@@ -56,7 +56,8 @@ void Enemy::Update(Player* player)
 	}
 
 	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE * 2 >= player->GetX() && enex - BLOCK_SIZE * 2 <= player->GetX() && eney + BLOCK_SIZE * 2 >= player->GetY())
+	if (enex + BLOCK_SIZE * 2 >= player->GetX() && enex - BLOCK_SIZE * 2 <=
+		player->GetX() && eney + BLOCK_SIZE * 2 >= player->GetY())
 	{
 		//プレイヤー追尾
 		if (enex >= player->GetX())
