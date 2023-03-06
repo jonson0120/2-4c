@@ -58,7 +58,7 @@ private:
 
 	int Weapon[3];		//武器画像
 	enum weapons Equip;		//装備している武器
-	Range range[2];	//攻撃範囲
+	Range range[3];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
 

@@ -32,7 +32,13 @@ AbstractScene* GameMainScene::Update()
 	{
 	case weapons::dagger:
 		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
-
+		break;
+	case weapons::mace:
+		if (player.HitMace(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		break;
+	case weapons::spear:
+		if (player.HitSpear(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		break;
 	default:
 		break;
 	}
@@ -56,6 +62,8 @@ void GameMainScene::Draw() const
 	ui.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
+
+	DrawFormatString(500, 200, 0xffffff, "%d", hit);
 
 }
 
