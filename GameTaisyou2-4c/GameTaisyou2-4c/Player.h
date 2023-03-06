@@ -68,6 +68,7 @@ private:
 	int TriggerL, TriggerR;	//トリガー入力値
 
 	//一部の武器種が使用する変数-----------
+	int Atkpt;				//汎用・攻撃パターン
 
 	float spear_angle;		//槍・攻撃方向
 

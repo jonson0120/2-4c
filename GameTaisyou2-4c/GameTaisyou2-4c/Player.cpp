@@ -46,7 +46,7 @@ Player::Player() {
 	TurnFlg=false;
 
 	//--------------------
-
+	Atkpt = 0;
 	spear_angle = 0;
 
 	//--------------------
@@ -65,7 +65,7 @@ void Player::Update() {
 		//壁面移動中か左側が壁なら入る
 		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
 		{
-			if (JoypadX <= -MARGIN) {
+			if (JoypadX <= -MARGIN && !Attack) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 
@@ -87,7 +87,7 @@ void Player::Update() {
 		//壁面移動中か右側が壁なら入る
 		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
 		{
-			if (MARGIN <= JoypadX) {
+			if (MARGIN <= JoypadX && !Attack) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 
@@ -110,7 +110,7 @@ void Player::Update() {
 		if ((wall == 3 || !MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] ||
 						  !MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160]))
 		{
-			if (JoypadY >= MARGIN) {
+			if (JoypadY >= MARGIN && !Attack) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 
@@ -359,6 +359,7 @@ void Player::Update() {
 					else spear_angle = 90;
 				}
 
+				Atkpt = wall;
 				Attack++;
 			}
 			break;
@@ -399,7 +400,7 @@ void Player::Draw() const {
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 360, 0xffffff, "%d", speed);
+	DrawFormatString(0, 360, 0xffffff, "%d", wall);
 
 
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
@@ -444,7 +445,7 @@ void Player::Draw() const {
 			DrawMace();
 			break;
 
-		case weapons::spear:	//メイス
+		case weapons::spear:	//槍
 			DrawSpear();
 			break;
 
@@ -855,47 +856,128 @@ void Player::DrawSpear()const
 	int thrust = 20;	//攻撃距離
 
 	//上記の値を計算
-	switch (TurnFlg)
+
+	switch (Atkpt)
 	{
-	case true:
-		if (Attack < 8)
+	case 0:
+		switch (TurnFlg)
 		{
-			stX = SCREEN_WIDTH / 2;
-			stY = SCREEN_HEIGHT / 2;
-			Dis = thrust * Attack;
+		case true:
+			if (Attack < 8)
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * Attack;
 
-			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
 
-		}
-		else
-		{
-			stX = SCREEN_WIDTH / 2;
-			stY = SCREEN_HEIGHT / 2;
-			Dis = thrust * (8 - (Attack - 8));
-			if (Dis < 0)Dis = 0;
+			}
+			else
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * (8 - (Attack - 8));
+				if (Dis < 0)Dis = 0;
 
-			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
 
+			}
+			break;
+		case false:
+			if (Attack < 7)
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * Attack;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			else
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * (8 - (Attack - 8));
+				if (Dis < 0)Dis = 0;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			break;
+
+		default:
+			break;
 		}
 		break;
-	case false:
-		if (Attack < 7)
+
+	case 1:
+
+		if (Attack < 11)
 		{
+			finAng = 25 + (130 / 10 * (Attack - 1));
 			stX = SCREEN_WIDTH / 2;
 			stY = SCREEN_HEIGHT / 2;
-			Dis = thrust * Attack;
+			Dis = Width * 1.5;
 
 			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
 		}
 		else
 		{
+			finAng = 155;
 			stX = SCREEN_WIDTH / 2;
 			stY = SCREEN_HEIGHT / 2;
-			Dis = thrust * (8 - (Attack - 8));
-			if (Dis < 0)Dis = 0;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	case 2:
+
+		if (Attack < 11)
+		{
+			finAng = -25 - (130 / 10 * (Attack - 1));
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = -155;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	case 3:
+
+		if (Attack < 11)
+		{
+			finAng = 115 + (130 / 10 * (Attack - 1));
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = 245;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
 
 			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
