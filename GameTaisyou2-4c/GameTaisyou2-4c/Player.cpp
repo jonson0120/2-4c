@@ -18,8 +18,10 @@ Player::Player() {
 
 	speedinit = 8;
 	speed = 0;
+	Dodgespd = 0;
 
-	fall = 16;
+	fall = 0;
+	Dodgefall = 0;
 	jump = 0;
 	wall = 0;
 
@@ -31,32 +33,49 @@ Player::Player() {
 	range[0] = { 24,44 };
 	range[1] = { 26,75 };
 
-    LoadDivGraph("images/Player.png", 2, 2, 1, 54, 56, PImages);
+	PImages = LoadGraph("images/Player.png");
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace2.png");
+	Weapon[2] = LoadGraph("images/spear.png");
 
 	JoypadX = 0;
 	JoypadY = 0;
+	TriggerL = 0;
+	TriggerR = 0;
 
 	TurnFlg=false;
+
+	//--------------------
+
+	spear_angle = 0;
+
+	//--------------------
 }
 
 void Player::Update() {
 	InitPad();
 
-	float Maxspeed = speedinit;
-	float CorSpeed = 1;
+	float Maxspeed = speedinit;	//最大速度
+	float CorSpeed = 1;			//移動速度補正
 
-	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_RIGHT_SHOULDER))
+	//壁面移動・Aボタン長押しで処理に入る
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_A))
 	{
+		//壁面移動・左壁
+		//壁面移動中か左側が壁なら入る
 		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
 		{
-			fall = 0;
-			jump = 0;
-			wall = 1;
-			if (!Attack)CorSpeed *= 0.5;
-			else CorSpeed = 0;
+			if (JoypadX <= -MARGIN) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
 
+				wall = 1;
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//左側が壁でなくなったなら壁面移動を解除
 			if (MapData[(y - Height / 2) / 160][(x - 1 - Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x - 1 - Width / 2) / 160])
 			{
@@ -64,14 +83,21 @@ void Player::Update() {
 			}
 		}
 
+		//壁面移動・右壁
+		//壁面移動中か右側が壁なら入る
 		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
 		{
-			fall = 0;
-			jump = 0;
-			wall = 2;
-			if (!Attack)CorSpeed *= 0.5;
-			else CorSpeed = 0;
+			if (MARGIN <= JoypadX) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
 
+				wall = 2;
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//右側が壁でなくなったなら壁面移動を解除
 			if (MapData[(y - Height / 2) / 160][(x + 1 + Width / 2) / 160]&&
 				MapData[(y + Height / 2) / 160][(x + 1 + Width / 2) / 160])
 			{
@@ -79,16 +105,22 @@ void Player::Update() {
 			}
 		}
 
+		//壁面移動・天井
+		//壁面移動中か上が壁なら入る
 		if ((wall == 3 || !MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] ||
 						  !MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160]))
 		{
-			fall = 0;
-			jump = 0;
-			if(JoypadY >= MARGIN) wall = 3;
+			if (JoypadY >= MARGIN) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
 
-			if (!Attack)CorSpeed *= 0.5;
-			else CorSpeed = 0;
+				wall = 3;	//上入力されているなら壁面移動になる
+			}
 
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//上が壁でなくなったなら壁面移動を解除
 			if (MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] &&
 				MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160])
 			{
@@ -99,29 +131,89 @@ void Player::Update() {
 	else wall = 0;
 
 		//横移動
+		//スティック入力時
 		if (JoypadX >= MARGIN) {
-			if (wall != 1 && wall != 2)speed += 0.5;
-			if (Attack < 1)TurnFlg = FALSE;
+			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
+			if (Attack < 1)TurnFlg = FALSE;				//向きを変える
 		}
 		else if (JoypadX <= -MARGIN) {
-			if (wall != 1 && wall != 2)speed -= 0.5;
-			if (Attack < 1)TurnFlg = TRUE;
+			if (wall != 1 && wall != 2)speed -= 0.5;	//移動量を減算
+			if (Attack < 1)TurnFlg = TRUE;				//向きを変える
 		}
+		//非スティック入力時
 		else 
 		{
+			//移動速度を0に近づける
 			if (speed < 0 && 0 < ++speed) {
 				speed = 0;
 			}
+
 			if (0 < speed && --speed < 0) {
+				speed = 0;
+			}
+
+		}
+
+		//移動速度の最大値を適用
+		if (speed < -Maxspeed)speed = -Maxspeed;
+		if (Maxspeed < speed)speed = Maxspeed;
+
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0)
+		{
+			float Dodge = 18;
+			if (TurnFlg)
+			{
+				Dodgespd = Dodge;
+				Dodgefall = -Dodge;
+				speed = 0;
+			}
+			else 
+			{
+				Dodgespd = -Dodge;
+				Dodgefall = -Dodge;
 				speed = 0;
 			}
 		}
 
-		if (speed < -Maxspeed)speed = -Maxspeed;
-		if (Maxspeed < speed)speed = Maxspeed;
+		//移動速度を0に近づける
+		if (Dodgespd != 0) {
+			if (Dodgespd < 0 && 0 < ++Dodgespd) {
+				Dodgespd = 0;
+			}
+		}
 
-		if (Attack)CorSpeed = 0.5;
-		x += speed * CorSpeed;
+		if (Dodgespd != 0) {
+			if (0 < Dodgespd && --Dodgespd < 0) {
+				Dodgespd = 0;
+			}
+		}
+
+		//移動速度を0に近づける
+		if (Dodgefall != 0) {
+			if (0 <= Dodgefall) {
+				Dodgefall = 0;
+			}
+			else Dodgefall += 2;
+		}
+
+		if (Attack && !wall)CorSpeed = 0.5;	//攻撃中は移動速度を半減
+
+		//武器種ごとの移動速度補正
+		if (Attack) {
+
+
+			//槍・攻撃中、空中にいなければ移動できない
+			if (Equip == weapons::spear && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+										   !MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160])
+			{
+				//CorSpeed = 0;
+				speed = 0;
+			}
+		}
+
+		x += (speed + Dodgespd) * CorSpeed;				//横軸移動
+
+		//壁で移動を止める
 		while (!MapData[y / 160][(x + Width / 2) / 160])
 		{
 			x--;
@@ -147,6 +239,7 @@ void Player::Update() {
 			if (Attack < 1)Yinput = Inp_UD::NONE;
 		}
 
+		//武器切り替え・攻撃アニメーション・コンボ数をリセット
 		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
 		{
 			switch (Equip) 
@@ -159,6 +252,13 @@ void Player::Update() {
 				break;
 
 			case weapons::mace:
+				Equip = weapons::spear;
+				Attack = 0;
+				Combo = 0;
+				stat.Power = 0;
+				break;
+
+			case weapons::spear:
 				Equip = weapons::dagger;
 				Attack = 0;
 				Combo = 0;
@@ -170,25 +270,28 @@ void Player::Update() {
 		//落下とジャンプ
 		float fallinit = 16;
 
+		//非壁面移動時
 		if (wall == 0)
 		{
+			//Aボタン・ジャンプ
 			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 			{
-				fall = -fallinit;
-				jump++;
+				fall = -fallinit;	//落下速度をマイナスにする
+				jump++;				//ジャンプ回数を増やす
 			}
 
-
+			//落下速度管理
 			if (fall < fallinit)
-			{
+			{	
+				//落下速度を増やす
 				fall += (fallinit * 2) / 45;
 				if (fall > fallinit)
 				{
-					fall = fallinit;
+					fall = fallinit;	//落下速度の最大値
 				}
 			}
 
-			y += fall;
+			y += fall + Dodgefall;	//上下移動
 		}
 		else if (wall == 1 || wall == 2)
 		{
@@ -201,6 +304,7 @@ void Player::Update() {
 			else y++;
 		}
 
+		//床で落下が阻まれる
 		while (!MapData[(y - Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y - Height / 2) / 160][(x + Width / 2) / 160])
 		{
@@ -208,6 +312,7 @@ void Player::Update() {
 			if (0 > fall)fall = 0;
 		}
 
+		//天井でジャンプが阻まれる
 		while (!MapData[(y + Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y + Height / 2) / 160][(x + Width / 2) / 160])
 		{
@@ -243,6 +348,21 @@ void Player::Update() {
 			}
 			break;
 
+		case weapons::spear:		//槍：ボタン単押しタイプ
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
+			{
+				spear_angle = PadangL;
+
+				if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
+				{
+					if (TurnFlg)spear_angle = -90;
+					else spear_angle = 90;
+				}
+
+				Attack++;
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -260,6 +380,10 @@ void Player::Update() {
 				MaceAtk();
 				break;
 
+			case weapons::spear:	//槍：攻撃
+				SpearAtk();
+				break;
+
 			default:
 				break;
 			}
@@ -268,15 +392,14 @@ void Player::Update() {
 
 void Player::Draw() const {
 	
-	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
-		SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
+	//DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
+	//	SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
-	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 360, 0xffffff, "%d", wall);
+	DrawFormatString(0, 360, 0xffffff, "%d", speed);
 
 
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
@@ -288,6 +411,10 @@ void Player::Draw() const {
 
 	case weapons::mace:		//メイス
 		DrawString(0, 130, "装備：メイス", 0xffffff);
+		break;
+
+	case weapons::spear:	//槍
+		DrawString(0, 130, "装備：槍", 0xffffff);
 		break;
 
 	default:
@@ -317,15 +444,21 @@ void Player::Draw() const {
 			DrawMace();
 			break;
 
+		case weapons::spear:	//メイス
+			DrawSpear();
+			break;
+
 		default:
 			break;
 		}
 	}
+
+	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0, PImages, TRUE, TurnFlg);
 }
 
 void Player::Spawn() {
 	x = BLOCK_SIZE + BLOCK_SIZE / 2;
-	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 2) + 1);
+	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
 
 	y += BLOCK_SIZE / 2 - Height / 2;
 }
@@ -335,6 +468,19 @@ void Player::InitPad() {
 	//スティック
 	JoypadX = PAD_INPUT::GetPadThumbLX();
 	JoypadY = PAD_INPUT::GetPadThumbLY();
+
+	//トリガー
+	TriggerL = PAD_INPUT::GetPadLeftTrigger();
+	TriggerR = PAD_INPUT::GetPadRightTrigger();
+
+	//入力角度
+	float angle = atan2((float)JoypadX, (float)JoypadY);
+	if (angle < 0)angle += 3.14;
+
+	angle = angle / 2 / 3.14 * 360;
+	if (JoypadX < 0)angle -= 180;
+
+	PadangL = angle;
 
 }
 //マップデータ
@@ -696,6 +842,73 @@ void Player::DrawMace()const
 	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
 }
 
+//攻撃描画：槍
+void Player::DrawSpear()const
+{
+	float size = 0.2;
+
+	double stX = 0, stY = 0;		//振りかぶる前の座標
+	double finX = 0, finY = 0;		//振りかぶった後の座標
+	double Dis = 0;			//体の中心からの距離
+
+	double finAng = spear_angle;	//攻撃する角度
+	int thrust = 20;	//攻撃距離
+
+	//上記の値を計算
+	switch (TurnFlg)
+	{
+	case true:
+		if (Attack < 8)
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * Attack;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+		}
+		else
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * (8 - (Attack - 8));
+			if (Dis < 0)Dis = 0;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+		}
+		break;
+	case false:
+		if (Attack < 7)
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * Attack;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = thrust * (8 - (Attack - 8));
+			if (Dis < 0)Dis = 0;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[2], true, false);
+}
+
 //攻撃：短剣
 void Player::DaggerAtk() 
 {
@@ -733,7 +946,7 @@ void Player::MaceAtk()
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && stat.Power == 0)Attack++;	//ボタン長押し中に力をためる
 	else if (PAD_INPUT::OnRelease(XINPUT_BUTTON_B) && stat.Power == 0)		//離すとためた力に応じて強化
 	{
-		if (Attack < 20)
+		if (Attack < 20 || wall != 0)
 		{
 			stat.Power = 1;
 			Attack = 20;
@@ -750,11 +963,16 @@ void Player::MaceAtk()
 		}
 	}
 
-	if (60 < Attack) 
+	
+	if (wall != 0 && 20 <= Attack)
+	{
+		Attack = 20 - 1;
+	}
+	else if (60 < Attack) 
 	{
 		Attack = 60;
 	}
-
+	
 	if (stat.Power)
 	{
 		Attack -= 1.0;
@@ -764,6 +982,17 @@ void Player::MaceAtk()
 			stat.Power = 0;
 		}
 	}
+}
+
+//攻撃：槍
+void Player::SpearAtk()
+{
+	if (20 < Attack++)
+	{
+		Attack = 0;
+		stat.Power = 0;
+	}
+	else stat.Power = 2;
 }
 
 //当たり判定：短剣
