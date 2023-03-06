@@ -15,6 +15,8 @@ private:
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
+	int E_AttackFlg;
+	int Damege;
 
 	//Player player;
 

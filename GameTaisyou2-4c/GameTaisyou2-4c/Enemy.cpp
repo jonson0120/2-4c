@@ -15,6 +15,8 @@ Enemy::Enemy()
 
 	direction = 0;
 
+	E_AttackFlg = FALSE;
+
 	speed = 0;
 	fall = 12;
 	jump = 0;
@@ -75,6 +77,11 @@ void Enemy::Update(Player* player)
 			jump++;
 		}
 		enex += speed;
+	}
+
+	if (enex == player->GetX() && eney == player->GetY())
+	{
+		player->stat.Hp
 	}
 }
 
