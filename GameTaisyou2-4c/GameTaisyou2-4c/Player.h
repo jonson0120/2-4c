@@ -32,6 +32,7 @@ class Player
 {
 private:
 	int image;	//画像
+	int seed = 0;
 
 	Stat stat;	//ステータス
 
@@ -44,7 +45,7 @@ private:
 	float fall;	//落下速度
 	int jump;	//ジャンプ回数
 	int wall;	//壁・天井移動 0:地面 1:左壁 2:右壁 3:天井
-
+	int a = 0, b = 0, c = 0, d = 0;
 	float Attack;	
 
 	int PImages[2];
