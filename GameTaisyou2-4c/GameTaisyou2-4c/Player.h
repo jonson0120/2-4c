@@ -103,6 +103,6 @@ public:
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
 
 	//敵との当たり判定
-	void HitEnemy() { stat.Hp - Enemy_Damage; }
+	int HitEnemy() { return stat.Hp - Enemy_Damage; }
 };
 

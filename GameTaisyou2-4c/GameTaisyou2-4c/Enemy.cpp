@@ -3,6 +3,9 @@
 #include "common.h"
 #include "Player.h"
 
+#define MAX_SPEED 5
+#define MIN_SPEED -5
+
 Enemy::Enemy()
 {
 	image = 0;
@@ -61,28 +64,34 @@ void Enemy::Update(Player* player)
 	}
 
 	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE * 2 >= player->GetX() && enex - BLOCK_SIZE * 2 <=
-		player->GetX() && eney + BLOCK_SIZE / 2 >= player->GetY())
+	if (enex + BLOCK_SIZE * 1.5 >= player->GetX() && enex - BLOCK_SIZE * 1.5 <= player->GetX() &&
+		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY())
 	{
 		//プレイヤー追尾
-		if (enex >= player->GetX())
+		if (enex >= player->GetX() && MIN_SPEED != speed)
 		{
 			--speed;
 		}
 
-		if (enex <= player->GetX())
+		if (enex <= player->GetX() && MAX_SPEED != speed)
 		{
 			++speed;
 		}
 
-		if (eney >= player->GetY() && fall >= fallinit && jump == 0)
+		if (eney >= player->GetY() && fall <= fallinit && jump == 0 && MAX_SPEED != jump)
 		{
 			fall *= -1;
 			jump++;
 		}
+
+		if (enex == player->GetX())
+		{
+			speed = 0;
+		}
 		enex += speed;
 	}
 
+	//プレイヤーに当たった時攻撃
 	if (enex == player->GetX() && eney == player->GetY())
 	{
 		player->HitEnemy();
@@ -93,7 +102,7 @@ void Enemy::Draw(int x,int y) const
 {
 	//敵の表示
 	DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EImages[0],TRUE);
+		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], TRUE);
 
 	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
@@ -104,7 +113,6 @@ void Enemy::Draw(int x,int y) const
 
 void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 {
-
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)

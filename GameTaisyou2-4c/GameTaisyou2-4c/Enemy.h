@@ -9,8 +9,7 @@ class Enemy
 private:
 
 	int image;	//画像
-
-	int EImages[5];
+	int EImages[5]; //画像
 	int EnemyImage = LoadGraph("images/slime1.png");
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
@@ -31,7 +30,7 @@ private:
 public:
 	Enemy();
 	void Update(Player* player);
-	void Draw(int x,int y) const;
+	void Draw(int x, int y) const;
 
 	int E_GetX()const { return enex; }
 	int E_GetY()const { return eney; }
@@ -42,5 +41,5 @@ public:
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
 	//プレイヤーとの当たり判定
-	void HitPlayer() { Player_Hp - Enemy_Damage; }
+	int HitPlayer() { return Player_Hp - Enemy_Damage; }
 };
