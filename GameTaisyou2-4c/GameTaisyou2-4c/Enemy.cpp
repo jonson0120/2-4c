@@ -13,6 +13,10 @@ Enemy::Enemy()
 	Width = 64;
 	Height = 64;
 
+	Enemy_Damage = 1;
+	Enemy_Hp = 2;
+	Player_Hp = 10;
+
 	direction = 0;
 
 	E_AttackFlg = FALSE;
@@ -81,7 +85,7 @@ void Enemy::Update(Player* player)
 
 	if (enex == player->GetX() && eney == player->GetY())
 	{
-		player->stat.Hp
+		player->HitEnemy();
 	}
 }
 

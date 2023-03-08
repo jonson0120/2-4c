@@ -43,6 +43,8 @@ Player::Player() {
 	TriggerR = 0;
 
 	TurnFlg=false;
+
+	Enemy_Damage = 1;
 }
 
 void Player::Update() {

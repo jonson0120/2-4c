@@ -65,6 +65,8 @@ private:
 	int JoypadX, JoypadY;	//パッド入力値
 	int TriggerL, TriggerR;	//トリガー入力値
 
+	int Enemy_Damage;//敵の攻撃力
+
 public:
 
 	void InitPad();
@@ -99,5 +101,8 @@ public:
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
+
+	//敵との当たり判定
+	void HitEnemy() { stat.Hp - Enemy_Damage; }
 };
 

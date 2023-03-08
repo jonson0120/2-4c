@@ -16,7 +16,9 @@ private:
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
 	int E_AttackFlg;
-	int Damege;
+	int Enemy_Damage;
+	int Enemy_Hp;
+	int Player_Hp;
 
 	//Player player;
 
@@ -38,4 +40,7 @@ public:
 	int GetHeight()const { return Height; }
 
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
+
+	//プレイヤーとの当たり判定
+	void HitPlayer() { Player_Hp - Enemy_Damage; }
 };
