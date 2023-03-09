@@ -10,6 +10,8 @@ Enemy::Enemy()
 {
 	image = 0;
 
+	DropItem_Image = LoadGraph("shard.png", TRUE);
+
 	enex = 0; // 176 一番左下にするための座標
 	eney = 0; //1423 一番左下にするための座標
 
@@ -117,11 +119,18 @@ void Enemy::Draw(int x,int y) const
 			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], TRUE);
 	}
 
+	if (Enemy_Hp == 0)
+	{
+		DeleteGraph(EImages[0]);
+
+		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
+			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
+	}
+
 	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 			  //enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
-
 }
 
 void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
