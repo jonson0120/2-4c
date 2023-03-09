@@ -30,15 +30,14 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	player.Update();
-	ui.Update();
-	enemy.Update();
+	enemy.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
-		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		if (player.HitDagger(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 
 	default:
 		break;
