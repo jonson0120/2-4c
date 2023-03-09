@@ -1319,7 +1319,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 	
 	return false;
 }
-
+//当たり判定；槍
 bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 
 	float size = 0.2;
