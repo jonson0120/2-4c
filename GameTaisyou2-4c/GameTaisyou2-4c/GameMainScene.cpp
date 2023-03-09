@@ -18,13 +18,19 @@ GameMainScene::GameMainScene()
 	CameraX = 0;
 	CameraY = 0;
 
+	Bright = 255;
+	Bright_minus = 20;
+	AnimTimer = 0;
+
+	Exit_flg = false;
+	Anim_flg = false;
+	MakeMap_flg = false;
 }
 
 AbstractScene* GameMainScene::Update() 
 {
-
-	ui.Update();
 	player.Update();
+	ui.Update();
 	enemy.Update();
 	CameraX = player.GetX();
 	CameraY = player.GetY();
@@ -38,12 +44,8 @@ AbstractScene* GameMainScene::Update()
 		break;
 	}
 
-	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) {
-		
-		MakeMap();
-		player.SetMapData(MapData);
-		enemy.SetMapData(MapData);
-	}
+	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;
+	if (Exit_flg == true) NextMap();
 
 	time++;
 	return this;
@@ -64,7 +66,8 @@ void GameMainScene::Draw() const
 	ui.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
-
+	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
+	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
 }
 
 //マップ生成
@@ -318,4 +321,40 @@ int GameMainScene::CheckSpace(int y, int x, int* cnt)
 		else CheckData[y][x - 1] = 1;
 	
 		return 0;
+}
+
+void GameMainScene::NextMap() {
+	AnimTimer++;
+	if (0 < Bright && Anim_flg == false) {
+		// フェードアウト処理
+		if (AnimTimer % 10 == 0) {
+			// 描画輝度をセット
+			SetDrawBright(Bright, Bright, Bright);
+			Bright -= Bright_minus;
+		}
+		if (Bright < 0)MakeMap_flg = true;
+	}
+	else {
+		if (AnimTimer % 10 == 0) {
+			// 描画輝度をセット
+			SetDrawBright(Bright, Bright, Bright);
+			Bright += Bright_minus;
+			Anim_flg = true;
+			if (Bright > 255) {
+				Exit_flg = false;
+				Anim_flg = false;
+				AnimTimer = 0, Bright = 255;
+			}
+		}
+	}
+		//次のマップを生成する処理
+	if (MakeMap_flg == true) {
+		player.Spawn();
+		MakeMap();
+		player.SetMapData(MapData);
+		enemy.SetMapData(MapData);
+		MakeMap_flg = false;
+	}
+
+	
 }
