@@ -1470,10 +1470,10 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 		Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
 
-		a = EneX;
+		/*a = EneX;
 		b = EneY;
 		c = finX;
-		d = finY;
+		d = finY;*/
 
 		if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
 		{
