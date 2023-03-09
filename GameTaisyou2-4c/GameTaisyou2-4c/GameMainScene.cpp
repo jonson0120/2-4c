@@ -19,7 +19,7 @@ GameMainScene::GameMainScene()
 	CameraY = 0;
 
 	Bright = 255;
-	Bright_minus = 20;
+	Bright_minus = 10;
 	AnimTimer = 0;
 
 	Exit_flg = false;
@@ -326,7 +326,7 @@ void GameMainScene::NextMap() {
 	AnimTimer++;
 	if (0 < Bright && Anim_flg == false) {
 		// フェードアウト処理
-		if (AnimTimer % 10 == 0) {
+		if (AnimTimer % 5 == 0) {
 			// 描画輝度をセット
 			SetDrawBright(Bright, Bright, Bright);
 			Bright -= Bright_minus;
@@ -334,7 +334,7 @@ void GameMainScene::NextMap() {
 		if (Bright < 0)MakeMap_flg = true;
 	}
 	else {
-		if (AnimTimer % 10 == 0) {
+		if (AnimTimer % 5 == 0) {
 			// 描画輝度をセット
 			SetDrawBright(Bright, Bright, Bright);
 			Bright += Bright_minus;
