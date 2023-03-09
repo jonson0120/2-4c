@@ -1383,3 +1383,102 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 	
 	return false;
 }
+//当たり判定；槍
+bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
+
+	float size = 0.2;
+
+	double stX = 0, stY = 0;		//振りかぶる前の座標
+	double finX = 0, finY = 0;		//振りかぶった後の座標
+	double Dis = 0;			//体の中心からの距離
+	int RangeX = 0;
+	int RangeY = 0;
+
+	double finAng = spear_angle;	//攻撃する角度
+	int thrust = 20;	//攻撃距離
+
+	EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+	EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+
+	if (Attack && !wall) {
+		//上記の値を計算
+		switch (TurnFlg)
+		{
+		case true:
+			if (Attack < 8)
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				RangeX = range[2].X / 2;
+				RangeY = range[2].Y / 2;
+
+				Dis = RangeY+(thrust * Attack);
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			else
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				RangeX = range[2].X / 2;
+				RangeY = range[2].Y / 2;
+
+				Dis = RangeY  + (thrust * (8 - (Attack - 8)));
+				if (Dis < RangeY)return false;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			break;
+		case false:
+			if (Attack < 7)
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				RangeX = range[2].X / 2;
+				RangeY = range[2].Y / 2;
+
+				Dis = RangeY  + (thrust * Attack);
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			else
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				RangeX = range[2].X / 2;
+				RangeY = range[2].Y / 2;
+
+				Dis = RangeY  + (thrust * (8 - (Attack - 8)));
+				if (Dis < RangeY)return false;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		int DisX = EneX - finX;
+		int DisY = EneY - finY;
+
+
+		Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+
+
+		a = EneX;
+		b = EneY;
+		c = finX;
+		d = finY;
+
+		if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
+		{
+			return true;
+		}
+	}
+	return false;
+}
