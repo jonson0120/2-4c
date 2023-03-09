@@ -7,6 +7,7 @@
 
 Player::Player() {
 	image = 0;
+	Walk = 0;
 
 	stat.Hp = 10;
 	stat.Power = 0;
@@ -15,6 +16,8 @@ Player::Player() {
 	Height = 56;
 
 	Spawn();
+	Arm_L = { SCREEN_WIDTH / 2 + 10,SCREEN_HEIGHT / 2 };
+	Arm_R = { SCREEN_WIDTH / 2 - 10,SCREEN_HEIGHT / 2 };
 
 	speedinit = 8;
 	speed = 0;
@@ -33,7 +36,10 @@ Player::Player() {
 	range[0] = { 24,44 };
 	range[1] = { 26,75 };
 
-	PImages = LoadGraph("images/Player.png");
+	PImages = LoadGraph("images/Player_Top.png");
+	LoadDivGraph("images/Player_Under.png", 5, 5, 1, 48, 28, image_U);
+	ArmImg = LoadGraph("images/arm.png");
+
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace2.png");
 	Weapon[2] = LoadGraph("images/spear.png");
@@ -135,10 +141,12 @@ void Player::Update() {
 		if (JoypadX >= MARGIN) {
 			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
 			if (Attack < 1)TurnFlg = FALSE;				//向きを変える
+			if (!wall)Walk++;							//歩行アニメーション進行
 		}
 		else if (JoypadX <= -MARGIN) {
 			if (wall != 1 && wall != 2)speed -= 0.5;	//移動量を減算
 			if (Attack < 1)TurnFlg = TRUE;				//向きを変える
+			if (!wall)Walk++;							//歩行アニメーション進行
 		}
 		//非スティック入力時
 		else 
@@ -151,8 +159,10 @@ void Player::Update() {
 			if (0 < speed && --speed < 0) {
 				speed = 0;
 			}
-
+			Walk = 0;	//歩行アニメーションリセット
 		}
+
+		if (40 <= Walk)Walk = 0;
 
 		//移動速度の最大値を適用
 		if (speed < -Maxspeed)speed = -Maxspeed;
@@ -454,7 +464,33 @@ void Player::Draw() const {
 		}
 	}
 
-	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0, PImages, TRUE, TurnFlg);
+	if (TurnFlg)
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 13, SCREEN_HEIGHT / 2, 1, 0, ArmImg, true, false);
+	}
+	else 
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 13, SCREEN_HEIGHT / 2, 1, 0, ArmImg, true, true);
+	}
+
+	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages, TRUE, TurnFlg);
+	if (MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+		MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160]) {
+		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[4], TRUE, TurnFlg);
+	}
+	else 
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[Walk / 10], TRUE, TurnFlg);
+	}
+
+	if (TurnFlg)
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2, 1, 0, ArmImg, true, true);
+	}
+	else
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT / 2, 1, 0, ArmImg, true, false);
+	}
 }
 
 void Player::Spawn() {
