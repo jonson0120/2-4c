@@ -73,6 +73,8 @@ private:
 	float PadangL;			//パッド入力角度
 	int TriggerL, TriggerR;	//トリガー入力値
 
+	int Enemy_Damage;//敵の攻撃力
+
 	//一部の武器種が使用する変数-----------
 	int Atkpt;				//汎用・攻撃パターン
 
@@ -116,6 +118,10 @@ public:
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
+
+	//敵との当たり判定
+	int HitEnemy() { return stat.Hp - Enemy_Damage; }
+
 	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 };
 

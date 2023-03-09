@@ -49,8 +49,9 @@ Player::Player() {
 	TriggerL = 0;
 	TriggerR = 0;
 
-	TurnFlg=false;
+	TurnFlg = false;
 
+	Enemy_Damage = 1;
 	//--------------------
 	Atkpt = 0;
 	spear_angle = 0;
