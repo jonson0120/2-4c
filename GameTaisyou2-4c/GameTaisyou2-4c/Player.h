@@ -32,12 +32,18 @@ struct Stat
 class Player
 {
 private:
-	int image;	//画像
+	int image;	//画像：上半身
+	int image_U[5];	//画像：下半身
+	int ArmImg;
+
+	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス
 
 	int x, y;		//X,Y座標
 	int Width, Height;	//プレイヤー高さ
+
+	Range Arm_L, Arm_R;
 
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
