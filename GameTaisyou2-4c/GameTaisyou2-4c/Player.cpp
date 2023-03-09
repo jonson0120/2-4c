@@ -11,15 +11,19 @@ Player::Player() {
 	stat.Hp = 10;
 	stat.Power = 0;
 
-	x = 500;
-	y = 500;
-
 	Width = 32;
-	Height = 48;
+	Height = 56;
 
-	speed = 8;
-	fall = 16;
+	Spawn();
+
+	speedinit = 8;
+	speed = 0;
+	Dodgespd = 0;
+
+	fall = 0;
+	Dodgefall = 0;
 	jump = 0;
+	wall = 0;
 
 	Attack = 0;
 	Equip = weapons::dagger;
@@ -27,32 +31,199 @@ Player::Player() {
 	Yinput = Inp_UD::NONE;
 	Combo = 0;
 	range[0] = { 24,44 };
-	range[1] = { 24,44 };
+	range[1] = { 26,75 };
 
-    LoadDivGraph("images/Player.png", 2, 36, 52, 72, 104, PImages);
+	PImages = LoadGraph("images/Player.png");
 	Weapon[0] = LoadGraph("images/Dagger.png");
-	Weapon[1] = LoadGraph("images/mace.png");
+	Weapon[1] = LoadGraph("images/mace2.png");
+	Weapon[2] = LoadGraph("images/spear.png");
 
 	JoypadX = 0;
 	JoypadY = 0;
+	TriggerL = 0;
+	TriggerR = 0;
 
 	TurnFlg=false;
+
+	//--------------------
+	Atkpt = 0;
+	spear_angle = 0;
+
+	//--------------------
 }
 
 void Player::Update() {
 	InitPad();
 
+	float Maxspeed = speedinit;	//最大速度
+	float CorSpeed = 1;			//移動速度補正
+
+	//壁面移動・Aボタン長押しで処理に入る
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_A))
+	{
+		//壁面移動・左壁
+		//壁面移動中か左側が壁なら入る
+		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
+		{
+			if (JoypadX <= -MARGIN && !Attack) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
+
+				wall = 1;
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//左側が壁でなくなったなら壁面移動を解除
+			if (MapData[(y - Height / 2) / 160][(x - 1 - Width / 2) / 160]&&
+				MapData[(y + Height / 2) / 160][(x - 1 - Width / 2) / 160])
+			{
+				wall = 0;
+			}
+		}
+
+		//壁面移動・右壁
+		//壁面移動中か右側が壁なら入る
+		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
+		{
+			if (MARGIN <= JoypadX && !Attack) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
+
+				wall = 2;
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//右側が壁でなくなったなら壁面移動を解除
+			if (MapData[(y - Height / 2) / 160][(x + 1 + Width / 2) / 160]&&
+				MapData[(y + Height / 2) / 160][(x + 1 + Width / 2) / 160])
+			{
+				wall = 0;
+			}
+		}
+
+		//壁面移動・天井
+		//壁面移動中か上が壁なら入る
+		if ((wall == 3 || !MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] ||
+						  !MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160]))
+		{
+			if (JoypadY >= MARGIN && !Attack) {
+				fall = 0;	//落下速度0
+				jump = 1;	//ジャンプ回数
+
+				wall = 3;	//上入力されているなら壁面移動になる
+			}
+
+			if (Attack)CorSpeed = 0;	//壁面移動中は攻撃中に移動できない
+			else CorSpeed = 0.5;		//壁面移動中は移動速度を半減させる
+
+			//上が壁でなくなったなら壁面移動を解除
+			if (MapData[(y - 1 - Height / 2) / 160][(x - Width / 2) / 160] &&
+				MapData[(y - 1 - Height / 2) / 160][(x + Width / 2) / 160])
+			{
+				wall = 0;
+			}
+		}
+	}
+	else wall = 0;
+
 		//横移動
+		//スティック入力時
 		if (JoypadX >= MARGIN) {
-			x += speed;
-			if (Attack < 1)TurnFlg = FALSE;
+			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
+			if (Attack < 1)TurnFlg = FALSE;				//向きを変える
 		}
-		if (JoypadX <= -MARGIN) {
-			x -= speed;
-			if (Attack < 1)TurnFlg = TRUE;
+		else if (JoypadX <= -MARGIN) {
+			if (wall != 1 && wall != 2)speed -= 0.5;	//移動量を減算
+			if (Attack < 1)TurnFlg = TRUE;				//向きを変える
 		}
-		while (!MapData[y / 160][(x + Width / 2) / 160])x--;
-		while (!MapData[y / 160][(x - Width / 2) / 160])x++;
+		//非スティック入力時
+		else 
+		{
+			//移動速度を0に近づける
+			if (speed < 0 && 0 < ++speed) {
+				speed = 0;
+			}
+
+			if (0 < speed && --speed < 0) {
+				speed = 0;
+			}
+
+		}
+
+		//移動速度の最大値を適用
+		if (speed < -Maxspeed)speed = -Maxspeed;
+		if (Maxspeed < speed)speed = Maxspeed;
+
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0)
+		{
+			float Dodge = 18;
+			if (TurnFlg)
+			{
+				Dodgespd = Dodge;
+				Dodgefall = -Dodge;
+				speed = 0;
+			}
+			else 
+			{
+				Dodgespd = -Dodge;
+				Dodgefall = -Dodge;
+				speed = 0;
+			}
+		}
+
+		//移動速度を0に近づける
+		if (Dodgespd != 0) {
+			if (Dodgespd < 0 && 0 < ++Dodgespd) {
+				Dodgespd = 0;
+			}
+		}
+
+		if (Dodgespd != 0) {
+			if (0 < Dodgespd && --Dodgespd < 0) {
+				Dodgespd = 0;
+			}
+		}
+
+		//移動速度を0に近づける
+		if (Dodgefall != 0) {
+			if (0 <= Dodgefall) {
+				Dodgefall = 0;
+			}
+			else Dodgefall += 2;
+		}
+
+		if (Attack && !wall)CorSpeed = 0.5;	//攻撃中は移動速度を半減
+
+		//武器種ごとの移動速度補正
+		if (Attack) {
+
+
+			//槍・攻撃中、空中にいなければ移動できない
+			if (Equip == weapons::spear && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+										   !MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160])
+			{
+				//CorSpeed = 0;
+				speed = 0;
+			}
+		}
+
+		x += (speed + Dodgespd) * CorSpeed;				//横軸移動
+
+		//壁で移動を止める
+		while (!MapData[y / 160][(x + Width / 2) / 160])
+		{
+			x--;
+			speed = 0;
+		}
+		while (!MapData[y / 160][(x - Width / 2) / 160])
+		{
+			x++;
+			speed = 0;
+		}
 
 		//上下入力の更新
 		if (JoypadY >= MARGIN * 2.5)
@@ -68,6 +239,7 @@ void Player::Update() {
 			if (Attack < 1)Yinput = Inp_UD::NONE;
 		}
 
+		//武器切り替え・攻撃アニメーション・コンボ数をリセット
 		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
 		{
 			switch (Equip) 
@@ -80,6 +252,13 @@ void Player::Update() {
 				break;
 
 			case weapons::mace:
+				Equip = weapons::spear;
+				Attack = 0;
+				Combo = 0;
+				stat.Power = 0;
+				break;
+
+			case weapons::spear:
 				Equip = weapons::dagger;
 				Attack = 0;
 				Combo = 0;
@@ -91,24 +270,41 @@ void Player::Update() {
 		//落下とジャンプ
 		float fallinit = 16;
 
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
+		//非壁面移動時
+		if (wall == 0)
 		{
-			fall = -fallinit;
-			jump++;	
-		}
-
-
-		if (fall < fallinit)
-		{
-			fall += (fallinit * 2) / 45;
-			if (fall > fallinit)
+			//Aボタン・ジャンプ
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 			{
-				fall = fallinit;
+				fall = -fallinit;	//落下速度をマイナスにする
+				jump++;				//ジャンプ回数を増やす
 			}
+
+			//落下速度管理
+			if (fall < fallinit)
+			{	
+				//落下速度を増やす
+				fall += (fallinit * 2) / 45;
+				if (fall > fallinit)
+				{
+					fall = fallinit;	//落下速度の最大値
+				}
+			}
+
+			y += fall + Dodgefall;	//上下移動
+		}
+		else if (wall == 1 || wall == 2)
+		{
+			if (-MARGIN >= JoypadY && !Attack) {
+				y += Maxspeed / 2;
+			}
+			else if (JoypadY >= MARGIN && !Attack) {
+				y -= Maxspeed / 2;
+			}
+			else y++;
 		}
 
-		y += fall;
-
+		//床で落下が阻まれる
 		while (!MapData[(y - Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y - Height / 2) / 160][(x + Width / 2) / 160])
 		{
@@ -116,6 +312,7 @@ void Player::Update() {
 			if (0 > fall)fall = 0;
 		}
 
+		//天井でジャンプが阻まれる
 		while (!MapData[(y + Height / 2) / 160][(x - Width / 2) / 160] ||
 			   !MapData[(y + Height / 2) / 160][(x + Width / 2) / 160])
 		{
@@ -123,7 +320,6 @@ void Player::Update() {
 			jump = 0;
 			if (fall > 0)fall = 0;
 		}
-
 
 		//攻撃
 		switch (Equip)
@@ -152,6 +348,22 @@ void Player::Update() {
 			}
 			break;
 
+		case weapons::spear:		//槍：ボタン単押しタイプ
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
+			{
+				spear_angle = PadangL;
+
+				if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
+				{
+					if (TurnFlg)spear_angle = -90;
+					else spear_angle = 90;
+				}
+
+				Atkpt = wall;
+				Attack++;
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -169,6 +381,10 @@ void Player::Update() {
 				MaceAtk();
 				break;
 
+			case weapons::spear:	//槍：攻撃
+				SpearAtk();
+				break;
+
 			default:
 				break;
 			}
@@ -177,15 +393,15 @@ void Player::Update() {
 
 void Player::Draw() const {
 	
-	DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
-		SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
+	//DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
+	//	SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
 
-	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - (Height / 2) +6 , 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	//DrawFormatString(0, 60, 0xffffff, "%.1f", stat.Power);
+	DrawFormatString(0, 360, 0xffffff, "%d", wall);
+
 
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
 	switch (Equip)
@@ -198,20 +414,23 @@ void Player::Draw() const {
 		DrawString(0, 130, "装備：メイス", 0xffffff);
 		break;
 
+	case weapons::spear:	//槍
+		DrawString(0, 130, "装備：槍", 0xffffff);
+		break;
+
 	default:
 		break;
 	}
 
-
-
-	//for (int i = 0; i < MAP_HEIGHT; i++)
-	//{
-	//	for (int j = 0; j < MAP_WIDTH; j++)
-	//	{
-	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xff0000, "9");
-	//		else DrawFormatString(50 + 15 * j, 50 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-	//	}
-	//}
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xff0000, "9");
+			else DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+		}
+	}
+	
 
 	//攻撃描画
 	if (Attack) 
@@ -226,10 +445,23 @@ void Player::Draw() const {
 			DrawMace();
 			break;
 
+		case weapons::spear:	//槍
+			DrawSpear();
+			break;
+
 		default:
 			break;
 		}
 	}
+
+	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0, PImages, TRUE, TurnFlg);
+}
+
+void Player::Spawn() {
+	x = BLOCK_SIZE + BLOCK_SIZE / 2;
+	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
+
+	y += BLOCK_SIZE / 2 - Height / 2;
 }
 
 void Player::InitPad() {
@@ -238,8 +470,21 @@ void Player::InitPad() {
 	JoypadX = PAD_INPUT::GetPadThumbLX();
 	JoypadY = PAD_INPUT::GetPadThumbLY();
 
-}
+	//トリガー
+	TriggerL = PAD_INPUT::GetPadLeftTrigger();
+	TriggerR = PAD_INPUT::GetPadRightTrigger();
 
+	//入力角度
+	float angle = atan2((float)JoypadX, (float)JoypadY);
+	if (angle < 0)angle += 3.14;
+
+	angle = angle / 2 / 3.14 * 360;
+	if (JoypadX < 0)angle -= 180;
+
+	PadangL = angle;
+
+}
+//マップデータ
 void Player::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -598,6 +843,154 @@ void Player::DrawMace()const
 	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
 }
 
+//攻撃描画：槍
+void Player::DrawSpear()const
+{
+	float size = 0.2;
+
+	double stX = 0, stY = 0;		//振りかぶる前の座標
+	double finX = 0, finY = 0;		//振りかぶった後の座標
+	double Dis = 0;			//体の中心からの距離
+
+	double finAng = spear_angle;	//攻撃する角度
+	int thrust = 20;	//攻撃距離
+
+	//上記の値を計算
+
+	switch (Atkpt)
+	{
+	case 0:
+		switch (TurnFlg)
+		{
+		case true:
+			if (Attack < 8)
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * Attack;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+			}
+			else
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * (8 - (Attack - 8));
+				if (Dis < 0)Dis = 0;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+			}
+			break;
+		case false:
+			if (Attack < 7)
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * Attack;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			else
+			{
+				stX = SCREEN_WIDTH / 2;
+				stY = SCREEN_HEIGHT / 2;
+				Dis = thrust * (8 - (Attack - 8));
+				if (Dis < 0)Dis = 0;
+
+				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 1:
+
+		if (Attack < 11)
+		{
+			finAng = 25 + (130 / 10 * (Attack - 1));
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = 155;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	case 2:
+
+		if (Attack < 11)
+		{
+			finAng = -25 - (130 / 10 * (Attack - 1));
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = -155;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	case 3:
+
+		if (Attack < 11)
+		{
+			finAng = 115 + (130 / 10 * (Attack - 1));
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = 245;
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+			Dis = Width * 1.5;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[2], true, false);
+}
+
 //攻撃：短剣
 void Player::DaggerAtk() 
 {
@@ -635,7 +1028,7 @@ void Player::MaceAtk()
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && stat.Power == 0)Attack++;	//ボタン長押し中に力をためる
 	else if (PAD_INPUT::OnRelease(XINPUT_BUTTON_B) && stat.Power == 0)		//離すとためた力に応じて強化
 	{
-		if (Attack < 20)
+		if (Attack < 20 || wall != 0)
 		{
 			stat.Power = 1;
 			Attack = 20;
@@ -652,15 +1045,20 @@ void Player::MaceAtk()
 		}
 	}
 
-	if (60 < Attack) 
+	
+	if (wall != 0 && 20 <= Attack)
+	{
+		Attack = 20 - 1;
+	}
+	else if (60 < Attack) 
 	{
 		Attack = 60;
 	}
-
+	
 	if (stat.Power)
 	{
-		Attack -= 1.5;
-		if (Attack < 0)
+		Attack -= 1.0;
+		if (Attack <= 0)
 		{
 			Attack = 0;
 			stat.Power = 0;
@@ -668,6 +1066,18 @@ void Player::MaceAtk()
 	}
 }
 
+//攻撃：槍
+void Player::SpearAtk()
+{
+	if (20 < Attack++)
+	{
+		Attack = 0;
+		stat.Power = 0;
+	}
+	else stat.Power = 2;
+}
+
+//当たり判定：短剣
 bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 	if (Attack && Attack < 10)
@@ -678,6 +1088,9 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 		int RangeY = 0;
 		float Rad = 0;
 
+		float gap = 0;
+		float top = Height * 1.1;
+
 		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
 		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
@@ -687,20 +1100,20 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 			switch (TurnFlg)
 			{
 			case true:
-					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack) + gap);
 				break;
 
 			case false:
 			
-					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack) + gap);
 				break;
 
 			default:
@@ -712,19 +1125,19 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 			switch (TurnFlg)
 			{
 			case true:
-					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack) + gap);
 				break;
 
 			case false:
-					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack);
+					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
+					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack));
+					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack) + gap);
 				break;
 
 			default:
@@ -739,16 +1152,234 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 		int DisX = EneX - WeaponX;
 		int DisY = EneY - WeaponY;
 
-		int Dis = sqrt(DisX * DisX + DisY * DisY);
+		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
-		EneX += Dis * cos(Rad);
-		EneY += Dis * sin(Rad);
 
-		if (WeaponX - RangeX < EneX && WeaponY - RangeY < EneY && EneX < WeaponX + RangeX && EneY < WeaponY + RangeY) 
+		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
 		{
 			return true;
 		}
 	}
 
+	return false;
+}
+
+//当たり判定：メイス
+bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
+
+	if (stat.Power)
+	{
+		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+
+		for (int i = 0; i < 2; i++) {
+			float size = 0.2;
+
+			double stX = 0, stY = 0;		//振りかぶる前の座標
+			double finX = 0, finY = 0;		//振りかぶった後の座標
+			double Dis = Width * (2 + i); //メイスの当たり判定
+			int RangeX = 0;
+			int RangeY = 0;
+
+			float Rad = 0;
+
+			double stAng, finAng = 0;	//振りかぶる角度
+
+
+			int power = stat.Power;
+			switch (power)
+			{
+			case 1:
+				switch (TurnFlg)
+				{
+				case true:
+					if (10 < Attack)
+					{
+						stAng = -90;
+						finAng = -135 + (155 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = -90;
+						finAng = -135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+
+				case false:
+					if (10 < Attack)
+					{
+						stAng = 90;
+						finAng = 135 - (155 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = 90;
+						finAng = 135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
+
+			case 2:
+				switch (TurnFlg)
+				{
+				case true:
+					if (10 < Attack)
+					{
+						stAng = -90;
+						finAng = -135 + (180 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = -90;
+						finAng = -135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+
+				case false:
+					if (10 < Attack)
+					{
+						stAng = 90;
+						finAng = 135 - (180 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = 90;
+						finAng = 135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
+
+			case 3:
+				switch (TurnFlg)
+				{
+				case true:
+					if (10 < Attack)
+					{
+						stAng = -90;
+						finAng = -135 + (205 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = -90;
+						finAng = -135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+
+				case false:
+					if (10 < Attack)
+					{
+						stAng = 90;
+						finAng = 135 - (205 / 10 * (Attack - 10));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						stAng = 90;
+						finAng = 135;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+						RangeX = range[1].X / 2;
+						RangeY = range[1].Y / 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
+
+			default:
+				break;
+			}
+
+
+			int DisX = EneX - (int)finX;
+			int DisY = EneY - (int)finY;
+
+			Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+			Rad = (3.14 / 180) * (finAng + 135);
+
+			if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
+			{
+				return true;
+			}
+		}
+	}
+	
 	return false;
 }
