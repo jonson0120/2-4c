@@ -3,6 +3,7 @@
 #include"KeyManager.h"
 #include"AbstractScene.h"
 #include"UI.h"
+#include<stdlib.h>
 
 GameMainScene::GameMainScene()
 {
@@ -35,6 +36,13 @@ AbstractScene* GameMainScene::Update()
 
 	default:
 		break;
+	}
+
+	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) {
+		
+		MakeMap();
+		player.SetMapData(MapData);
+		enemy.SetMapData(MapData);
 	}
 
 	time++;
@@ -247,15 +255,29 @@ void GameMainScene::MakeMap()
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
 		//出口を設置
-		for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
+		/*for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
 		{
 			for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
 			{
 				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
 				{
 					MapData[i][j] = 2;
+					MapExitX = i;
+					MapExitY = j;
 					MakeExit = true;
 				}
+			}
+		}*/
+		while (MakeExit==false)
+		{
+			int i = rand() % 11;
+			int j = rand() % 14;
+			if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+			{
+				MapData[i][j] = 2;
+				MapExitX = i;
+				MapExitY = j;
+				MakeExit = true;
 			}
 		}
 
