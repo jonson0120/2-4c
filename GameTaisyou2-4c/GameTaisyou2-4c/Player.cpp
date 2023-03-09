@@ -391,8 +391,8 @@ void Player::Update() {
 			}
 		}
 
-		DrawCircle(a, b, 3, 0x00ff00, true);
-		DrawCircle(c, d, 3, 0x0000ff, true);
+		//DrawCircle(a, b, 3, 0x00ff00, true);
+		//DrawCircle(c, d, 3, 0x0000ff, true);
 }
 
 void Player::Draw() const {
@@ -460,8 +460,8 @@ void Player::Draw() const {
 
 	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0, PImages, TRUE, TurnFlg);
 
-	DrawCircle(a, b, 3.0f, 0xff0000, true);
-	DrawCircle(c, d, 3.0f, 0x00ff00, true);
+	//DrawCircle(a, b, 3.0f, 0xff0000, true);
+	//DrawCircle(c, d, 3.0f, 0x00ff00, true);
 }
 
 void Player::Spawn() {
