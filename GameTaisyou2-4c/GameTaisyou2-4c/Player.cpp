@@ -43,7 +43,7 @@ Player::Player() {
 	TriggerL = 0;
 	TriggerR = 0;
 
-	TurnFlg=false;
+	TurnFlg = false;
 
 	Enemy_Damage = 1;
 	//--------------------
@@ -51,6 +51,7 @@ Player::Player() {
 	spear_angle = 0;
 
 	//--------------------
+}
 
 void Player::Update() {
 	InitPad();
