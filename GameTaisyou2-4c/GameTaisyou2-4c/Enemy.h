@@ -11,6 +11,7 @@ private:
 	int image;	//画像
 	int EImages[5]; //画像
 	int EnemyImage = LoadGraph("images/slime1.png");
+	int DropItem_Image;
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き

@@ -10,8 +10,10 @@ Enemy::Enemy()
 {
 	image = 0;
 
-	enex = 2000; // 176 一番左下にするための座標
-	eney = 1000; //1423 一番左下にするための座標
+	enex = 0; // 176 一番左下にするための座標
+	eney = 0; //1423 一番左下にするための座標
+
+	//MapData[eney][enex];
 
 	Width = 64;
 	Height = 64;
@@ -36,7 +38,7 @@ void Enemy::Update(Player* player)
 	//落下とジャンプ
 	float fallinit = 12;
 	eney += fall;
-	while (!MapData[(eney + Height / 2) / 160][(enex - Width / 2) / 160])
+	while (!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
 		eney--;
 		jump = 0;
@@ -52,15 +54,22 @@ void Enemy::Update(Player* player)
 	}
 
 	//壁に当たった時止める
-	while (!MapData[eney / 160][(enex + Width / 2) / 160])
+	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 	{
-		enex--;
-		speed = 0;
+		if (MIN_SPEED != enex)
+		{
+			enex--;
+			speed = 0;
+		}
 	}
-	while (!MapData[eney / 160][(enex - Width / 2) / 160])
+
+	while (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
-		enex++;
-		speed = 0;
+		if (MIN_SPEED != enex)
+		{
+			enex++;
+			speed = 0;
+		}
 	}
 
 	//プレイヤー認識範囲
@@ -100,9 +109,13 @@ void Enemy::Update(Player* player)
 
 void Enemy::Draw(int x,int y) const
 {
-	//敵の表示
-	DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], TRUE);
+	if (MapData[eney / BLOCK_SIZE][enex / BLOCK_SIZE] == 1 && MapData[eney / BLOCK_SIZE][(enex / BLOCK_SIZE) + 1] == 1 &&
+		MapData[(eney / BLOCK_SIZE) + 1][enex / BLOCK_SIZE] == 0)
+	{
+		//敵の表示
+		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
+			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], TRUE);
+	}
 
 	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
