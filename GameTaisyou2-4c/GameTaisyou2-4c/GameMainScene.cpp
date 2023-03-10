@@ -37,13 +37,13 @@ AbstractScene* GameMainScene::Update()
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
-		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		if (player.HitDagger(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 		break;
 	case weapons::mace:
-		if (player.HitMace(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		if (player.HitMace(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 		break;
 	case weapons::spear:
-		if (player.HitSpear(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		if (player.HitSpear(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 		break;
 	default:
 		break;
