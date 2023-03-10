@@ -492,6 +492,9 @@ void Player::Draw() const {
 	{
 		DrawRotaGraph(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT / 2, 1, 0, ArmImg, true, false);
 	}
+
+	DrawCircle(a, b, 3.0f, 0xff0000, true);
+	DrawCircle(c, d, 3.0f, 0x00ff00, true);
 }
 
 void Player::Spawn() {
@@ -1191,6 +1194,10 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
+		a = EneX;
+		b = EneY;
+		c = WeaponX;
+		d = WeaponY;
 
 		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
 		{
@@ -1200,7 +1207,6 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 	return false;
 }
-
 //当たり判定：メイス
 bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
@@ -1411,6 +1417,11 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 			Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 			Rad = (3.14 / 180) * (finAng + 135);
 
+			a = EneX;
+			b = EneY;
+			c = finX;
+			d = finY;
+
 			if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
 			{
 				return true;
@@ -1507,10 +1518,10 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 		Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
 
-		/*a = EneX;
+		a = EneX;
 		b = EneY;
 		c = finX;
-		d = finY;*/
+		d = finY;
 
 		if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
 		{

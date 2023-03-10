@@ -37,12 +37,17 @@ AbstractScene* GameMainScene::Update()
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
-		if (player.HitDagger(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
-
+		if (player.HitDagger(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		break;
+	case weapons::mace:
+		if (player.HitMace(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		break;
+	case weapons::spear:
+		if (player.HitSpear(enemy.GetX(), enemy.GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		break;
 	default:
 		break;
 	}
-
 	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;
 	if (Exit_flg == true) NextMap();
 
@@ -67,6 +72,7 @@ void GameMainScene::Draw() const
 	enemy.Draw(player.GetX(),player.GetY());
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
+	DrawFormatString(500, 200, 0xffffff, "%d", hit);
 }
 
 //マップ生成
