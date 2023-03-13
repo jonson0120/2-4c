@@ -36,6 +36,7 @@ Player::Player() {
 	range[0] = { 24,44 };
 	range[1] = { 26,75 };
 	range[2] = { 25,93 };
+	range[3] = { 25,93 };
 
 	PImages = LoadGraph("images/Player_Top.png");
 	LoadDivGraph("images/Player_Under.png", 5, 5, 1, 48, 28, image_U);
@@ -1497,6 +1498,7 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
 	return false;
 }
+
 //当たり判定：メイス
 bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
@@ -1721,7 +1723,8 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 	
 	return false;
 }
-//当たり判定；槍
+
+//当たり判定：槍
 bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 
 	float size = 0.2;
@@ -1821,235 +1824,295 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 	return false;
 }
 
-//
+//当たり判定：刀
 bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
-	float size = 0.2;
-	float sizeY = 1;
 
-	double stX = 0, stY = 0;		//振りかぶる前の座標
-	double finX = 0, finY = 0;		//振りかぶった後の座標
-	double Dis = 0;			//体の中心からの距離
+		float size = 0.2;
+		float sizeY = 1;
 
-	double finAng = 0;	//攻撃する角度
-	int thrust = 85;	//攻撃距離
+		double stX = 0, stY = 0;		//振りかぶる前の座標
+		double finX = 0, finY = 0;		//振りかぶった後の座標
+		double Dis = 0;			//体の中心からの距離
+		int RangeX = 0;
+		int RangeY = 0;
 
-	//画像サイズ取得
-	int imgX;
-	int imgY;
+		double finAng = 0;	//攻撃する角度
+		int thrust = 85;	//攻撃距離
 
-	GetGraphSize(Weapon[3], &imgX, &imgY);
+		//画像サイズ取得
+		int imgX;
+		int imgY;
 
-	//上記の値を計算
+		GetGraphSize(Weapon[3], &imgX, &imgY);
 
-	if (Combo == 1) {
-		switch (TurnFlg)
-		{
-		case true:
-			if (Attack < 6)
-			{
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = -thrust + thrust * 2 / 6 * Attack;
-				sizeY = -1 + 2 / 6 * Attack;
+		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
-				finAng = -80;
 
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		//上記の値を計算
+		
+			if (Combo == 1) {
+				switch (TurnFlg)
+				{
+				case true:
+					if (Attack < 6)
+					{
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
 
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = -thrust + thrust * 2 / 6 * Attack;
+						sizeY = -1 + 2 / 6 * Attack;
+
+						finAng = -80;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+					}
+					else
+					{
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust;
+						sizeY = 1;
+
+						finAng = -80;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+					}
+					break;
+				case false:
+					if (Attack < 6)
+					{
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis =-thrust + thrust * 2 / 6 * Attack;
+						sizeY = -1 + 2 / 6 * Attack;
+
+						finAng = 80;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+
+					}
+					else
+					{
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust;
+						sizeY = 1;
+
+						finAng = 80;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+				default:
+					break;
+
+					break;
+				}
 			}
-			else
-			{
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust;
-				sizeY = 1;
 
-				finAng = -80;
+			if (Combo == 2) {
+				switch (TurnFlg)
+				{
+				case true:
+					if (Attack <= 9)
+					{
+						finAng = -140 + (80 / 9 * (Attack - 1));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
 
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
 
+						Dis = thrust;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						finAng = -60;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+				default:
+					break;
+
+					break;
+
+				case false:
+					if (Attack <= 9)
+					{
+						finAng = 140 - (80 / 9 * (Attack - 1));
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					else
+					{
+						finAng = 60;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust;
+
+						finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+					}
+					break;
+				}
 			}
-			break;
-		case false:
-			if (Attack < 6)
-			{
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = -thrust + thrust * 2 / 6 * Attack;
-				sizeY = -1 + 2 / 6 * Attack;
 
-				finAng = 80;
+			if (Combo == 3) {
+				thrust = thrust - imgY / 2 * size;
 
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+				switch (TurnFlg)
+				{
+				case true:
+					if (Attack < 15)
+					{
+						finAng = -60 + (180 / 12 * (Attack - 1));
+						if (120 < finAng)finAng = 120;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
 
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust + Attack * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
+					}
+					else if (Attack < 18)
+					{
+						finAng = 120;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
+						finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
+					}
+					else
+					{
+						finAng = 120;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+						Dis = 0;
+
+						finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
+					}
+				default:
+					break;
+
+					break;
+
+				case false:
+					if (Attack < 15)
+					{
+						finAng = 60 - (180 / 12 * (Attack - 1));
+						if (finAng < -120)finAng = -120;
+
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust + Attack * 2;
+
+						finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
+					}
+					else if (Attack < 18)
+					{
+						finAng = -120;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
+
+						finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
+					}
+					else
+					{
+						finAng = -120;
+						stX = SCREEN_WIDTH / 2;
+						stY = SCREEN_HEIGHT / 2;
+
+						RangeX = range[3].X / 2;
+						RangeY = range[3].Y / 2;
+
+						Dis = 0;
+
+						finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
+					}
+					break;
+				}
+
+				int DisX = EneX - finX;
+				int DisY = EneY - finY;
+
+				a = EneX;
+				b = EneY;
+				c = finX;
+				d = finY;
+
+				if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
+				{
+					return true;
+				}
 			}
-			else
-			{
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust;
-				sizeY = 1;
-
-				finAng = 80;
-
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-			}
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	if (Combo == 2) {
-
-		switch (TurnFlg)
-		{
-		case true:
-			if (Attack <= 9)
-			{
-				finAng = -140 + (80 / 9 * (Attack - 1));
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust;
-
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-			}
-			else
-			{
-				finAng = -60;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust;
-
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-			}
-			break;
-
-		case false:
-			if (Attack <= 9)
-			{
-				finAng = 140 - (80 / 9 * (Attack - 1));
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust;
-
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-			}
-			else
-			{
-				finAng = 60;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust;
-
-				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-			}
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	if (Combo == 3) {
-		thrust = thrust - imgY / 2 * size;
-
-		switch (TurnFlg)
-		{
-		case true:
-			if (Attack < 15)
-			{
-				finAng = -60 + (180 / 12 * (Attack - 1));
-				if (120 < finAng)finAng = 120;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust + Attack * 2;
-
-				finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
-			}
-			else if (Attack < 18)
-			{
-				finAng = 120;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
-				finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
-			}
-			else
-			{
-				finAng = 120;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = 0;
-
-				finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
-			}
-			break;
-
-		case false:
-			if (Attack < 15)
-			{
-				finAng = 60 - (180 / 12 * (Attack - 1));
-				if (finAng < -120)finAng = -120;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust + Attack * 2;
-
-				finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
-			}
-			else if (Attack < 18)
-			{
-				finAng = -120;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
-
-				finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
-			}
-			else
-			{
-				finAng = -120;
-				stX = SCREEN_WIDTH / 2;
-				stY = SCREEN_HEIGHT / 2;
-				Dis = 0;
-
-				finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
-				finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
-			}
-			break;
-
-		default:
-			break;
-		}
-		int DisX = EneX - finX;
-		int DisY = EneY - finY;
-
-
-		Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
-
-
-		a = EneX;
-		b = EneY;
-		c = finX;
-		d = finY;
-
-		if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
-		{
-			return true;
-		}
-	}
+		return false;
 }
