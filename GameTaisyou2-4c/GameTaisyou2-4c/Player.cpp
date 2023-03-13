@@ -1750,7 +1750,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 				RangeX = range[2].X / 2;
 				RangeY = range[2].Y / 2;
 
-				Dis = RangeY+(thrust * Attack);
+				Dis = RangeY + (thrust * Attack);
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -1762,7 +1762,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 				RangeX = range[2].X / 2;
 				RangeY = range[2].Y / 2;
 
-				Dis = RangeY  + (thrust * (8 - (Attack - 8)));
+				Dis = RangeY + (thrust * (8 - (Attack - 8)));
 				if (Dis < RangeY)return false;
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
@@ -1777,7 +1777,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 				RangeX = range[2].X / 2;
 				RangeY = range[2].Y / 2;
 
-				Dis = RangeY  + (thrust * Attack);
+				Dis = RangeY + (thrust * Attack);
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -1789,7 +1789,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 				RangeX = range[2].X / 2;
 				RangeY = range[2].Y / 2;
 
-				Dis = RangeY  + (thrust * (8 - (Attack - 8)));
+				Dis = RangeY + (thrust * (8 - (Attack - 8)));
 				if (Dis < RangeY)return false;
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
