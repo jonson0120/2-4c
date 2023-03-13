@@ -19,6 +19,7 @@ private:
 	int Enemy_Damage;
 	int Enemy_Hp;
 	int Player_Hp;
+	bool MakeEnemy;
 
 	//Player player;
 

@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "common.h"
 #include "Player.h"
+#include "GameMainScene.h"
 
 #define MAX_SPEED 5
 #define MIN_SPEED -5
@@ -24,6 +25,8 @@ Enemy::Enemy()
 	Player_Damage = 1;
 	Enemy_Hp = 2;
 	Player_Hp = 10;
+
+	MakeEnemy = FALSE;
 
 	direction = 0;
 
@@ -108,12 +111,26 @@ void Enemy::Update(Player* player)
 	//{
 	//	player->HitEnemy(float damage);
 	//}
+
+	//bool MakeEnemy = FALSE;
+
+	//while (MakeEnemy == FALSE)
+	//{
+	//	int i = rand() % 11;
+	//	int j = rand() % 14;
+	//	if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+	//	{
+	//		MapData[i][j] = 2;
+	//		enex = i;
+	//		eney = j;
+	//		MakeEnemy = TRUE;
+	//	}
+	//}
 }
 
 void Enemy::Draw(int x,int y) const
 {
-	if (MapData[eney / BLOCK_SIZE][enex / BLOCK_SIZE] == 1 && MapData[eney / BLOCK_SIZE][(enex / BLOCK_SIZE) + 1] == 1 &&
-		MapData[(eney / BLOCK_SIZE) + 1][enex / BLOCK_SIZE] == 0)
+	if (MakeEnemy == TRUE)
 	{
 		//敵の表示
 		DrawRotaGraph(enex, eney, 1.0, 0, EImages[0], TRUE, FALSE);
