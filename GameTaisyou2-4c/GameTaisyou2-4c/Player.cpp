@@ -35,7 +35,7 @@ Player::Player() {
 	Combo = 0;
 	range[0] = { 24,44 };
 	range[1] = { 26,75 };
-	range[2]={}
+	range[2] = { 25,93 };
 
 	PImages = LoadGraph("images/Player_Top.png");
 	LoadDivGraph("images/Player_Under.png", 5, 5, 1, 48, 28, image_U);
