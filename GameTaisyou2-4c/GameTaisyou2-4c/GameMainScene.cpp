@@ -45,6 +45,9 @@ AbstractScene* GameMainScene::Update()
 	case weapons::spear:
 		if (player.HitSpear(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
 		break;
+	case weapons::katana:
+		if (player.HitKatana(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		break;
 	default:
 		break;
 	}

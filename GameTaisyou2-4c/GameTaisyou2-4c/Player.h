@@ -124,6 +124,7 @@ public:
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
 	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
+	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
 
 	//敵との当たり判定
 	int HitEnemy() { return stat.Hp - Enemy_Damage; }

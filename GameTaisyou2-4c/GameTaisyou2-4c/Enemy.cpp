@@ -13,7 +13,7 @@ Enemy::Enemy()
 	enex = 0; // 176 一番左下にするための座標
 	eney = 0; //1423 一番左下にするための座標
 
-	//MapData[eney][enex];
+	MapData[eney][enex];
 
 	Width = 64;
 	Height = 64;
