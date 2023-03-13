@@ -15,6 +15,7 @@ private:
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
 	int E_AttackFlg;
+	int Player_Damage;
 	int Enemy_Damage;
 	int Enemy_Hp;
 	int Player_Hp;
@@ -40,6 +41,6 @@ public:
 
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
-	//プレイヤーとの当たり判定
-	int HitPlayer() { return Player_Hp - Enemy_Damage; }
+	//プレイヤーからの攻撃
+	bool HitPlayer(float damage) { Enemy_Hp -= damage; }
 };

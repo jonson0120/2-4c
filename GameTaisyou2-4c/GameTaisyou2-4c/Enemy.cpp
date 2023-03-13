@@ -21,6 +21,7 @@ Enemy::Enemy()
 	Height = 64;
 
 	Enemy_Damage = 1;
+	Player_Damage = 1;
 	Enemy_Hp = 2;
 	Player_Hp = 10;
 
@@ -103,10 +104,10 @@ void Enemy::Update(Player* player)
 	}
 
 	//プレイヤーに当たった時攻撃
-	if (enex == player->GetX() && eney == player->GetY())
-	{
-		player->HitEnemy();
-	}
+	//if (enex == player->GetX() && eney == player->GetY())
+	//{
+	//	player->HitEnemy(float damage);
+	//}
 }
 
 void Enemy::Draw(int x,int y) const
@@ -115,8 +116,7 @@ void Enemy::Draw(int x,int y) const
 		MapData[(eney / BLOCK_SIZE) + 1][enex / BLOCK_SIZE] == 0)
 	{
 		//敵の表示
-		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], TRUE);
+		DrawRotaGraph(enex, eney, 1.0, 0, EImages[0], TRUE, FALSE);
 	}
 
 	if (Enemy_Hp == 0)

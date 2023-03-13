@@ -113,8 +113,8 @@ public:
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
 
-	//敵との当たり判定
-	int HitEnemy() { return stat.Hp - Enemy_Damage; }
+	//敵からの攻撃
+	void HitEnemy(float damage) { stat.Hp -= damage; }
 
 	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 };
