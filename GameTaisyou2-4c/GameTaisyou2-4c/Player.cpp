@@ -45,7 +45,7 @@ Player::Player() {
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace2.png");
 	Weapon[2] = LoadGraph("images/spear.png");
-	Weapon[3] = LoadGraph("images/spear.png");
+	Weapon[3] = LoadGraph("images/katana.png");
 
 	JoypadX = 0;
 	JoypadY = 0;
@@ -1093,6 +1093,8 @@ void Player::DrawKatana()const
 	double finX = 0, finY = 0;		//振りかぶった後の座標
 	double Dis = 0;			//体の中心からの距離
 
+	bool TurnX = true;		//画像のX反転
+
 	double finAng = 0;	//攻撃する角度
 	int thrust = 85;	//攻撃距離
 
@@ -1108,12 +1110,14 @@ void Player::DrawKatana()const
 		switch (TurnFlg)
 		{
 		case true:
+
+			TurnX = true;
 			if (Attack < 6)
 			{
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
 				Dis = -thrust + thrust * 2 / 6 * Attack;
-				sizeY = -1 + 2 / 6 * Attack;
+				sizeY = -1.0 + 2.0 / 6.0 * Attack;
 
 				finAng = -80;
 
@@ -1136,12 +1140,14 @@ void Player::DrawKatana()const
 			}
 			break;
 		case false:
+
+			TurnX = false;
 			if (Attack < 6)
 			{
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
 				Dis = -thrust + thrust * 2 / 6 * Attack;
-				sizeY = -1 + 2 / 6 * Attack;
+				sizeY = -1.0 + 2.0 / 6.0 * Attack;
 
 				finAng = 80;
 
@@ -1173,6 +1179,8 @@ void Player::DrawKatana()const
 		switch (TurnFlg)
 		{
 		case true:
+
+			TurnX = false;
 			if (Attack <= 9)
 			{
 				finAng = -140 + (80 / 9 * (Attack - 1));
@@ -1196,6 +1204,8 @@ void Player::DrawKatana()const
 			break;
 
 		case false:
+
+			TurnX = true;
 			if (Attack <= 9)
 			{
 				finAng = 140 - (80 / 9 * (Attack - 1));
@@ -1229,6 +1239,8 @@ void Player::DrawKatana()const
 		switch (TurnFlg)
 		{
 		case true:
+
+			TurnX = true;
 			if (Attack < 15)
 			{
 				finAng = -60 + (180 / 12 * (Attack - 1));
@@ -1262,6 +1274,8 @@ void Player::DrawKatana()const
 			break;
 
 		case false:
+
+			TurnX = false;
 			if (Attack < 15)
 			{
 				finAng = 60 - (180 / 12 * (Attack - 1));
@@ -1300,13 +1314,25 @@ void Player::DrawKatana()const
 		}
 	}
 
-
-	if (Combo != 3) {
-		DrawRotaGraph3(finX, finY, imgX / 2, imgY / 2, size, sizeY * size, (3.14 / 180) * finAng, Weapon[3], true, false, false);
-	}
-	else 
+	switch (Combo)
 	{
-		DrawRotaGraph3(finX, finY, imgX / 2, imgY, size, sizeY* size, (3.14 / 180)* finAng, Weapon[3], true, false, false);
+	case 1:
+		DrawRotaGraph3(finX, finY, imgX / 2, imgY / 2, size, sizeY * size,
+			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
+		break;
+
+	case 2:
+		DrawRotaGraph3(finX, finY, imgX / 2, imgY / 2, size, sizeY * size,
+			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
+		break;
+
+	case 3:
+		DrawRotaGraph3(finX, finY, imgX / 2, imgY, size, sizeY * size,
+			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1855,6 +1881,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				switch (TurnFlg)
 				{
 				case true:
+
 					if (Attack < 6)
 					{
 						stX = SCREEN_WIDTH / 2;
@@ -1890,6 +1917,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 
 					}
 					break;
+
 				case false:
 					if (Attack < 6)
 					{
@@ -1925,8 +1953,6 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
 					}
 				default:
-					break;
-
 					break;
 				}
 			}
@@ -1964,8 +1990,6 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
 					}
 				default:
-					break;
-
 					break;
 
 				case false:
@@ -2042,8 +2066,6 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));*/
 					}
 				default:
-					break;
-
 					break;
 
 				case false:
