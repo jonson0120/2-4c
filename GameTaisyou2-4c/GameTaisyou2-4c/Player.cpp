@@ -2101,18 +2101,19 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-				int DisX = EneX - finX;
-				int DisY = EneY - finY;
+				
+			}
+			int DisX = EneX - finX;
+			int DisY = EneY - finY;
 
-				a = EneX;
-				b = EneY;
-				c = finX;
-				d = finY;
+			a = EneX;
+			b = EneY;
+			c = finX;
+			d = finY;
 
-				if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
-				{
-					return true;
-				}
+			if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
+			{
+				return true;
 			}
 		return false;
 }
