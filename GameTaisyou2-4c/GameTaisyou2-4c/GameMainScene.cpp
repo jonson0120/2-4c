@@ -41,8 +41,8 @@ AbstractScene* GameMainScene::Update()
 	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) {
 		
 		MakeMap();
-		player.SetMapData(MapData);
 		enemy.SetMapData(MapData);
+		player.SetMapData(MapData);
 	}
 
 	time++;
@@ -280,9 +280,9 @@ void GameMainScene::MakeMap()
 				MakeExit = true;
 			}
 		}
-
+		//enemy.makeEnemy();
 		//空間数が一定以下なら再生成
-	} while (Space < 70 && MakeExit);
+	} while (Space < 70);
 	
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)

@@ -4,8 +4,8 @@
 #include "Player.h"
 #include "GameMainScene.h"
 
-#define MAX_SPEED 5
-#define MIN_SPEED -5
+#define MAX_SPEED 3
+#define MIN_SPEED -3
 
 Enemy::Enemy()
 {
@@ -13,10 +13,8 @@ Enemy::Enemy()
 
 	DropItem_Image = LoadGraph("shard.png", TRUE);
 
-	enex = 0; // 176 一番左下にするための座標
-	eney = 0; //1423 一番左下にするための座標
-
-	//MapData[eney][enex];
+	enex = 0;
+	eney = 0;
 
 	Width = 64;
 	Height = 64;
@@ -33,16 +31,16 @@ Enemy::Enemy()
 	E_AttackFlg = FALSE;
 
 	speed = 0;
-	fall = 12;
+	fall = 14;
 	jump = 0;
 
-	LoadDivGraph("images/Enemy.png", 5, 16, 16, 32, 32, EImages);
+	LoadDivGraph("images/Enemy2.png", 5, 5, 1, 64, 64, EImages);
 }
 
 void Enemy::Update(Player* player)
 {
 	//落下とジャンプ
-	float fallinit = 12;
+	float fallinit = 14;
 	eney += fall;
 	while (!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
@@ -111,21 +109,22 @@ void Enemy::Update(Player* player)
 	//{
 	//	player->HitEnemy(float damage);
 	//}
+}
 
-	//bool MakeEnemy = FALSE;
-
-	//while (MakeEnemy == FALSE)
-	//{
-	//	int i = rand() % 11;
-	//	int j = rand() % 14;
-	//	if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
-	//	{
-	//		MapData[i][j] = 2;
-	//		enex = i;
-	//		eney = j;
-	//		MakeEnemy = TRUE;
-	//	}
-	//}
+void Enemy::makeEnemy()
+{
+	while (MakeEnemy == FALSE)
+	{
+		int i = rand() % 11;
+		int j = rand() % 14;
+		if (MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+		{
+			MapData[i][j] = 2;
+			enex = i * BLOCK_SIZE + BLOCK_SIZE / 2;
+			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
+			MakeEnemy = TRUE;
+		}
+	}
 }
 
 void Enemy::Draw(int x,int y) const
@@ -133,7 +132,7 @@ void Enemy::Draw(int x,int y) const
 	if (MakeEnemy == TRUE)
 	{
 		//敵の表示
-		DrawRotaGraph(enex, eney, 1.0, 0, EImages[0], TRUE, FALSE);
+		DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[0], TRUE);
 	}
 
 	if (Enemy_Hp == 0)
@@ -147,7 +146,7 @@ void Enemy::Draw(int x,int y) const
 	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			  //enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
+	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 }
 
 void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
@@ -159,4 +158,6 @@ void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 			this->MapData[i][j] = MapData[i][j];
 		}
 	}
+
+	makeEnemy();
 }

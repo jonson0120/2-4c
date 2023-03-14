@@ -22,10 +22,10 @@ private:
 	bool MakeEnemy;
 
 	//Player player;
-
-	float speed;	//移動速度
-	float fall;		//落下速度
-	int jump;		//ジャンプ回数
+	
+	float speed; //移動速度
+	float fall;	 //落下速度
+	int jump;	 //ジャンプ回数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
@@ -41,6 +41,7 @@ public:
 	int GetHeight()const { return Height; }
 
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
+	void makeEnemy();
 
 	//プレイヤーからの攻撃
 	bool HitPlayer(float damage) { Enemy_Hp -= damage; }
