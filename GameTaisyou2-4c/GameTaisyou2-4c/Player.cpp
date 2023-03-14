@@ -2014,13 +2014,10 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						stX = SCREEN_WIDTH / 2;
 						stY = SCREEN_HEIGHT / 2;
 
-						RangeX = range[3].X / 2;
-						RangeY = range[3].Y / 2;
-
 						Dis = thrust + Attack * 2;
 
-						finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
-						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
+						/*finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));*/
 					}
 					else if (Attack < 18)
 					{
@@ -2028,12 +2025,10 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						stX = SCREEN_WIDTH / 2;
 						stY = SCREEN_HEIGHT / 2;
 
-						RangeX = range[3].X / 2;
-						RangeY = range[3].Y / 2;
-
 						Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
-						finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
-						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
+
+						/*finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));*/
 					}
 					else
 					{
@@ -2041,12 +2036,10 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						stX = SCREEN_WIDTH / 2;
 						stY = SCREEN_HEIGHT / 2;
 
-						RangeX = range[3].X / 2;
-						RangeY = range[3].Y / 2;
 						Dis = 0;
 
-						finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
-						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));
+						/*finX = stX + Dis * cos((3.14 / 180) * (-60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (-60 - 90));*/
 					}
 				default:
 					break;
@@ -2062,13 +2055,10 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						stX = SCREEN_WIDTH / 2;
 						stY = SCREEN_HEIGHT / 2;
 
-						RangeX = range[3].X / 2;
-						RangeY = range[3].Y / 2;
-
 						Dis = thrust + Attack * 2;
 
-						finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
-						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
+						/*finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));*/
 					}
 					else if (Attack < 18)
 					{
@@ -2076,13 +2066,10 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						stX = SCREEN_WIDTH / 2;
 						stY = SCREEN_HEIGHT / 2;
 
-						RangeX = range[3].X / 2;
-						RangeY = range[3].Y / 2;
-
 						Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
 
-						finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
-						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
+						/*finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));*/
 					}
 					else
 					{
@@ -2090,19 +2077,18 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 						stX = SCREEN_WIDTH / 2;
 						stY = SCREEN_HEIGHT / 2;
 
-						RangeX = range[3].X / 2;
-						RangeY = range[3].Y / 2;
-
 						Dis = 0;
 
-						finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
-						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));
+						/*finX = stX + Dis * cos((3.14 / 180) * (60 - 90));
+						finY = stY + Dis * sin((3.14 / 180) * (60 - 90));*/
 					}
 					break;
 				}
 
 				
 			}
+
+
 			int DisX = EneX - finX;
 			int DisY = EneY - finY;
 
