@@ -25,11 +25,12 @@ GameMainScene::GameMainScene()
 	Exit_flg = false;
 	Anim_flg = false;
 	MakeMap_flg = false;
+	MoveStop_flg = true;
 }
 
 AbstractScene* GameMainScene::Update() 
 {
-	player.Update();
+	if (MoveStop_flg == true)player.Update();
 	enemy.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
@@ -43,9 +44,11 @@ AbstractScene* GameMainScene::Update()
 		break;
 	}
 
-	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;
+	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
+	ExitCheck();
 	if (Exit_flg == true) NextMap();
-
+	x= MapExitY * 160 + 80;
+	y= MapExitX * 160 + 131;
 	time++;
 	return this;
 }
@@ -57,7 +60,7 @@ void GameMainScene::Draw() const
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (MapData[i][j] < 4) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
+			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
 	
@@ -67,6 +70,11 @@ void GameMainScene::Draw() const
 	enemy.Draw(player.GetX(),player.GetY());
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
+	DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
+	DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
+	DrawFormatString(0, 650, 0xff0000, "%d", x);
+	DrawFormatString(50, 650, 0xff0000, "%d", y);
+	DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
 }
 
 //マップ生成
@@ -272,15 +280,15 @@ void GameMainScene::MakeMap()
 		}*/
 		while (MakeExit==false)
 		{
-			int i = rand() % 11;
-			int j = rand() % 14;
-			if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
-			{
-				MapData[i][j] = 2;
-				MapExitX = i;
-				MapExitY = j;
-				MakeExit = true;
-			}
+			int i = GetRand(MAP_HEIGHT);
+			int j = GetRand(MAP_WIDTH - 3) + 2;
+				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+				{
+					MapData[i][j] = 2;
+					MapExitX = i;
+					MapExitY = j;
+					MakeExit = true;
+				}
 		}
 
 		//空間数が一定以下なら再生成
@@ -324,6 +332,8 @@ int GameMainScene::CheckSpace(int y, int x, int* cnt)
 
 void GameMainScene::NextMap() {
 	AnimTimer++;
+	MoveStop_flg = false;
+	
 	if (0 < Bright && Anim_flg == false) {
 		// フェードアウト処理
 		if (AnimTimer % 5 == 0) {
@@ -331,7 +341,7 @@ void GameMainScene::NextMap() {
 			SetDrawBright(Bright, Bright, Bright);
 			Bright -= Bright_minus;
 		}
-		if (Bright < 0)MakeMap_flg = true;
+		if (Bright <= 0)MakeMap_flg = true;
 	}
 	else {
 		if (AnimTimer % 5 == 0) {
@@ -342,6 +352,7 @@ void GameMainScene::NextMap() {
 			if (Bright > 255) {
 				Exit_flg = false;
 				Anim_flg = false;
+				MoveStop_flg = true;
 				AnimTimer = 0, Bright = 255;
 			}
 		}
@@ -356,4 +367,9 @@ void GameMainScene::NextMap() {
 	}
 
 	
+}
+
+void GameMainScene::ExitCheck() {
+	if (MapExitY * 160 + 100>player.GetX()&& MapExitY * 160 + 60<player.GetX()&& player.GetY() == MapExitX * 160 + 131) Exit_flg = true;
+
 }
