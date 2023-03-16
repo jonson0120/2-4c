@@ -16,6 +16,8 @@ Enemy::Enemy()
 	enex = 0;
 	eney = 0;
 
+	MapData[eney][enex];
+
 	Width = 64;
 	Height = 64;
 
