@@ -34,7 +34,7 @@ Enemy::Enemy()
 	fall = 14;
 	jump = 0;
 
-	LoadDivGraph("images/Enemy2.png", 5, 5, 1, 64, 64, EImages);
+	LoadDivGraph("images/Enemy.png", 5, 5, 1, 64, 64, EImages);
 }
 
 void Enemy::Update(Player* player)

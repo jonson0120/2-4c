@@ -10,6 +10,7 @@ GameMainScene::GameMainScene()
 	MakeMap();
 	player.SetMapData(MapData);
 	enemy.SetMapData(MapData);
+	enemy2.SetMapData(MapData);
 
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
@@ -26,6 +27,7 @@ AbstractScene* GameMainScene::Update()
 	ui.Update();
 	player.Update();
 	enemy.Update(&player);
+	enemy2.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
@@ -42,6 +44,7 @@ AbstractScene* GameMainScene::Update()
 		
 		MakeMap();
 		enemy.SetMapData(MapData);
+		enemy2.SetMapData(MapData);
 		player.SetMapData(MapData);
 	}
 
@@ -64,6 +67,7 @@ void GameMainScene::Draw() const
 	ui.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
+	enemy2.Draw(player.GetX(), player.GetY());
 
 }
 

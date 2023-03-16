@@ -7,7 +7,6 @@ class Player;
 class Enemy
 {
 private:
-
 	int image;			//画像
 	int EImages[5];		//画像
 	int DropItem_Image;	//ドロップアイテム
