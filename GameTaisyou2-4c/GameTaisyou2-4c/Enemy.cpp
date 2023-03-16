@@ -10,7 +10,7 @@ Enemy::Enemy()
 {
 	image = 0;
 
-	enex = 176; // 176 一番左下にするための座標
+	enex = 376; // 176 一番左下にするための座標
 	eney = 1423; //1423 一番左下にするための座標
 
 	MapData[eney][enex];
@@ -114,7 +114,7 @@ void Enemy::Draw(int x,int y) const
 	{
 		//敵の表示
 		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], TRUE);
+			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), EImages[0], FALSE);
 	}
 
 	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);

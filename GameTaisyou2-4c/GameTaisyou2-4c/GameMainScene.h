@@ -32,6 +32,9 @@ private:
 	int AnimTimer; //アニメーション用のタイマー
 	bool Anim_flg; //アニメーション用のフラグ
 	bool MakeMap_flg; //マップを作るか判断する
+	bool MoveStop_flg; //プレイヤーの行動制御フラグ
+
+	int x, y;
 
 public:
 	GameMainScene();
@@ -49,4 +52,5 @@ public:
 	void MakeMap();
 	int CheckSpace(int y, int x, int* cnt);
 	void NextMap();
+	void ExitCheck();
 };
