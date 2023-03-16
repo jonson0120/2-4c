@@ -57,13 +57,7 @@ AbstractScene* GameMainScene::Update()
 		break;
 	}
 
-	if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) {
-		
-		MakeMap();
-		enemy.SetMapData(MapData);
-		enemy2.SetMapData(MapData);
-		player.SetMapData(MapData);
-	}
+	
 
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
 	ExitCheck();
