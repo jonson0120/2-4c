@@ -329,7 +329,6 @@ void GameMainScene::MakeMap()
 		//enemy.makeEnemy();
 		//空間数が一定以下なら再生成
 	} while (Space < 70);
-	}
 	
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)

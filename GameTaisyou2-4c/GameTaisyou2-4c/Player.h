@@ -128,7 +128,5 @@ public:
 
 	//敵との当たり判定
 	void HitEnemy(float damage) { stat.Hp -= damage; }
-
-	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 };
 
