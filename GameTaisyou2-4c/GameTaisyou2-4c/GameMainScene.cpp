@@ -401,6 +401,7 @@ void GameMainScene::NextMap() {
 		MakeMap();
 		player.SetMapData(MapData);
 		enemy.SetMapData(MapData);
+		enemy2.SetMapData(MapData);
 		MakeMap_flg = false;
 	}
 
