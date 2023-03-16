@@ -7,7 +7,8 @@ enum struct weapons
 {
 	dagger, //0
 	mace,	//1
-	spear	//2
+	spear,	//2
+	katana	//2
 };
 
 enum struct Inp_UD
@@ -54,6 +55,8 @@ private:
 	int jump;	//ジャンプ回数
 	int wall;	//壁・天井移動 0:地面 1:左壁 2:右壁 3:天井
 
+	int a = 0, b = 0, c = 0, d = 0;
+
 	float Attack;	
 
 	int PImages;
@@ -61,9 +64,9 @@ private:
 	bool FalseFlg;
 	
 
-	int Weapon[3];		//武器画像
+	int Weapon[4];		//武器画像
 	enum weapons Equip;		//装備している武器
-	Range range[2];	//攻撃範囲
+	Range range[4];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
 
@@ -109,19 +112,21 @@ public:
 	void DrawDagger()const;
 	void DrawMace()const;
 	void DrawSpear()const;
+	void DrawKatana()const;
 
 	//武器アニメーション管理
 	void DaggerAtk();
 	void MaceAtk();
 	void SpearAtk();
+	void KatanaAtk();
 
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
+	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
+	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
 
 	//敵との当たり判定
 	int HitEnemy() { return stat.Hp - Enemy_Damage; }
-
-	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 };
 
