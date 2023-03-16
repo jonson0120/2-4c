@@ -7,6 +7,8 @@
 
 GameMainScene::GameMainScene()
 {
+	MapExitX = 0;
+	MapExitY = 0;
 	MakeMap();
 	player.SetMapData(MapData);
 	enemy.SetMapData(MapData);
@@ -207,7 +209,9 @@ void GameMainScene::MakeMap()
 	//出口生成チェック
 	bool MakeExit = false;
 
-	int Space;				//空間の数
+	int Space = 0;				//空間の数
+
+	int x = player.GetX();
 
 	//マップデータ作成
 	do {
@@ -220,6 +224,7 @@ void GameMainScene::MakeMap()
 			for (int j = 0; j < MAP_WIDTH; j++)
 			{
 				CheckData[i][j] = 0;
+				MapData[i][j] = 0;
 			}
 		}
 		//-------------------------------------------
@@ -288,23 +293,28 @@ void GameMainScene::MakeMap()
 				}
 			}
 		}*/
-		while (MakeExit==false)
-		{
-			int i = GetRand(MAP_HEIGHT);
-			int j = GetRand(MAP_WIDTH - 3) + 2;
-			if (i != CameraY / 160 && j != CameraX / 160) {
-				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
-				{
-					MapData[i][j] = 2;
-					MapExitX = i;
-					MapExitY = j;
-					MakeExit = true;
-				}
-			}
-		}
+
 
 		//空間数が一定以下なら再生成
-	} while (Space < 70 && MakeExit);
+	} while (Space < 70);
+
+	MakeExit = MakeExit;
+	
+	while (MakeExit == false)
+	{
+		int i = GetRand(MAP_HEIGHT);
+		int j = GetRand(MAP_WIDTH - 3) + 2;
+		if (i != CameraY / 160 && j != CameraX / 160) {
+			if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+			{
+				MapData[i][j] = 2;
+				MapExitX = i;
+				MapExitY = j;
+				MakeExit = true;
+				//break;
+			}
+		}
+	}
 	
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -346,7 +356,7 @@ void GameMainScene::NextMap() {
 	AnimTimer++;
 	MoveStop_flg = false;
 	
-	if (0 < Bright && Anim_flg == false) {
+	if (0 <= Bright && Anim_flg == false) {
 		// フェードアウト処理
 		if (AnimTimer % 5 == 0) {
 			// 描画輝度をセット
@@ -361,7 +371,7 @@ void GameMainScene::NextMap() {
 			SetDrawBright(Bright, Bright, Bright);
 			Bright += Bright_minus;
 			Anim_flg = true;
-			if (Bright > 255) {
+			if (Bright >= 255) {
 				Exit_flg = false;
 				Anim_flg = false;
 				MoveStop_flg = true;
@@ -371,6 +381,8 @@ void GameMainScene::NextMap() {
 	}
 		//次のマップを生成する処理
 	if (MakeMap_flg == true) {
+		MapExitX = 0;
+		MapExitY = 0;
 		player.Spawn();
 		MakeMap();
 		player.SetMapData(MapData);
