@@ -292,6 +292,7 @@ void GameMainScene::MakeMap()
 		{
 			int i = GetRand(MAP_HEIGHT);
 			int j = GetRand(MAP_WIDTH - 3) + 2;
+			if (i != CameraY / 160 && j != CameraX / 160) {
 				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
 				{
 					MapData[i][j] = 2;
@@ -299,6 +300,7 @@ void GameMainScene::MakeMap()
 					MapExitY = j;
 					MakeExit = true;
 				}
+			}
 		}
 
 		//空間数が一定以下なら再生成
@@ -381,5 +383,4 @@ void GameMainScene::NextMap() {
 
 void GameMainScene::ExitCheck() {
 	if (MapExitY * 160 + 100>player.GetX()&& MapExitY * 160 + 60<player.GetX()&& player.GetY() == MapExitX * 160 + 131) Exit_flg = true;
-
 }
