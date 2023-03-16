@@ -555,13 +555,6 @@ void Player::Spawn() {
 	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
 
 	y += BLOCK_SIZE - Height / 2;
-
-	while (!MapData[(y + Height / 2) / 160][(x - Width / 2) / 160] ||
-		!MapData[(y + Height / 2) / 160][(x + Width / 2) / 160])
-	{
-		y--;
-		speed = 0;
-	}
 }
 
 void Player::InitPad() {
