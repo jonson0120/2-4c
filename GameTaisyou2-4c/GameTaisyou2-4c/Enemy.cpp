@@ -33,7 +33,7 @@ Enemy::Enemy()
 	E_AttackFlg = FALSE;
 
 	speed = 0;
-	fall = 14;
+	fall = 12;
 	jump = 0;
 
 	LoadDivGraph("images/Enemy.png", 5, 5, 1, 64, 64, EImages);
@@ -42,7 +42,7 @@ Enemy::Enemy()
 void Enemy::Update(Player* player)
 {
 	//落下とジャンプ
-	float fallinit = 14;
+	float fallinit = 12;
 	eney += fall;
 	while (!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
@@ -62,20 +62,14 @@ void Enemy::Update(Player* player)
 	//壁に当たった時止める
 	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 	{
-		if (MIN_SPEED != enex)
-		{
-			enex--;
-			speed = 0;
-		}
+		enex--;
+		speed = 0;
 	}
 
 	while (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
-		if (MIN_SPEED != enex)
-		{
-			enex++;
-			speed = 0;
-		}
+		enex++;
+		speed = 0;
 	}
 
 	//プレイヤー認識範囲
@@ -117,11 +111,10 @@ void Enemy::makeEnemy()
 {
 	while (MakeEnemy == FALSE)
 	{
-		int i = rand() % 11;
-		int j = rand() % 14;
+		int i = GetRand(13) + 1;
+		int j = GetRand(10) + 1;
 		if (MapData[i][j] == 1 && MapData[i + 1][j] == 0)
 		{
-			MapData[i][j] = 2;
 			enex = i * BLOCK_SIZE + BLOCK_SIZE / 2;
 			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
 			MakeEnemy = TRUE;

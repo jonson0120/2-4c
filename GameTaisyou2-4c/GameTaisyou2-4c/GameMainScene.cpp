@@ -12,6 +12,7 @@ GameMainScene::GameMainScene()
 	MakeMap();
 	player.SetMapData(MapData);
 	enemy.SetMapData(MapData);
+	enemy.makeEnemy();
 	enemy2.SetMapData(MapData);
 
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
@@ -326,11 +327,9 @@ void GameMainScene::MakeMap()
 				//break;
 			}
 		}
-		//enemy.makeEnemy();
 		//空間数が一定以下なら再生成
 	} while (Space < 70);
-	}
-	
+
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
@@ -339,7 +338,6 @@ void GameMainScene::MakeMap()
 			if (CheckData[i][j] == 0)MapData[i][j] = 5;
 		}
 	}
-
 	MapData[player.GetY() / 160][player.GetX() / 160] = 3;
 }
 
@@ -404,8 +402,6 @@ void GameMainScene::NextMap() {
 		enemy.SetMapData(MapData);
 		MakeMap_flg = false;
 	}
-
-	
 }
 
 void GameMainScene::ExitCheck() {
