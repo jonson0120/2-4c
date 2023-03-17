@@ -4,6 +4,7 @@
 #include"common.h"
 #include"Player.h"
 #include"Enemy.h"
+#include "Enemy2.h"
 #include"UI.h"
 
 class GameMainScene : public AbstractScene
@@ -18,12 +19,24 @@ private:
 	int time;
 	Player player;
 	Enemy enemy;
+	Enemy2 enemy2;
 	UI ui;
 
 	int CameraX;
 	int CameraY;
 
 	int hit = 0;
+
+	int Bright; //輝度
+	int Bright_minus; //輝度を引くためのもの
+
+	bool Exit_flg; //出口についてるかを判定する
+	int AnimTimer; //アニメーション用のタイマー
+	bool Anim_flg; //アニメーション用のフラグ
+	bool MakeMap_flg; //マップを作るか判断する
+	bool MoveStop_flg; //プレイヤーの行動制御フラグ
+
+	int x, y;
 
 public:
 	GameMainScene();
@@ -40,4 +53,6 @@ public:
 
 	void MakeMap();
 	int CheckSpace(int y, int x, int* cnt);
+	void NextMap();
+	void ExitCheck();
 };

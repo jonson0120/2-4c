@@ -1,69 +1,158 @@
-﻿#include"Enemy.h"
-#include"DxLib.h"
-#include"common.h"
+﻿#include "Enemy.h"
+#include "DxLib.h"
+#include "common.h"
+#include "Player.h"
+#include "GameMainScene.h"
 
-Enemy::Enemy() {
+#define MAX_SPEED 3
+#define MIN_SPEED -3
+
+Enemy::Enemy()
+{
 	image = 0;
 
-	enex = 2000; // 176 一番左下にするための座標
-	eney = 1000; //1423 一番左下にするための座標
+	DropItem_Image = LoadGraph("shard.png", TRUE);
+
+	enex = 0;
+	eney = 0;
+
+	MapData[eney][enex];
 
 	Width = 64;
 	Height = 64;
 
+	Enemy_Damage = 1;
+	Player_Damage = 1;
+	Enemy_Hp = 2;
+	Player_Hp = 10;
+
+	MakeEnemy = FALSE;
+
 	direction = 0;
 
-	speed = 6;
-	fall = 16;
+	E_AttackFlg = FALSE;
+
+	speed = 0;
+	fall = 14;
 	jump = 0;
 
-	LoadDivGraph("images/Enemy.png", 5, 16, 16, 32, 32, EImages);
+	LoadDivGraph("images/Enemy.png", 5, 5, 1, 64, 64, EImages);
 }
 
-void Enemy::Update() {
-
+void Enemy::Update(Player* player)
+{
 	//落下とジャンプ
-	float fallinit = 16;
+	float fallinit = 14;
 	eney += fall;
-	while (!MapData[(eney + Height / 2) / 160][(enex - Width / 2) / 160])
+	while (!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
 		eney--;
 		jump = 0;
 	}
 
-	//エネミーの移動処理
-	//enex += speed;
-	if (direction == 0)
+	if (fall < fallinit)
 	{
-		direction = GetRand(60) + 60;
-		speed *= -1;
-	}
-	else
-	{
-		direction--;
+		fall += (fallinit * 2) / 45;
+		if (fall > fallinit)
+		{
+			fall = fallinit;
+		}
 	}
 
-	if (!MapData[eney / 160][(enex + Width / 2) / 160]) 
+	//壁に当たった時止める
+	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 	{
-		while (!MapData[eney / 160][(enex + Width / 2) / 160])enex--;
-		speed *= -1;
+		if (MIN_SPEED != enex)
+		{
+			enex--;
+			speed = 0;
+		}
 	}
 
-	if (!MapData[eney / 160][(enex - Width / 2) / 160])
+	while (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
-		while (!MapData[eney / 160][(enex - Width / 2) / 160])enex++;
-		speed *= -1;
+		if (MIN_SPEED != enex)
+		{
+			enex++;
+			speed = 0;
+		}
+	}
+
+	//プレイヤー認識範囲
+	if (enex + BLOCK_SIZE * 1.5 >= player->GetX() && enex - BLOCK_SIZE * 1.5 <= player->GetX() &&
+		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY())
+	{
+		//プレイヤー追尾
+		if (enex >= player->GetX() && MIN_SPEED != speed)
+		{
+			--speed;
+		}
+
+		if (enex <= player->GetX() && MAX_SPEED != speed)
+		{
+			++speed;
+		}
+
+		if (eney >= player->GetY() && fall <= fallinit && jump == 0 && MAX_SPEED != jump)
+		{
+			fall *= -1;
+			jump++;
+		}
+
+		if (enex == player->GetX())
+		{
+			speed = 0;
+		}
+		enex += speed;
+	}
+
+	//プレイヤーに当たった時攻撃
+	//if (enex == player->GetX() && eney == player->GetY())
+	//{
+	//	player->HitEnemy(float damage);
+	//}
+}
+
+void Enemy::makeEnemy()
+{
+	while (MakeEnemy == FALSE)
+	{
+		int i = rand() % 11;
+		int j = rand() % 14;
+		if (MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+		{
+			MapData[i][j] = 2;
+			enex = i * BLOCK_SIZE + BLOCK_SIZE / 2;
+			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
+			MakeEnemy = TRUE;
+		}
 	}
 }
 
-void Enemy::Draw(int x,int y) const {
-	//敵の表示
-	DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-		enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2),EImages[0],false);
+void Enemy::Draw(int x,int y) const
+{
+	if (MakeEnemy == TRUE)
+	{
+		//敵の表示
+		DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[0], TRUE);
+	}
+
+	if (Enemy_Hp == 0)
+	{
+		DeleteGraph(EImages[0]);
+
+		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
+			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
+	}
+
+	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
+
+	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
+	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 }
 
-void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
-
+void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
+{
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -71,4 +160,6 @@ void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
 			this->MapData[i][j] = MapData[i][j];
 		}
 	}
+
+	makeEnemy();
 }

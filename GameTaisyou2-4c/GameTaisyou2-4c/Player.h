@@ -7,7 +7,8 @@ enum struct weapons
 {
 	dagger, //0
 	mace,	//1
-	spear	//2
+	spear,	//2
+	katana	//2
 };
 
 enum struct Inp_UD
@@ -32,12 +33,18 @@ struct Stat
 class Player
 {
 private:
-	int image;	//画像
+	int image;	//画像：上半身
+	int image_U[5];	//画像：下半身
+	int ArmImg;
+
+	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス
 
 	int x, y;		//X,Y座標
 	int Width, Height;	//プレイヤー高さ
+
+	Range Arm_L, Arm_R;
 
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
@@ -48,6 +55,8 @@ private:
 	int jump;	//ジャンプ回数
 	int wall;	//壁・天井移動 0:地面 1:左壁 2:右壁 3:天井
 
+	int a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
+
 	float Attack;	
 
 	int PImages;
@@ -55,9 +64,9 @@ private:
 	bool FalseFlg;
 	
 
-	int Weapon[3];		//武器画像
+	int Weapon[4];		//武器画像
 	enum weapons Equip;		//装備している武器
-	Range range[2];	//攻撃範囲
+	Range range[4];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
 
@@ -66,6 +75,8 @@ private:
 	int JoypadX, JoypadY;	//パッド入力値
 	float PadangL;			//パッド入力角度
 	int TriggerL, TriggerR;	//トリガー入力値
+
+	int Enemy_Damage;//敵の攻撃力
 
 	//一部の武器種が使用する変数-----------
 	int Atkpt;				//汎用・攻撃パターン
@@ -101,15 +112,21 @@ public:
 	void DrawDagger()const;
 	void DrawMace()const;
 	void DrawSpear()const;
+	void DrawKatana()const;
 
 	//武器アニメーション管理
 	void DaggerAtk();
 	void MaceAtk();
 	void SpearAtk();
+	void KatanaAtk();
 
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
 	bool HitMace(int EneX, int EneY, int EneW, int EneH);
 	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
+	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
+
+	//敵との当たり判定
+	void HitEnemy(float damage) { stat.Hp -= damage; }
 };
 
