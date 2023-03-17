@@ -65,6 +65,8 @@ private:
 	
 
 	int Weapon[4];		//武器画像
+	int WeaponEffect[4];	//武器効果
+
 	enum weapons Equip;		//装備している武器
 	Range range[4];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
@@ -82,6 +84,8 @@ private:
 	int Atkpt;				//汎用・攻撃パターン
 
 	float spear_angle;		//槍・攻撃方向
+	Range katana_slash[5];		//刀・斬撃位置
+	int katana_angle[5];		//刀・斬撃角度
 
 	//-------------------------------------
 
