@@ -62,32 +62,32 @@ void Enemy::Update(Player* player)
 	}
 
 	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE * 1.5 >= player->GetX() && enex - BLOCK_SIZE * 1.5 <= player->GetX() &&
-		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY())
-	{
-		//プレイヤー追尾
-		if (enex >= player->GetX() && MIN_SPEED != speed)
-		{
-			--speed;
-		}
+	//if (enex + BLOCK_SIZE * 1.5 >= player->GetX() && enex - BLOCK_SIZE * 1.5 <= player->GetX() &&
+	//	eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY())
+	//{
+	//	//プレイヤー追尾
+	//	if (enex >= player->GetX() && MIN_SPEED != speed)
+	//	{
+	//		--speed;
+	//	}
 
-		if (enex <= player->GetX() && MAX_SPEED != speed)
-		{
-			++speed;
-		}
+	//	if (enex <= player->GetX() && MAX_SPEED != speed)
+	//	{
+	//		++speed;
+	//	}
 
-		if (eney >= player->GetY() && fall <= fallinit && jump == 0 && MAX_SPEED != jump)
-		{
-			fall *= -1;
-			jump++;
-		}
+	//	if (eney >= player->GetY() && fall <= fallinit && jump == 0 && MAX_SPEED != jump)
+	//	{
+	//		fall *= -1;
+	//		jump++;
+	//	}
 
-		if (enex == player->GetX())
-		{
-			speed = 0;
-		}
-		enex += speed;
-	}
+	//	if (enex == player->GetX())
+	//	{
+	//		speed = 0;
+	//	}
+	//	enex += speed;
+	//}
 
 	//壁に当たった時止める
 	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
