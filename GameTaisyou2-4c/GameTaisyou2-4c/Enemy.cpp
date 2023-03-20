@@ -43,12 +43,6 @@ void Enemy::Update(Player* player)
 {
 	//落下とジャンプ
 	float fallinit = 12;
-	eney += fall;
-	while (!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
-	{
-		eney--;
-		jump = 0;
-	}
 
 	if (fall < fallinit)
 	{
@@ -58,18 +52,13 @@ void Enemy::Update(Player* player)
 			fall = fallinit;
 		}
 	}
+	eney += fall;
 
-	//壁に当たった時止める
-	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
+		(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
 	{
-		enex--;
-		speed = 0;
-	}
-
-	while (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
-	{
-		enex++;
-		speed = 0;
+		eney--;
+		jump = 0;
 	}
 
 	//プレイヤー認識範囲
@@ -98,6 +87,19 @@ void Enemy::Update(Player* player)
 			speed = 0;
 		}
 		enex += speed;
+	}
+
+	//壁に当たった時止める
+	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+	{
+		enex--;
+		speed = 0;
+	}
+
+	while (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
+	{
+		enex++;
+		speed = 0;
 	}
 
 	//プレイヤーに当たった時攻撃
