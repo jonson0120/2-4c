@@ -84,8 +84,10 @@ private:
 	int Atkpt;				//汎用・攻撃パターン
 
 	float spear_angle;		//槍・攻撃方向
-	Range katana_slash[5];		//刀・斬撃位置
-	int katana_angle[5];		//刀・斬撃角度
+
+	int Katana_num = 8;		//刀・斬撃の数
+	Range katana_slash[8];		//刀・斬撃位置
+	int katana_angle[8];		//刀・斬撃角度
 
 	//-------------------------------------
 

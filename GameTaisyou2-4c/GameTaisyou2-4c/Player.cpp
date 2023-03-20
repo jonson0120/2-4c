@@ -60,7 +60,7 @@ Player::Player() {
 	//--------------------
 	Atkpt = 0;
 	spear_angle = 0;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < Katana_num; i++)
 	{
 		katana_slash[i].X = 0;
 		katana_slash[i].Y = 0;
@@ -427,7 +427,7 @@ void Player::Update() {
 					katana_angle[0] = GetRand(360);
 
 					Range base = katana_slash[0];
-					for (int i = 1; i < 5; i++)
+					for (int i = 1; i < Katana_num; i++)
 					{
 						katana_slash[i] = { base.X + GetRand(80) - 40,base.Y + GetRand(80) - 40 };
 						katana_angle[i] = GetRand(360);
@@ -1363,7 +1363,7 @@ void Player::DrawKatana()const
 			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
 
 		if (18 < Attack) {
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < Katana_num; i++)
 			{
 				DrawRotaGraph(katana_slash[i].X, katana_slash[i].Y, 1, (3.14 / 180) * katana_angle[i]
 					, WeaponEffect[slashanim], true, false, false);
@@ -1915,6 +1915,8 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 		int imgX;
 		int imgY;
 
+		int KScope = 0;  //斬撃
+
 		GetGraphSize(Weapon[3], &imgX, &imgY);
 		//上記の値を計算
 
@@ -1967,7 +1969,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 
 					RangeX = range[3].X / 2;
 					RangeY = range[3].Y / 2;
-					
+
 					Dis = (-thrust + thrust * 2 / 6 * Attack) + (imgY / 2 * size);
 					sizeY = -1 + 2 / 6 * Attack;
 
@@ -2054,28 +2056,21 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 			case true:
 				if (Attack < 15)
 				{
-					finAng = -60 + (180 / 12 * (Attack - 1));
-					if (120 < finAng)finAng = 120;
-					stX = SCREEN_WIDTH / 2;
-					stY = SCREEN_HEIGHT / 2;
-
-					Dis = thrust + Attack * 2;
+					
 				}
 				else if (Attack < 18)
 				{
-					finAng = 120;
-					stX = SCREEN_WIDTH / 2;
-					stY = SCREEN_HEIGHT / 2;
-
-					Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
+					
 				}
 				else
 				{
-					finAng = 120;
-					stX = SCREEN_WIDTH / 2;
-					stY = SCREEN_HEIGHT / 2;
+					//斬撃
+					KScope = 30;
 
 					Dis = 0;
+
+					finX = katana_slash[0].X;
+					finY = katana_slash[0].Y;
 				}
 			default:
 				break;
@@ -2083,29 +2078,21 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 			case false:
 				if (Attack < 15)
 				{
-					finAng = 60 - (180 / 12 * (Attack - 1));
-					if (finAng < -120)finAng = -120;
-
-					stX = SCREEN_WIDTH / 2;
-					stY = SCREEN_HEIGHT / 2;
-
-					Dis = thrust + Attack * 2;
+					
 				}
 				else if (Attack < 18)
 				{
-					finAng = -120;
-					stX = SCREEN_WIDTH / 2;
-					stY = SCREEN_HEIGHT / 2;
-
-					Dis = thrust - (thrust / 4 * (Attack - 15)) + (30 - 30 / 4 * (Attack - 15));
+					
 				}
 				else
 				{
-					finAng = -120;
-					stX = SCREEN_WIDTH / 2;
-					stY = SCREEN_HEIGHT / 2;
+					//斬撃
+					KScope = 30;
 
 					Dis = 0;
+
+					finX = katana_slash[0].X;
+					finY = katana_slash[0].Y;
 				}
 				break;
 			}
@@ -2113,26 +2100,26 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 
 		}
 
-		int DisX = EneX - finX;
-		int DisY = EneY - finY;
+			int DisX = EneX - finX;
+			int DisY = EneY - finY;
 
-		a = EneX;
-		b = EneY;
+			a = EneX;
+			b = EneY;
 
-		if (i == 0) {
-			c = finX;
-			d = finY;
-		}
-		if (i == 2) {
-			e = finX;
-			f = finY;
-		}
+			if (i == 0) {
+				c = finX;
+				d = finY;
+			}
+			if (i == 2) {
+				e = finX;
+				f = finY;
+			}
 
-		if (finX < EneX + EneW / 2 && finY < EneY + EneH / 2 && EneX - EneW / 2 < finX && EneY - EneH / 2 < finY)
-		{
-			return true;
+			if (finX - KScope < EneX + EneW / 2 && finY - KScope < EneY + EneH / 2 && EneX - EneW / 2 < finX + KScope && EneY - EneH / 2 < finY + KScope)
+			{
+				return true;
+			}
+
 		}
-		
-	}
-	return false;
+		return false;
 }
