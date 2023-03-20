@@ -47,7 +47,7 @@ Player::Player() {
 	Weapon[2] = LoadGraph("images/spear.png");
 	Weapon[3] = LoadGraph("images/katana.png");
 
-	LoadDivGraph("images/slashB.png", 4, 4, 1, 8, 64, WeaponEffect);
+	LoadDivGraph("images/slash.png", 4, 4, 1, 8, 80, WeaponEffect);
 
 	JoypadX = 0;
 	JoypadY = 0;
@@ -421,15 +421,15 @@ void Player::Update() {
 					Combo++;
 
 					//斬撃の座標を決める
-					if (TurnFlg)katana_slash[0] = { SCREEN_WIDTH / 2 - 250,SCREEN_HEIGHT / 2 };
-					else katana_slash[0] = { SCREEN_WIDTH / 2 + 250,SCREEN_HEIGHT / 2 };
+					if (TurnFlg)katana_slash[0] = { GetX() - 250 , GetY() };
+					else katana_slash[0] = { GetX() + 250,GetY() };
 
 					katana_angle[0] = GetRand(360);
 
 					Range base = katana_slash[0];
 					for (int i = 1; i < Katana_num; i++)
 					{
-						katana_slash[i] = { base.X + GetRand(80) - 40,base.Y + GetRand(80) - 40 };
+						katana_slash[i] = { base.X + GetRand(100) - 50,base.Y + GetRand(80) - 40 };
 						katana_angle[i] = GetRand(360);
 					}
 				}
@@ -1365,8 +1365,9 @@ void Player::DrawKatana()const
 		if (18 < Attack) {
 			for (int i = 0; i < Katana_num; i++)
 			{
-				DrawRotaGraph(katana_slash[i].X, katana_slash[i].Y, 1, (3.14 / 180) * katana_angle[i]
-					, WeaponEffect[slashanim], true, false, false);
+				DrawRotaGraph(katana_slash[i].X - GetX() + SCREEN_WIDTH / 2,
+							  katana_slash[i].Y - GetY() + SCREEN_HEIGHT / 2,
+					1, (3.14 / 180)* katana_angle[i], WeaponEffect[slashanim], true, false, false);
 			}
 		}
 		break;
@@ -2069,8 +2070,8 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 
 					Dis = 0;
 
-					finX = katana_slash[0].X;
-					finY = katana_slash[0].Y;
+					finX = katana_slash[0].X - GetX() + SCREEN_WIDTH / 2;
+					finY = katana_slash[0].Y - GetY() + SCREEN_HEIGHT / 2;
 				}
 			default:
 				break;
@@ -2091,8 +2092,8 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 
 					Dis = 0;
 
-					finX = katana_slash[0].X;
-					finY = katana_slash[0].Y;
+					finX = katana_slash[0].X - GetX() + SCREEN_WIDTH / 2;
+					finY = katana_slash[0].Y - GetY() + SCREEN_HEIGHT / 2;
 				}
 				break;
 			}
