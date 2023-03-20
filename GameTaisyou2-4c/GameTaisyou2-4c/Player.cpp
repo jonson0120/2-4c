@@ -1480,19 +1480,88 @@ void Player::KatanaAtk()
 //当たり判定：短剣
 bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
-	if (Attack && Attack < 10)
+	int WeaponX = 0;
+	int WeaponY = 0;
+	int RangeX = 0;
+	int RangeY = 0;
+	float Rad = 0;
+
+	float gap = 0;
+	float top = Height * 1.1;
+
+	EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+	EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+
+	if (Yinput == Inp_UD::UP) {
+		switch (TurnFlg)
+		{
+		case true:	//左向き時
+			if (Attack < 10) {
+				WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack);
+				WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+				RangeX = range[0].X / 2;
+				RangeY = range[0].Y / 2;
+
+				Rad = (3.14 / 180) * (-45 + ((90 / 10) * Attack));
+			}
+			else if (Attack < 20)
+			{
+				WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10));
+				WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+				RangeX = range[0].X / 2;
+				RangeY = range[0].Y / 2;
+
+				Rad = (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10)));
+
+			}
+			break;
+		case false:	//右向き時
+			if (Attack < 10)
+			{
+
+				WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack);
+				WeaponY = SCREEN_HEIGHT / 2 - Height- range[0].Y / 2;
+
+				RangeX = range[0].X / 2;
+				RangeY = range[0].Y / 2;
+
+				Rad = (3.14 / 180) * (45 - ((90 / 10) * Attack));
+			}
+			else if (Attack < 20)
+			{
+				WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10));
+				WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+				RangeX = range[0].X / 2;
+				RangeY = range[0].Y / 2;
+
+				Rad = (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10)));
+			}
+			break;
+		default:
+			break;
+		}
+
+		int DisX = EneX - WeaponX;
+		int DisY = EneY - WeaponY;
+
+		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+
+		a = EneX;
+		b = EneY;
+		c = WeaponX;
+		d = WeaponY;
+
+		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
+		{
+			return true;
+		}
+
+	}
+	else if (Attack && Attack < 10)
 	{
-		int WeaponX = 0;
-		int WeaponY = 0;
-		int RangeX = 0;
-		int RangeY = 0;
-		float Rad = 0;
-
-		float gap = 0;
-		float top = Height * 1.1;
-
-		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
-		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
 		switch (Combo)
 		{
@@ -1810,7 +1879,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 	EneX = EneX - GetX() + SCREEN_WIDTH / 2;
 	EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
-	if (Attack && !wall) {
+	if (Attack && !wall&& Atkpt==0) {
 		//上記の値を計算
 		switch (TurnFlg)
 		{
@@ -1846,6 +1915,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 			{
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
+
 				RangeX = range[2].X / 2;
 				RangeY = range[2].Y / 2;
 
@@ -1858,6 +1928,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 			{
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
+
 				RangeX = range[2].X / 2;
 				RangeY = range[2].Y / 2;
 
@@ -1872,7 +1943,107 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 		default:
 			break;
 		}
+	}
 
+	if (Attack && Atkpt == 1) {
+		if (Attack < 11)
+		{
+			finAng = 25 + (130 / 10 * (Attack - 1));
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+
+			RangeX = range[2].X / 2;
+			RangeY = range[2].Y / 2;
+
+			Dis = range[2].Y;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = 155;
+
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+
+			RangeX = range[2].X / 2;
+			RangeY = range[2].Y / 2;
+
+			Dis = range[2].Y;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+	}
+
+	if (Attack && Atkpt == 2) {
+		if (Attack < 11)
+		{
+			finAng = -25 - (130 / 10 * (Attack - 1));
+
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+
+			RangeX = range[2].X / 2;
+			RangeY = range[2].Y / 2;
+
+			Dis = range[2].Y;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = -155;
+
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+
+			RangeX = range[2].X / 2;
+			RangeY = range[2].Y / 2;
+
+			Dis = range[2].Y;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+	}
+
+	if (Attack && Atkpt == 3)
+	{
+		if (Attack < 11)
+		{
+			finAng = 115 + (130 / 10 * (Attack - 1));
+
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+
+			RangeX = range[2].X / 2;
+			RangeY = range[2].Y / 2;
+
+			Dis = range[2].Y;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finAng = 245;
+
+			stX = SCREEN_WIDTH / 2;
+			stY = SCREEN_HEIGHT / 2;
+
+			RangeX = range[2].X / 2;
+			RangeY = range[2].Y / 2;
+
+			Dis = range[2].Y;
+
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+	}
+	if (Attack) {
 		int DisX = EneX - finX;
 		int DisY = EneY - finY;
 
