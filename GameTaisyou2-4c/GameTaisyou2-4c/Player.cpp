@@ -2087,7 +2087,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 		int imgX;
 		int imgY;
 
-		int KScope = 0;  //斬撃
+		int KScope = 0;  //斬撃範囲
 
 		GetGraphSize(Weapon[3], &imgX, &imgY);
 		//上記の値を計算
@@ -2236,7 +2236,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				}
 				else
 				{
-					//斬撃
+					//斬撃範囲
 					KScope = 30;
 
 					Dis = 0;
@@ -2258,7 +2258,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				}
 				else
 				{
-					//斬撃
+					//斬撃範囲
 					KScope = 30;
 
 					Dis = 0;
