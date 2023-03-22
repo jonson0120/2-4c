@@ -2237,7 +2237,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				else
 				{
 					//斬撃範囲
-					KScope = 30;
+					KScope = 40;
 
 					Dis = 0;
 
@@ -2259,7 +2259,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				else
 				{
 					//斬撃範囲
-					KScope = 30;
+					KScope = 40;
 
 					Dis = 0;
 
@@ -2282,6 +2282,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				c = finX;
 				d = finY;
 			}
+
 			if (i == 2) {
 				e = finX;
 				f = finY;
