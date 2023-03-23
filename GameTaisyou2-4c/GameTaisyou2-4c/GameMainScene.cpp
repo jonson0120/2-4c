@@ -7,12 +7,20 @@
 
 GameMainScene::GameMainScene()
 {
+	enemy = new Enemy * [10];
+
+	for (int i = 0; i < 10; i++)
+	{
+		enemy[i] = nullptr;
+	}
+	enemy[0] = new Enemy();
+
 	MapExitX = 0;
 	MapExitY = 0;
 	MakeMap();
 	player.SetMapData(MapData);
-	enemy.SetMapData(MapData);
-	enemy.makeEnemy();
+	enemy[0]->SetMapData(MapData);
+	enemy[0]->makeEnemy();
 	enemy2.SetMapData(MapData);
 
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
@@ -35,7 +43,10 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	if (MoveStop_flg == true)player.Update();
-	enemy.Update(&player);
+	for (int i = 0; i < 10; i++)
+	{
+		if(enemy[i]!=nullptr)enemy[i]->Update(&player);
+	}
 	//enemy2.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
@@ -43,22 +54,44 @@ AbstractScene* GameMainScene::Update()
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
-		if (player.HitDagger(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)if (player.HitDagger(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
+		}
 		break;
 	case weapons::mace:
-		if (player.HitMace(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)if (player.HitMace(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
+		}
 		break;
 	case weapons::spear:
-		if (player.HitSpear(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)if (player.HitSpear(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
+		}
 		break;
 	case weapons::katana:
-		if (player.HitKatana(enemy.E_GetX(), enemy.E_GetY(), enemy.GetWidth(), enemy.GetHeight()))hit++;
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)if (player.HitKatana(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
+		}
 		break;
 	default:
 		break;
 	}
 
-	
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemy[i] != nullptr) 
+		{
+			if (enemy[i]->CheckHp())enemy[i] = nullptr;
+		}
+	}
 
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
 	ExitCheck();
@@ -83,7 +116,10 @@ void GameMainScene::Draw() const
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
 	player.Draw();
-	enemy.Draw(player.GetX(),player.GetY());
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
+	}
 	enemy2.Draw(player.GetX(), player.GetY());
 
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
@@ -393,7 +429,14 @@ void GameMainScene::NextMap() {
 		player.Spawn();
 		MakeMap();
 		player.SetMapData(MapData);
-		enemy.SetMapData(MapData);
+
+		enemy[0] = nullptr;
+		enemy[0] = new Enemy();
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
+		}
+
 		enemy2.SetMapData(MapData);
 		MakeMap_flg = false;
 	}

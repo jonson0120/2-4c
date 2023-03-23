@@ -23,7 +23,7 @@ Enemy::Enemy()
 
 	Enemy_Damage = 1;
 	Player_Damage = 1;
-	Enemy_Hp = 2;
+	Enemy_Hp = 10;
 	Player_Hp = 10;
 
 	MakeEnemy = FALSE;
@@ -31,6 +31,8 @@ Enemy::Enemy()
 	direction = 0;
 
 	E_AttackFlg = FALSE;
+
+	HitCool = 0;
 
 	speed = 0;
 	fall = 12;
@@ -54,12 +56,21 @@ void Enemy::Update(Player* player)
 	}
 	eney += fall;
 
+	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
+		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
+	{
+		eney++;
+		fall = 0;
+		jump = 0;
+	}
+
 	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
 	{
 		eney--;
 		jump = 0;
 	}
+
 
 	//プレイヤー認識範囲
 	if (enex + BLOCK_SIZE * 1.5 >= player->GetX() && enex - BLOCK_SIZE * 1.5 <= player->GetX() &&
@@ -107,6 +118,8 @@ void Enemy::Update(Player* player)
 	//{
 	//	player->HitEnemy(float damage);
 	//}
+
+	if (HitCool)HitCool--;
 }
 
 void Enemy::makeEnemy()
@@ -127,7 +140,7 @@ void Enemy::makeEnemy()
 
 void Enemy::Draw(int x,int y) const
 {
-	if (MakeEnemy == TRUE)
+	if (MakeEnemy == TRUE && HitCool % 4 < 2)
 	{
 		//敵の表示
 		DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[0], TRUE);
@@ -158,4 +171,19 @@ void Enemy::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 	}
 
 	makeEnemy();
+}
+
+//体力確認
+bool Enemy::CheckHp() {
+	if (Enemy_Hp <= 0)return true;
+
+	return false;
+}
+
+//プレイヤーからの攻撃
+void Enemy::HitPlayer(float damage) { 
+	if (!HitCool) {
+		Enemy_Hp -= damage;
+		HitCool = 30;
+	}
 }
