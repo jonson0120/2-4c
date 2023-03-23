@@ -36,7 +36,7 @@ AbstractScene* GameMainScene::Update()
 {
 	if (MoveStop_flg == true)player.Update();
 	enemy.Update(&player);
-	enemy2.Update(&player);
+	//enemy2.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 

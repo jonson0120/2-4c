@@ -1480,157 +1480,159 @@ void Player::KatanaAtk()
 //当たり判定：短剣
 bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 
-	int WeaponX = 0;
-	int WeaponY = 0;
-	int RangeX = 0;
-	int RangeY = 0;
-	float Rad = 0;
+	if (stat.Power) {
+		int WeaponX = 0;
+		int WeaponY = 0;
+		int RangeX = 0;
+		int RangeY = 0;
+		float Rad = 0;
 
-	float gap = 0;
-	float top = Height * 1.1;
+		float gap = 0;
+		float top = Height * 1.1;
 
-	EneX = EneX - GetX() + SCREEN_WIDTH / 2;
-	EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
+		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
+		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
-	if (Yinput == Inp_UD::UP) {
-		switch (TurnFlg)
-		{
-		case true:	//左向き時
-			if (Attack < 10) {
-				WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack);
-				WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-				RangeX = range[0].X / 2;
-				RangeY = range[0].Y / 2;
-
-				Rad = (3.14 / 180) * (-45 + ((90 / 10) * Attack));
-			}
-			else if (Attack < 20)
-			{
-				WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10));
-				WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-				RangeX = range[0].X / 2;
-				RangeY = range[0].Y / 2;
-
-				Rad = (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10)));
-
-			}
-			break;
-		case false:	//右向き時
-			if (Attack < 10)
-			{
-
-				WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack);
-				WeaponY = SCREEN_HEIGHT / 2 - Height- range[0].Y / 2;
-
-				RangeX = range[0].X / 2;
-				RangeY = range[0].Y / 2;
-
-				Rad = (3.14 / 180) * (45 - ((90 / 10) * Attack));
-			}
-			else if (Attack < 20)
-			{
-				WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10));
-				WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-				RangeX = range[0].X / 2;
-				RangeY = range[0].Y / 2;
-
-				Rad = (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10)));
-			}
-			break;
-		default:
-			break;
-		}
-
-		int DisX = EneX - WeaponX;
-		int DisY = EneY - WeaponY;
-
-		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
-
-		a = EneX;
-		b = EneY;
-		c = WeaponX;
-		d = WeaponY;
-
-		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
-		{
-			return true;
-		}
-
-	}
-	else if (Attack && Attack < 10)
-	{
-
-		switch (Combo)
-		{
-		case 1:
+		if (Yinput == Inp_UD::UP) {
 			switch (TurnFlg)
 			{
-			case true:
+			case true:	//左向き時
+				if (Attack < 10) {
+					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack);
+					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+
+					Rad = (3.14 / 180) * (-45 + ((90 / 10) * Attack));
+				}
+				else if (Attack < 20)
+				{
+					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10));
+					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+
+					Rad = (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10)));
+
+				}
+				break;
+			case false:	//右向き時
+				if (Attack < 10)
+				{
+
+					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack);
+					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+
+					Rad = (3.14 / 180) * (45 - ((90 / 10) * Attack));
+				}
+				else if (Attack < 20)
+				{
+					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10));
+					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
+
+					RangeX = range[0].X / 2;
+					RangeY = range[0].Y / 2;
+
+					Rad = (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10)));
+				}
+				break;
+			default:
+				break;
+			}
+
+			int DisX = EneX - WeaponX;
+			int DisY = EneY - WeaponY;
+
+			int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+
+			a = EneX;
+			b = EneY;
+			c = WeaponX;
+			d = WeaponY;
+
+			if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
+			{
+				return true;
+			}
+
+		}
+		else if (Attack && Attack < 10)
+		{
+
+			switch (Combo)
+			{
+			case 1:
+				switch (TurnFlg)
+				{
+				case true:
 					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
 					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
 					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack) + gap);
-				break;
+					break;
 
-			case false:
-			
+				case false:
+
 					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
 					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
 					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack) + gap);
+					break;
+
+				default:
+					break;
+				}
 				break;
 
-			default:
-				break;
-			}
-			break;
-
-		case 2:
-			switch (TurnFlg)
-			{
-			case true:
+			case 2:
+				switch (TurnFlg)
+				{
+				case true:
 					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
 					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
 					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack) + gap);
-				break;
+					break;
 
-			case false:
+				case false:
 					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
 					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
 					RangeX = range[0].X / 2;
 					RangeY = range[0].Y / 2;
 					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack) + gap);
+					break;
+
+				default:
+					break;
+				}
 				break;
 
 			default:
 				break;
 			}
-			break;
 
-		default:
-			break;
-		}
-		
-		int DisX = EneX - WeaponX;
-		int DisY = EneY - WeaponY;
+			int DisX = EneX - WeaponX;
+			int DisY = EneY - WeaponY;
 
-		int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+			int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
 
-		a = EneX;
-		b = EneY;
-		c = WeaponX;
-		d = WeaponY;
+			a = EneX;
+			b = EneY;
+			c = WeaponX;
+			d = WeaponY;
 
-		if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
-		{
-			return true;
+			if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
+			{
+				return true;
+			}
 		}
 	}
 

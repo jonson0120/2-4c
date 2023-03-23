@@ -111,11 +111,12 @@ void Enemy::Update(Player* player)
 
 void Enemy::makeEnemy()
 {
+	MakeEnemy = FALSE;
 	while (MakeEnemy == FALSE)
 	{
-		int i = GetRand(13) + 1;
-		int j = GetRand(10) + 1;
-		if (MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+		int i = GetRand(11) + 2;
+		int j = GetRand(9) + 1;
+		if (MapData[j][i] == 1 && MapData[j + 1][i] == 0)
 		{
 			enex = i * BLOCK_SIZE + BLOCK_SIZE / 2;
 			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
