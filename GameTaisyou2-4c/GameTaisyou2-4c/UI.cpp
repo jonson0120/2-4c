@@ -1,16 +1,18 @@
 #include"UI.h"
 #include"DxLib.h"
 #include"PadInput.h"
-
+#include"Player.h"
 
 
 UI::UI()
 {
+	Weapon = 0;
 
 	DaggerImage = LoadGraph("images/Dagger.png");
 	MaceImage = LoadGraph("images/mace.png");
-
-	Equip = weapons::dagger;
+	SpearImage=LoadGraph("images/spear.png");
+	KatanaImage=LoadGraph("images/katana.png");
+	
 
 	PotionImage1 = LoadGraph("images/potion2.png");
 	PotionImage2 = LoadGraph("images/potion2.png");
@@ -31,7 +33,8 @@ UI::UI()
 
 void UI::Update()
 {
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
+	player.Update();
+	/*if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
 	{
 		switch (Equip)
 		{
@@ -43,6 +46,24 @@ void UI::Update()
 			Equip = weapons::dagger;
 			break;
 		}
+	}*/
+
+	switch (player.GetEquip())
+	{
+	case weapons::dagger:
+		Weapon = 0;
+		break;
+	case weapons::mace:
+		Weapon = 1;
+		break;
+	case weapons::spear:
+		Weapon = 2;
+		break;
+	case weapons::katana:
+		Weapon = 3;
+		break;
+	default:
+		break;
 	}
 
 	if (0 < PotionCount)
@@ -125,15 +146,22 @@ void UI::Draw() const
 	}
 	
 	//•Ší
-	DrawCircle(50, 50, 50, GetColor(255, 255, 255), TRUE);
-	switch (Equip)
+	DrawCircle(50, 50, 50, GetColor(35, 59, 108), TRUE);
+	switch (Weapon)
 	{
-	case weapons::dagger:
+	case 0:
 		DrawRotaGraph(50, 50, 0.5, 0, DaggerImage, TRUE);
 		break;
-	case weapons::mace:
+	case 1:
 		DrawRotaGraph(50, 50, 0.2, 0, MaceImage, TRUE);
 		break;
+	case 2:
+		DrawRotaGraph(50, 50, 0.2, 0, SpearImage, TRUE);
+		break;
+	case 3:
+		DrawRotaGraph(50, 50, 0.25, 0, KatanaImage, TRUE);
+		break;
+
 	}
 
 	//HPÔ

@@ -14,6 +14,8 @@ GameMainScene::GameMainScene()
 	enemy.SetMapData(MapData);
 	enemy2.SetMapData(MapData);
 
+	
+
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
@@ -38,6 +40,9 @@ AbstractScene* GameMainScene::Update()
 	enemy2.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
+
+	ui.Update();
+	treasurebox.Update();
 
 	switch (player.GetEquip())
 	{
@@ -81,6 +86,7 @@ void GameMainScene::Draw() const
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
+	treasurebox.Draw();
 	player.Draw();
 	enemy.Draw(player.GetX(),player.GetY());
 	enemy2.Draw(player.GetX(), player.GetY());

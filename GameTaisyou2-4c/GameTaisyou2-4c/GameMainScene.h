@@ -6,6 +6,8 @@
 #include"Enemy.h"
 #include "Enemy2.h"
 #include"UI.h"
+#include"TreasureBox.h"
+
 
 class GameMainScene : public AbstractScene
 {
@@ -21,6 +23,7 @@ private:
 	Enemy enemy;
 	Enemy2 enemy2;
 	UI ui;
+	TreasureBox treasurebox;
 
 	int CameraX;
 	int CameraY;

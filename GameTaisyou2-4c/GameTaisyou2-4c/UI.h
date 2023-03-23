@@ -1,12 +1,15 @@
 #pragma once
 #include "Player.h"
 #include"PadInput.h"
+#include"Player.h"
 
 
-
-class UI : public Player
+class UI
 {
 private:
+
+	Player player;
+
 	int MaxHP;
 	float PlayerHP;
 
@@ -14,10 +17,12 @@ private:
 
 	int Damage;
 
-	enum weapons Equip;
+	int Weapon;
 
 	int DaggerImage;
 	int MaceImage;
+	int SpearImage;
+	int KatanaImage;
 	 
 
 	int PotionImage1;
