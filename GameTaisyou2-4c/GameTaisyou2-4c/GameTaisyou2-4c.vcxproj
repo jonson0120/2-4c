@@ -161,6 +161,7 @@
     <ClCompile Include="potion.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="KeyManager.cpp" />
+    <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +175,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="potion.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

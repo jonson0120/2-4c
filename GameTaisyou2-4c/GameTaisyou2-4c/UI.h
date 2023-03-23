@@ -1,29 +1,40 @@
 #pragma once
 #include "Player.h"
 #include"PadInput.h"
+#include"Player.h"
 
-class UI : public Player
+
+class UI
 {
 private:
+
+	Player player;
+
 	int MaxHP;
 	float PlayerHP;
 
-	bool flag;
+	bool potionflag;
 
 	int Damage;
+
+	int Weapon;
+
+	int DaggerImage;
+	int MaceImage;
+	int SpearImage;
+	int KatanaImage;
+	 
 
 	int PotionImage1;
 	int PotionImage2;
 	int PotionImage3;
 
-	int DaggerImage;
-
+	
 	int PotionCount;
 public:
 	
 	UI();
 	void Update();
 	void Draw()const;
-
 };
 
