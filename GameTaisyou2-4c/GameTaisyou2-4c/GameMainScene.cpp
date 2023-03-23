@@ -432,6 +432,8 @@ void GameMainScene::NextMap() {
 
 		enemy[0] = nullptr;
 		enemy[0] = new Enemy();
+		enemy[1] = nullptr;
+		enemy[1] = new Enemy();
 		for (int i = 0; i < 10; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
