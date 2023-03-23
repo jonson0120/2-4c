@@ -1642,6 +1642,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 
 	if (stat.Power)
 	{
+
 		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
 		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
@@ -1865,6 +1866,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 //当たり判定：槍
 bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 
+
 	float size = 0.2;
 
 	double stX = 0, stY = 0;		//振りかぶる前の座標
@@ -2071,6 +2073,8 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 	EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
 	for (int i = 0; i < 3; i++) {
+		
+
 		float size = 0.2;
 		float sizeY = 1;
 
@@ -2259,6 +2263,7 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 				else
 				{
 					//斬撃範囲
+
 					KScope = 40;
 
 					Dis = 0;
