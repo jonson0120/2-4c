@@ -132,6 +132,9 @@ public:
 	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
 
+	//攻撃力取得
+	float GetPower() { return stat.Power; }
+
 	//敵との当たり判定
 	void HitEnemy(float damage) { stat.Hp -= damage; }
 };
