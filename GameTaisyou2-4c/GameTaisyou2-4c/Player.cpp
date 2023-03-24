@@ -59,6 +59,9 @@ Player::Player() {
 	Enemy_Damage = 1;
 	//--------------------
 	Atkpt = 0;
+	Search = false;
+	Near_Enemy = { -1,-1 };
+
 	spear_angle = 0;
 	for (int i = 0; i < Katana_num; i++)
 	{
@@ -419,21 +422,7 @@ void Player::Update() {
 				{
 					Attack = 1;
 					Combo++;
-
-					//斬撃の座標を決める
-					if (TurnFlg)katana_slash[0] = { GetX() - 250 , GetY() };
-					else katana_slash[0] = { GetX() + 250,GetY() };
-
-					katana_angle[0] = GetRand(360);
-
-					Range base = katana_slash[0];
-					for (int i = 1; i < Katana_num; i++)
-					{
-						katana_slash[i] = { base.X + GetRand(100) - 50,base.Y + GetRand(80) - 40 };
-						katana_angle[i] = GetRand(360);
-					}
 				}
-
 			}
 			break;
 
@@ -1475,6 +1464,29 @@ void Player::KatanaAtk()
 		Combo = 0;
 	}
 	else stat.Power = 2;
+
+	if (3 <= Combo && Attack < 18)
+	{
+		//斬撃の座標を決める
+		if (0 <= Near_Enemy.X && NearEneDis <= 250) katana_slash[0] = Near_Enemy;
+
+		else
+		{
+			if (TurnFlg)katana_slash[0] = { GetX() - 250 , GetY() };
+			else katana_slash[0] = { GetX() + 250,GetY() };
+		}
+
+		katana_angle[0] = GetRand(360);
+
+		Range base = katana_slash[0];
+		for (int i = 1; i < Katana_num; i++)
+		{
+			katana_slash[i] = { base.X + GetRand(100) - 50,base.Y + GetRand(80) - 40 };
+			katana_angle[i] = GetRand(360);
+		}
+
+		Search = true;
+	}
 }
 
 //当たり判定：短剣
@@ -2302,4 +2314,12 @@ bool Player::HitKatana(int EneX, int EneY, int EneW, int EneH) {
 
 		}
 		return false;
+}
+
+//近くの敵の座標をセット
+void Player::SetNear(int X, int Y, int Dis)
+{
+	Search = false;
+	Near_Enemy = { X,Y };
+	NearEneDis = Dis;
 }

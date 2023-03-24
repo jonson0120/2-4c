@@ -82,6 +82,9 @@ private:
 
 	//一部の武器種が使用する変数-----------
 	int Atkpt;				//汎用・攻撃パターン
+	bool Search;			//索敵が必要な時にTRUE
+	Range Near_Enemy;		//最も近くの敵座標
+	int NearEneDis;			//最も近くの敵までの距離
 
 	float spear_angle;		//槍・攻撃方向
 
@@ -134,6 +137,10 @@ public:
 
 	//攻撃力取得
 	float GetPower() { return stat.Power; }
+
+	//索敵
+	bool WaitSearch() { return Search; }
+	void SetNear(int X, int Y, int Dis);
 
 	//敵との当たり判定
 	void HitEnemy(float damage) { stat.Hp -= damage; }
