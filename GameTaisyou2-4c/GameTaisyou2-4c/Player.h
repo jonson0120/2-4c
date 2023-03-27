@@ -45,6 +45,7 @@ private:
 	int Width, Height;	//プレイヤー高さ
 
 	Range Arm_L, Arm_R;
+	int ArmAngle_L, ArmAngle_R;
 
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
