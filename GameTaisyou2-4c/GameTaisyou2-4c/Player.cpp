@@ -420,7 +420,7 @@ void Player::Update() {
 					Attack = 1;
 					Combo++;
 				}
-				else if (Combo == 2 && 12 < Attack)
+				else if (Combo == 2 && 12 < Attack && !wall)
 				{
 					Attack = 1;
 					Combo++;
@@ -524,7 +524,7 @@ void Player::Draw() const {
 	}
 	
 
-	//攻撃描画
+	//攻撃描画：プレイヤー後方
 	if (Attack) 
 	{
 		switch (Equip)
@@ -538,11 +538,11 @@ void Player::Draw() const {
 			break;
 
 		case weapons::spear:	//槍
-			DrawSpear();
+			if (!TurnFlg)DrawSpear();
 			break;
 
 		case weapons::katana:	//刀
-			DrawKatana();
+			if (!TurnFlg)DrawKatana();
 			break;
 
 		default:
@@ -550,6 +550,7 @@ void Player::Draw() const {
 		}
 	}
 
+	//腕：プレイヤー後方
 	if (TurnFlg)
 	{
 		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
@@ -559,6 +560,10 @@ void Player::Draw() const {
 		DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
 	}
 
+	if (Attack && Equip == weapons::katana)
+		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+
+	//プレイヤー本体
 	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages, TRUE, TurnFlg);
 
 	if (MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
@@ -570,13 +575,38 @@ void Player::Draw() const {
 		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[Walk / 10], TRUE, TurnFlg);
 	}
 
+	//腕：プレイヤー前面
 	if (TurnFlg)
 	{
 		DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
 	}
 	else
 	{
+		if (!Attack || Equip != weapons::katana)
 		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+	}
+
+	//攻撃描画：プレイヤー前方
+	if (Attack)
+	{
+		switch (Equip)
+		{
+		case weapons::spear:	//槍
+			if (TurnFlg)DrawSpear();
+			break;
+
+		case weapons::katana:	//刀
+			if (TurnFlg)
+			{
+				DrawKatana();
+				DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180)* ArmAngle_R, ArmImg, true, false);
+				DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180)* ArmAngle_L, ArmImg, true, true);
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	DrawCircle(a, b, 3.0f, 0xff0000, true);
@@ -979,9 +1009,9 @@ void Player::DrawSpear()const
 	double stX = 0, stY = 0;		//振りかぶる前の座標
 	double finX = 0, finY = 0;		//振りかぶった後の座標
 	double Dis = 0;			//体の中心からの距離
+	int thrust = 20;	//攻撃距離
 
 	double finAng = spear_angle;	//攻撃する角度
-	int thrust = 20;	//攻撃距離
 
 	//上記の値を計算
 
@@ -999,22 +1029,20 @@ void Player::DrawSpear()const
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-
 			}
 			else
 			{
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
 				Dis = thrust * (8 - (Attack - 8));
-				if (Dis < 0)Dis = 0;
+				if (Dis < thrust)Dis = thrust;
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
-
 			}
 			break;
 		case false:
-			if (Attack < 7)
+			if (Attack < 8)
 			{
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
@@ -1028,7 +1056,7 @@ void Player::DrawSpear()const
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
 				Dis = thrust * (8 - (Attack - 8));
-				if (Dis < 0)Dis = 0;
+				if (Dis < thrust)Dis = thrust;
 
 				finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
 				finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
@@ -1221,7 +1249,7 @@ void Player::DrawKatana()const
 			TurnX = false;
 			if (Attack <= 9)
 			{
-				finAng = -140 + (80 / 9 * (Attack - 1));
+				finAng = -140 + (80 / 8 * (Attack - 1));
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
 				Dis = thrust;
@@ -1246,7 +1274,7 @@ void Player::DrawKatana()const
 			TurnX = true;
 			if (Attack <= 9)
 			{
-				finAng = 140 - (80 / 9 * (Attack - 1));
+				finAng = 140 - (80 / 8 * (Attack - 1));
 				stX = SCREEN_WIDTH / 2;
 				stY = SCREEN_HEIGHT / 2;
 				Dis = thrust;
@@ -1594,8 +1622,6 @@ void Player::MaceAtk()
 	int Dis = Width;
 
 	if (stat.Power == 0) {
-
-
 		switch (TurnFlg)
 		{
 		case true:
@@ -1777,19 +1803,148 @@ void Player::MaceAtk()
 //攻撃：槍
 void Player::SpearAtk()
 {
-	Attack += 0.2;
-	if (20 < Attack++)
+	Attack += 0.8;
+	if (20 < Attack)
 	{
 		Attack = 0;
 		stat.Power = 0;
+		return;
 	}
 	else stat.Power = 2;
+
+	//	腕のアニメーション
+	double thrust = 20;	//攻撃距離
+	double Dis = Width; 
+	switch (Atkpt)
+	{
+	case 0:
+
+		ArmAngle_R = spear_angle;
+		ArmAngle_L = spear_angle;
+
+		switch (TurnFlg)
+		{
+		case true:
+			if (Attack < 8)
+			{
+				Dis = thrust * (Attack - 0.5);
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+
+				Arm_L = { (int)(SCREEN_WIDTH / 2 + (Dis - thrust) *cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + (Dis - thrust) * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			else
+			{
+				Dis = thrust * (8 - (Attack - 7.5));
+				if (Dis < thrust / 2)Dis = thrust / 2;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+
+				Arm_L = { (int)(SCREEN_WIDTH / 2 + (Dis - thrust) * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + (Dis - thrust) * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			break;
+		case false:
+			if (Attack < 7)
+			{
+				Dis = thrust * (Attack - 0.5);
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+
+				Arm_L = { (int)(SCREEN_WIDTH / 2 + (Dis - thrust) * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + (Dis - thrust) * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			else
+			{
+				Dis = thrust * (8 - (Attack - 7.5));
+				if (Dis < thrust / 2)Dis = thrust / 2;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+
+				Arm_L = { (int)(SCREEN_WIDTH / 2 + (Dis - thrust) * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + (Dis - thrust) * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 1:
+
+		if (Attack < 11)
+		{
+			ArmAngle_R = 25 + (130 / 10 * (Attack - 1));
+			Dis = Width * 1.5;
+
+			Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+					  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+		}
+		else
+		{
+			ArmAngle_R = 155;
+			Dis = Width * 1.5;
+
+			Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+					  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+		}
+		break;
+
+	case 2:
+
+		if (Attack < 11)
+		{
+			ArmAngle_R = -25 - (130 / 10 * (Attack - 1));
+			Dis = Width * 1.5;
+
+			Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+					  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+		}
+		else
+		{
+			ArmAngle_R = -155;
+			Dis = Width * 1.5;
+
+			Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+					  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+		}
+		break;
+
+	case 3:
+
+		if (Attack < 11)
+		{
+			ArmAngle_R = 115 + (130 / 10 * (Attack - 1));
+			Dis = Width * 1.5;
+
+			Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+					  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+		}
+		else
+		{
+			ArmAngle_R = 245;
+			Dis = Width * 1.5;
+
+			Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+					  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 //攻撃：刀
 void Player::KatanaAtk()
 {
-	Attack += 1;
+	Attack += 0.8;
 	if (33 < Attack)
 	{
 		Attack = 0;
@@ -1819,6 +1974,186 @@ void Player::KatanaAtk()
 		}
 
 		Search = true;
+	}
+
+	//腕アニメーション
+	int Dis = 0;
+	int thrust = 85;	//攻撃距離
+
+	if (Combo == 1) {
+		switch (TurnFlg)
+		{
+		case true:
+
+			if (Attack < 6)
+			{
+				ArmAngle_R = -80;
+				Dis = -thrust + thrust * 1.6 / 6 * Attack;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			else
+			{
+				ArmAngle_R = -80;
+				Dis = thrust * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			break;
+		case false:
+
+			if (Attack < 6)
+			{
+				ArmAngle_R = 80;
+				Dis = -thrust + thrust * 1.6 / 6 * Attack;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			else
+			{
+				ArmAngle_R = 80;
+				Dis = thrust * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (Combo == 2) {
+
+		switch (TurnFlg)
+		{
+		case true:
+
+			if (Attack <= 9)
+			{
+				ArmAngle_R = -140 + (80 / 8 * (Attack - 1));
+				Dis = thrust * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			else
+			{
+				ArmAngle_R = -60;
+				Dis = thrust * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			break;
+
+		case false:
+
+			if (Attack <= 9)
+			{
+				ArmAngle_R = 140 - (80 / 8 * (Attack - 1));
+				Dis = thrust * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			else
+			{
+				ArmAngle_R = 60;
+				Dis = thrust * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (ArmAngle_R - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (ArmAngle_R - 90))) };
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (Combo == 3) {
+		thrust *= 0.6;
+
+		switch (TurnFlg)
+		{
+		case true:
+
+			if (Attack < 15)
+			{
+				ArmAngle_R = -60 + (180 / 13 * (Attack - 1));
+				Dis = thrust + Attack * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (-60 - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (-60 - 90))) };
+			}
+			else if (Attack < 18)
+			{
+				ArmAngle_R = 120;
+				Dis = thrust - (thrust / 4 * (Attack - 15)) + (9 - 9 / 4 * (Attack - 15));
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (-60 - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (-60 - 90))) };
+			}
+			else
+			{
+				ArmAngle_R = 120;
+				Dis = 0;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (-60 - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (-60 - 90))) };
+			}
+			break;
+
+		case false:
+
+			if (Attack < 15)
+			{
+				ArmAngle_R = 60 - (180 / 13 * (Attack - 1));
+				Dis = thrust + Attack * 0.6;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (60 - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (60 - 90))) };
+			}
+			else if (Attack < 18)
+			{
+				ArmAngle_R = -120;
+				Dis = thrust - (thrust / 4 * (Attack - 15)) + (9 - 9 / 4 * (Attack - 15));
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (60 - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (60 - 90))) };
+			}
+			else
+			{
+				ArmAngle_R = -120;
+				Dis = 0;
+
+				Arm_R = { (int)(SCREEN_WIDTH / 2 + Dis * cos((3.14 / 180) * (60 - 90))),
+						  (int)(SCREEN_HEIGHT / 2 + Dis * sin((3.14 / 180) * (60 - 90))) };
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (!wall)
+	{
+		if (TurnFlg)
+		{
+			Arm_L = { SCREEN_WIDTH / 2 + 15, SCREEN_HEIGHT / 2 + 5 };
+			ArmAngle_L = 25;
+		}
+		else
+		{
+			Arm_L = { SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT / 2 + 5 };
+			ArmAngle_L = -25;
+		}
 	}
 }
 
