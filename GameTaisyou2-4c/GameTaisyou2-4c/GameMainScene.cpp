@@ -23,6 +23,9 @@ GameMainScene::GameMainScene()
 	enemy[0]->makeEnemy();
 	enemy2.SetMapData(MapData);
 
+	//treasurebox.MakeBox();
+	treasurebox.SetMapData(MapData);
+
 	
 
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
@@ -45,6 +48,7 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 	if (MoveStop_flg == true)player.Update();
+	
 	for (int i = 0; i < 10; i++)
 	{
 		if(enemy[i]!=nullptr)enemy[i]->Update(&player);
@@ -54,7 +58,7 @@ AbstractScene* GameMainScene::Update()
 	CameraY = player.GetY();
 
 	ui.Update();
-	treasurebox.Update();
+	treasurebox.Update(&player);
 
 	switch (player.GetEquip())
 	{
@@ -120,14 +124,14 @@ void GameMainScene::Draw() const
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
-	treasurebox.Draw();
+	
 	player.Draw();
 	for (int i = 0; i < 10; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 	enemy2.Draw(player.GetX(), player.GetY());
-
+	treasurebox.Draw(player.GetX(), player.GetY());
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
 	DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
@@ -444,6 +448,7 @@ void GameMainScene::NextMap() {
 		}
 
 		enemy2.SetMapData(MapData);
+		treasurebox.SetMapData(MapData);
 		MakeMap_flg = false;
 	}
 }
