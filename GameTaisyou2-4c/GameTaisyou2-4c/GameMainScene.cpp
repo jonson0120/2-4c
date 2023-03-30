@@ -3,6 +3,7 @@
 #include"KeyManager.h"
 #include"AbstractScene.h"
 #include"UI.h"
+#include<math.h>
 #include<stdlib.h>
 
 GameMainScene::GameMainScene()
@@ -22,9 +23,6 @@ GameMainScene::GameMainScene()
 	enemy[0]->SetMapData(MapData);
 	enemy[0]->makeEnemy();
 	enemy2.SetMapData(MapData);
-
-	//treasurebox.MakeBox();
-	treasurebox.SetMapData(MapData);
 
 	
 
@@ -47,8 +45,12 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
-	if (MoveStop_flg == true)player.Update();
-	
+	if (MoveStop_flg == true)
+	{
+		if (player.WaitSearch())SearchEnemy();
+		player.Update();
+	}
+
 	for (int i = 0; i < 10; i++)
 	{
 		if(enemy[i]!=nullptr)enemy[i]->Update(&player);
@@ -102,7 +104,13 @@ AbstractScene* GameMainScene::Update()
 		}
 	}
 
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemy[i] != nullptr)break;
+		if (i == 9)MapData[MapExitX][MapExitY] = 3;
+	}
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
+
 	ExitCheck();
 	if (Exit_flg == true) NextMap();
 	x= MapExitY * 160 + 80;
@@ -124,14 +132,14 @@ void GameMainScene::Draw() const
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
-	
+	treasurebox.Draw(player.GetX(),player.GetY());
 	player.Draw();
 	for (int i = 0; i < 10; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 	enemy2.Draw(player.GetX(), player.GetY());
-	treasurebox.Draw(player.GetX(), player.GetY());
+
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
 	DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
@@ -442,17 +450,56 @@ void GameMainScene::NextMap() {
 
 		enemy[0] = nullptr;
 		enemy[0] = new Enemy();
+		enemy[1] = nullptr;
+		enemy[1] = new Enemy();
 		for (int i = 0; i < 10; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
 		}
 
 		enemy2.SetMapData(MapData);
-		treasurebox.SetMapData(MapData);
 		MakeMap_flg = false;
 	}
 }
 
 void GameMainScene::ExitCheck() {
-	if (MapExitY * 160 + 100>player.GetX()&& MapExitY * 160 + 60<player.GetX()&& player.GetY() == MapExitX * 160 + 131) Exit_flg = true;
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)break;
+			if (i == 9)Exit_flg = true;
+		}
+	}
+}
+
+void GameMainScene::SearchEnemy() 
+{
+	//近くの敵のナンバーと距離
+	int NearEnemy = -1;
+	int NearDistance = -1;
+
+	//プレイヤーと敵の座標
+	int PlayerX = player.GetX();
+	int PlayerY = player.GetY();
+	int EnemyX = 0, EnemyY = 0;
+
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemy[i] != nullptr) 
+		{
+			EnemyX = enemy[i]->E_GetX();
+			EnemyY = enemy[i]->E_GetY();
+
+			int Dis = sqrt(pow(PlayerX - EnemyX, 2) + pow(PlayerY - EnemyY, 2));
+
+			if (NearDistance < 0 || Dis < NearDistance)
+			{
+				NearEnemy = i;
+				NearDistance = Dis;
+			}
+		}
+	}
+
+	if (0 <= NearEnemy) player.SetNear(enemy[NearEnemy]->E_GetX(), enemy[NearEnemy]->E_GetY(),NearDistance);
+	else player.SetNear(-1, -1, -1);
 }
