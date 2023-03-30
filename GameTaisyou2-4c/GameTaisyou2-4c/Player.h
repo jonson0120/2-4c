@@ -33,8 +33,8 @@ struct Stat
 class Player
 {
 private:
-	int image;	//画像：上半身
-	int image_U[5];	//画像：下半身
+	int PImages[5];	//画像：上半身
+	int image_U[7];	//画像：下半身
 	int ArmImg;
 
 	int Walk;	//歩行アニメーション管理
@@ -60,7 +60,6 @@ private:
 
 	float Attack;	
 
-	int PImages;
 	bool TurnFlg;
 	bool FalseFlg;
 	
