@@ -3,7 +3,6 @@
 #include"KeyManager.h"
 #include"AbstractScene.h"
 #include"UI.h"
-#include<math.h>
 #include<stdlib.h>
 
 GameMainScene::GameMainScene()
@@ -48,14 +47,8 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
-
-	if (MoveStop_flg == true)
-	{
-		if (player.WaitSearch())SearchEnemy();
-		player.Update();
-	}
-
-
+	if (MoveStop_flg == true)player.Update();
+	
 	for (int i = 0; i < 10; i++)
 	{
 		if(enemy[i]!=nullptr)enemy[i]->Update(&player);
@@ -449,8 +442,6 @@ void GameMainScene::NextMap() {
 
 		enemy[0] = nullptr;
 		enemy[0] = new Enemy();
-		enemy[1] = nullptr;
-		enemy[1] = new Enemy();
 		for (int i = 0; i < 10; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
@@ -464,36 +455,4 @@ void GameMainScene::NextMap() {
 
 void GameMainScene::ExitCheck() {
 	if (MapExitY * 160 + 100>player.GetX()&& MapExitY * 160 + 60<player.GetX()&& player.GetY() == MapExitX * 160 + 131) Exit_flg = true;
-}
-
-void GameMainScene::SearchEnemy() 
-{
-	//近くの敵のナンバーと距離
-	int NearEnemy = -1;
-	int NearDistance = -1;
-
-	//プレイヤーと敵の座標
-	int PlayerX = player.GetX();
-	int PlayerY = player.GetY();
-	int EnemyX = 0, EnemyY = 0;
-
-	for (int i = 0; i < 10; i++)
-	{
-		if (enemy[i] != nullptr) 
-		{
-			EnemyX = enemy[i]->E_GetX();
-			EnemyY = enemy[i]->E_GetY();
-
-			int Dis = sqrt(pow(PlayerX - EnemyX, 2) + pow(PlayerY - EnemyY, 2));
-
-			if (NearDistance < 0 || Dis < NearDistance)
-			{
-				NearEnemy = i;
-				NearDistance = Dis;
-			}
-		}
-	}
-
-	if (0 <= NearEnemy) player.SetNear(enemy[NearEnemy]->E_GetX(), enemy[NearEnemy]->E_GetY(),NearDistance);
-	else player.SetNear(-1, -1, -1);
 }
