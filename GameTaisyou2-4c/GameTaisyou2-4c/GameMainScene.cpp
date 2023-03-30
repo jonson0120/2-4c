@@ -24,6 +24,7 @@ GameMainScene::GameMainScene()
 	enemy[0]->makeEnemy();
 	enemy2.SetMapData(MapData);
 
+	treasurebox.SetMapData(MapData);
 	
 
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
@@ -60,7 +61,7 @@ AbstractScene* GameMainScene::Update()
 	CameraY = player.GetY();
 
 	ui.Update();
-	treasurebox.Update();
+	treasurebox.Update(&player);
 
 	switch (player.GetEquip())
 	{
@@ -132,7 +133,7 @@ void GameMainScene::Draw() const
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	ui.Draw();
-	treasurebox.Draw();
+	treasurebox.Draw(player.GetX(),player.GetY());
 	player.Draw();
 	for (int i = 0; i < 10; i++)
 	{
@@ -458,6 +459,8 @@ void GameMainScene::NextMap() {
 		}
 
 		enemy2.SetMapData(MapData);
+		treasurebox.SetMapData(MapData);
+
 		MakeMap_flg = false;
 	}
 }
