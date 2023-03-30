@@ -102,7 +102,13 @@ AbstractScene* GameMainScene::Update()
 		}
 	}
 
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemy[i] != nullptr)break;
+		if (i == 9)MapData[MapExitX][MapExitY] = 3;
+	}
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
+
 	ExitCheck();
 	if (Exit_flg == true) NextMap();
 	x= MapExitY * 160 + 80;
@@ -454,5 +460,45 @@ void GameMainScene::NextMap() {
 }
 
 void GameMainScene::ExitCheck() {
-	if (MapExitY * 160 + 100>player.GetX()&& MapExitY * 160 + 60<player.GetX()&& player.GetY() == MapExitX * 160 + 131) Exit_flg = true;
+
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
+		for (int i = 0; i < 10; i++)
+		{
+			if (enemy[i] != nullptr)break;
+			if (i == 9)Exit_flg = true;
+		}
+	}
+}
+
+void GameMainScene::SearchEnemy() 
+{
+	//近くの敵のナンバーと距離
+	int NearEnemy = -1;
+	int NearDistance = -1;
+
+	//プレイヤーと敵の座標
+	int PlayerX = player.GetX();
+	int PlayerY = player.GetY();
+	int EnemyX = 0, EnemyY = 0;
+
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemy[i] != nullptr) 
+		{
+			EnemyX = enemy[i]->E_GetX();
+			EnemyY = enemy[i]->E_GetY();
+
+			int Dis = sqrt(pow(PlayerX - EnemyX, 2) + pow(PlayerY - EnemyY, 2));
+
+			if (NearDistance < 0 || Dis < NearDistance)
+			{
+				NearEnemy = i;
+				NearDistance = Dis;
+			}
+		}
+	}
+
+	if (0 <= NearEnemy) player.SetNear(enemy[NearEnemy]->E_GetX(), enemy[NearEnemy]->E_GetY(),NearDistance);
+	else player.SetNear(-1, -1, -1);
+
 }
