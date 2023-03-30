@@ -58,4 +58,6 @@ public:
 	int CheckSpace(int y, int x, int* cnt);
 	void NextMap();
 	void ExitCheck();
+
+	void SearchEnemy();
 };
