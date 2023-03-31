@@ -569,6 +569,8 @@ void Player::Draw() const {
 		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
 
 	//プレイヤー本体
+
+	//上半身
 	if (wall)
 	{
 		if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[2], TRUE, true);
@@ -577,6 +579,7 @@ void Player::Draw() const {
 	}
 	else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
+	//下半身
 	if (wall)
 	{
 		if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[6], TRUE, true);

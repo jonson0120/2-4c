@@ -6,6 +6,8 @@
 #include<math.h>
 #include<stdlib.h>
 
+#include"Slime.h"
+
 GameMainScene::GameMainScene()
 {
 	enemy = new Enemy * [10];
@@ -14,7 +16,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Enemy();
+	enemy[0] = new Slime();
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -22,7 +24,7 @@ GameMainScene::GameMainScene()
 	player.SetMapData(MapData);
 	enemy[0]->SetMapData(MapData);
 	enemy[0]->makeEnemy();
-	enemy2.SetMapData(MapData);
+	//enemy2.SetMapData(MapData);
 
 	
 
@@ -138,7 +140,7 @@ void GameMainScene::Draw() const
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
-	enemy2.Draw(player.GetX(), player.GetY());
+	//enemy2.Draw(player.GetX(), player.GetY());
 
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
@@ -449,15 +451,15 @@ void GameMainScene::NextMap() {
 		player.SetMapData(MapData);
 
 		enemy[0] = nullptr;
-		enemy[0] = new Enemy();
+		enemy[0] = new Slime();
 		enemy[1] = nullptr;
-		enemy[1] = new Enemy();
+		enemy[1] = new Slime();
 		for (int i = 0; i < 10; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
 		}
 
-		enemy2.SetMapData(MapData);
+		//enemy2.SetMapData(MapData);
 		MakeMap_flg = false;
 	}
 }

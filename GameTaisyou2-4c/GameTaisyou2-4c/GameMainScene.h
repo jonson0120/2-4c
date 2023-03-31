@@ -21,7 +21,7 @@ private:
 	int time;
 	Player player;
 	Enemy** enemy;
-	Enemy2 enemy2;
+	//Enemy2 enemy2;
 	UI ui;
 	TreasureBox treasurebox;
 

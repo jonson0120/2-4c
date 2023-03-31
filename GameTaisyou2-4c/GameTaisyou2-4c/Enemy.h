@@ -1,50 +1,28 @@
-﻿#pragma once
-#include "DxLib.h"
+#pragma once
+#include "Player.h"
 #include "common.h"
 
 class Player;
 
 class Enemy
 {
-private:
-	int image;			//画像
-	int EImages[5];		//画像
-	int DropItem_Image;	//ドロップアイテム
-	int enex, eney;		//X,Y座標
-	int Width, Height;	//敵の高さ
-	int direction;		//敵の向き
-	int E_AttackFlg;
-	int Player_Damage;
-	int Enemy_Damage;
-	int Enemy_Hp;
-	int Player_Hp;
-	bool MakeEnemy;
-
-	//Player player;
-
-	int HitCool;	//被弾クールタイム
-	
-	float speed; //移動速度
-	float fall;	 //落下速度
-	int jump;	 //ジャンプ回数
-
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
-
 public:
-	Enemy();
-	void Update(Player* player);
-	void Draw(int x, int y) const;
+	Enemy() {};
 
-	int E_GetX()const { return enex; }
-	int E_GetY()const { return eney; }
+	virtual void Update(Player* player) = 0;
+	virtual void Draw(int x, int y)const = 0;
 
-	int GetWidth()const { return Width; }
-	int GetHeight()const { return Height; }
+	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) = 0;
+	virtual void makeEnemy() = 0;
 
-	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
-	void makeEnemy();
+	virtual int E_GetX()const = 0;
+	virtual int E_GetY()const = 0;
 
-	bool CheckHp();
+	virtual int GetWidth()const = 0;
+	virtual int GetHeight()const = 0;
 
-	void HitPlayer(float damage);
+	virtual bool CheckHp() = 0;
+
+	virtual void HitPlayer(float damage) = 0;
 };
+
