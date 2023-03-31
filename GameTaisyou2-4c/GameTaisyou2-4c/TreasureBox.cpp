@@ -43,8 +43,7 @@ void TreasureBox::Update(Player* player)
 
 	
 
-	if (ButtonFlag == false)
-	{
+	
 		if (fall < fallinit)
 		{
 			fall += (fallinit * 2) / 45;
@@ -72,7 +71,7 @@ void TreasureBox::Update(Player* player)
 			lidy--;
 
 		}
-	}
+	
 
 	//------------------------------------------------------------------
 	while ((!MapData[(Boxy - Height / 5) / BLOCK_SIZE][(Boxx - Width / 2) / BLOCK_SIZE]) ||
@@ -89,7 +88,15 @@ void TreasureBox::Update(Player* player)
 		Boxy--;
 
 	}
-
+	//プレイヤー認識範囲
+	if (lidx + BLOCK_SIZE * 0.3 >= player->GetX() && lidx - BLOCK_SIZE * 0.3 <= player->GetX() &&
+		lidy + BLOCK_SIZE >= player->GetY() && lidy - BLOCK_SIZE <= player->GetY())
+	{
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X))
+		{
+			ButtonFlag = true;
+		}
+	}
 
 	/*if (ButtonFlag == true)
 	{
@@ -102,10 +109,7 @@ void TreasureBox::Update(Player* player)
 	}
 	*/
 
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_X))
-	{
-		ButtonFlag = true;
-	}
+	
 }
 
 void TreasureBox::Draw(int x, int y)const
