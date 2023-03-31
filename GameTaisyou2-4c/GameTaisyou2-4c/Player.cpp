@@ -30,7 +30,8 @@ Player::Player() {
 	wall = 0;
 
 	Attack = 0;
-	Equip = weapons::dagger;
+	Equip[0] = weapons::dagger;
+	Equip[1] = weapons::spear;
 
 	Yinput = Inp_UD::NONE;
 	Combo = 0;
@@ -229,7 +230,7 @@ void Player::Update() {
 		if (Attack) {
 
 			//槍・攻撃中、空中にいなければ移動できない
-			if (Equip == weapons::spear && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+			if (Equip[EquipNum] == weapons::spear && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
 										   !MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160])
 			{
 				//CorSpeed = 0;
@@ -237,7 +238,7 @@ void Player::Update() {
 			}
 
 			//刀・攻撃中、空中にいなければ移動できない
-			if (Equip == weapons::katana && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+			if (Equip[EquipNum] == weapons::katana && !MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
 				!MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160])
 			{
 				//CorSpeed = 0;
@@ -275,38 +276,12 @@ void Player::Update() {
 		}
 
 		//武器切り替え・攻撃アニメーション・コンボ数をリセット
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER) && !Attack)
 		{
-			switch (Equip) 
-			{
-			case weapons::dagger:
-				Equip = weapons::mace;
-				Attack = 0;
-				Combo = 0;
-				stat.Power = 0;
-				break;
-
-			case weapons::mace:
-				Equip = weapons::spear;
-				Attack = 0;
-				Combo = 0;
-				stat.Power = 0;
-				break;
-
-			case weapons::spear:
-				Equip = weapons::katana;
-				Attack = 0;
-				Combo = 0;
-				stat.Power = 0;
-				break;
-
-			case weapons::katana:
-				Equip = weapons::dagger;
-				Attack = 0;
-				Combo = 0;
-				stat.Power = 0;
-				break;
-			}
+			if (1 < ++EquipNum) EquipNum = 0;
+			Attack = 0;
+			Combo = 0;
+			stat.Power = 0;
 		}
 
 		//落下とジャンプ
@@ -364,7 +339,7 @@ void Player::Update() {
 		}
 
 		//攻撃
-		switch (Equip)
+		switch (Equip[EquipNum])
 		{
 		case weapons::dagger:	//短剣：ボタン単押しタイプ
 			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
@@ -434,7 +409,7 @@ void Player::Update() {
 		//攻撃ステータス・武器、腕アニメーション管理
 		if (Attack) 
 		{
-			switch (Equip)
+			switch (Equip[EquipNum])
 			{
 			case weapons::dagger:	//短剣：攻撃
 				DaggerAtk();
@@ -497,22 +472,44 @@ void Player::Draw() const {
 
 
 	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
-	switch (Equip)
+	switch (Equip[0])
 	{
 	case weapons::dagger:	//短剣
-		DrawString(0, 130, "装備：短剣", 0xffffff);
+		DrawString(0, 130, "装備１：短剣", 0xffffff);
 		break;
 
 	case weapons::mace:		//メイス
-		DrawString(0, 130, "装備：メイス", 0xffffff);
+		DrawString(0, 130, "装備１：メイス", 0xffffff);
 		break;
 
 	case weapons::spear:	//槍
-		DrawString(0, 130, "装備：槍", 0xffffff);
+		DrawString(0, 130, "装備１：槍", 0xffffff);
 		break;
 
 	case weapons::katana:	//刀
-		DrawString(0, 130, "装備：刀", 0xffffff);
+		DrawString(0, 130, "装備１：刀", 0xffffff);
+		break;
+
+	default:
+		break;
+	}
+
+	switch (Equip[1])
+	{
+	case weapons::dagger:	//短剣
+		DrawString(0, 150, "装備２：短剣", 0xffffff);
+		break;
+
+	case weapons::mace:		//メイス
+		DrawString(0, 150, "装備２：メイス", 0xffffff);
+		break;
+
+	case weapons::spear:	//槍
+		DrawString(0, 150, "装備２：槍", 0xffffff);
+		break;
+
+	case weapons::katana:	//刀
+		DrawString(0, 150, "装備２：刀", 0xffffff);
 		break;
 
 	default:
@@ -523,8 +520,8 @@ void Player::Draw() const {
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xff0000, "9");
-			else DrawFormatString(50 + 15 * j, 150 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xff0000, "9");
+			else DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xffffff, "%d", MapData[i][j]);
 		}
 	}
 	
@@ -532,7 +529,7 @@ void Player::Draw() const {
 	//攻撃描画：プレイヤー後方
 	if (Attack) 
 	{
-		switch (Equip)
+		switch (Equip[EquipNum])
 		{
 		case weapons::dagger:	//短剣
 			DrawDagger();
@@ -565,7 +562,7 @@ void Player::Draw() const {
 		DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
 	}
 
-	if (Attack && Equip == weapons::katana)
+	if (Attack && Equip[EquipNum] == weapons::katana)
 		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
 
 	//プレイヤー本体
@@ -602,14 +599,14 @@ void Player::Draw() const {
 	}
 	else
 	{
-		if (wall != 1 && (!Attack || Equip != weapons::katana))
+		if (wall != 1 && (!Attack || Equip[EquipNum] != weapons::katana))
 		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
 	}
 
 	//攻撃描画：プレイヤー前方
 	if (Attack)
 	{
-		switch (Equip)
+		switch (Equip[EquipNum])
 		{
 		case weapons::spear:	//槍
 			if (TurnFlg && !wall)DrawSpear();

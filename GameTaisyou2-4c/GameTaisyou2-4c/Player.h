@@ -8,7 +8,8 @@ enum struct weapons
 	dagger, //0
 	mace,	//1
 	spear,	//2
-	katana	//2
+	katana,	//3
+	NONE	//4
 };
 
 enum struct Inp_UD
@@ -67,7 +68,9 @@ private:
 	int Weapon[4];		//武器画像
 	int WeaponEffect[4];	//武器効果
 
-	enum weapons Equip;		//装備している武器
+	enum weapons Equip[2];		//持っている武器
+	int EquipNum;				//装備している武器
+
 	Range range[4];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
@@ -112,7 +115,7 @@ public:
 	int GetHeight()const { return Height; }
 
 	//装備取得
-	weapons GetEquip()const { return Equip; }
+	weapons GetEquip()const { return Equip[EquipNum]; }
 
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
