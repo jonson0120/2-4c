@@ -132,14 +132,15 @@ void GameMainScene::Draw() const
 	}
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
-	ui.Draw();
-	treasurebox.Draw(player.GetX(),player.GetY());
+	treasurebox.Draw(player.GetX(), player.GetY());
 	player.Draw();
 	for (int i = 0; i < 10; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 	enemy2.Draw(player.GetX(), player.GetY());
+
+	ui.Draw();
 
 	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	DrawFormatString(0, 550, 0xff0000, "%d", Bright);

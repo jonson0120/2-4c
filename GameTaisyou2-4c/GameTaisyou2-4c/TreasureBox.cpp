@@ -29,7 +29,7 @@ TreasureBox::TreasureBox()
 
 	lidflag = 0;
 
-	fall = 14;
+	fall = 12;
 
 	ButtonFlag = false;
 
@@ -39,12 +39,12 @@ TreasureBox::TreasureBox()
 void TreasureBox::Update(Player* player)
 {
 
-	float fallinit = 14;
+	float fallinit = 12;
 
+	
 
 	if (ButtonFlag == false)
 	{
-
 		if (fall < fallinit)
 		{
 			fall += (fallinit * 2) / 45;
@@ -55,6 +55,8 @@ void TreasureBox::Update(Player* player)
 		}
 		Boxy += fall;
 		lidy += fall;
+
+
 
 		while ((!MapData[(lidy - Height / 4) / BLOCK_SIZE][(lidx - Width / 2) / BLOCK_SIZE]) ||
 			(!MapData[(lidy - Height / 4) / BLOCK_SIZE][(lidx + Width / 2) / BLOCK_SIZE]))
@@ -112,7 +114,7 @@ void TreasureBox::Draw(int x, int y)const
 	if (MakeTreasureBox == TRUE)
 	{
 		DrawRotaGraph(Boxx - x + (SCREEN_WIDTH / 2), Boxy - y + (SCREEN_HEIGHT / 2), 0.2, 0, BoxImage, TRUE);
-		DrawRotaGraph(lidx - x + (SCREEN_WIDTH / 2), lidy - y + (SCREEN_HEIGHT / 2) + (lidflag / 2), 0.2, 0, lidImage, TRUE);
+		DrawRotaGraph(lidx - x + (SCREEN_WIDTH / 2), lidy - y + (SCREEN_HEIGHT / 2) , 0.2, 0, lidImage, TRUE);
 	}
 	if (ButtonFlag == true)
 	{
@@ -135,7 +137,7 @@ void TreasureBox::MakeBox()
 			Boxx = i * BLOCK_SIZE + BLOCK_SIZE / 2;
 			Boxy = j * BLOCK_SIZE + BLOCK_SIZE / 2;
 
-			MakeTreasureBox = TRUE;
+			MakeTreasureBox = TRUE;	
 		}
 	}
 }
