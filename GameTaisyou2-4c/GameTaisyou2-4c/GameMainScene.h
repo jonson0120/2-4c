@@ -4,6 +4,7 @@
 #include"common.h"
 #include"Player.h"
 #include"Enemy.h"
+#include"Item.h"
 #include "Enemy2.h"
 #include"UI.h"
 #include"TreasureBox.h"
@@ -21,6 +22,7 @@ private:
 	int time;
 	Player player;
 	Enemy** enemy;
+	Item** item;
 	//Enemy2 enemy2;
 	UI ui;
 	TreasureBox treasurebox;

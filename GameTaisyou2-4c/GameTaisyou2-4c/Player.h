@@ -114,8 +114,9 @@ public:
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
 
-	//装備取得
+	//装備取得・更新
 	weapons GetEquip()const { return Equip[EquipNum]; }
+	void ChangeEquip(weapons get) { Equip[EquipNum] = get; }
 
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
@@ -138,7 +139,8 @@ public:
 	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
 	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
 
-	//攻撃力取得
+	//攻撃入力・攻撃力取得
+	float GetAttack() { return Attack; }
 	float GetPower() { return stat.Power; }
 
 	//索敵
