@@ -9,7 +9,9 @@ Player::Player() {
 	Walk = 0;
 
 	stat.Hp = 10;
+	stat.MaxHp = stat.Hp;
 	stat.Power = 0;
+	PotionCount = 3;
 
 	Width = 32;
 	Height = 56;
@@ -456,6 +458,22 @@ void Player::Update() {
 				Arm_R = { SCREEN_WIDTH / 2 - 12, SCREEN_HEIGHT / 2 };
 				ArmAngle_R = 0;
 			}
+		}
+
+		//回復
+
+		//Xボタンを押すと回復
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) && 0 < PotionCount)
+		{
+			PotionCount--;
+
+			stat.Hp += (stat.MaxHp / 100 * 20);
+		}
+
+		//HPは100以上回復しない
+		if (stat.MaxHp < stat.Hp)
+		{
+			stat.Hp = stat.MaxHp;
 		}
 }
 

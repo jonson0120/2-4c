@@ -24,5 +24,6 @@ public:
 	virtual bool CheckHp() = 0;
 
 	virtual void HitPlayer(float damage) = 0;
+	//virtual bool EnemyAttack(float damage) = 0;
 };
 

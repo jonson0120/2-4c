@@ -91,7 +91,7 @@ AbstractScene* GameMainScene::Update()
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
-	ui.Update();
+	ui.Update(&player);
 	treasurebox.Update(&player);
 
 	switch (player.GetEquip())

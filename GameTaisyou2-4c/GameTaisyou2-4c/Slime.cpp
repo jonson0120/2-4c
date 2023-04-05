@@ -19,7 +19,7 @@ Slime::Slime() : Enemy()
 
 	MapData[eney][enex];
 
-	Width = 64;
+	Width = 48;
 	Height = 64;
 
 	Enemy_Damage = 1;
@@ -33,19 +33,109 @@ Slime::Slime() : Enemy()
 
 	E_AttackFlg = FALSE;
 
+	HighJump = false;
+	Attack = 0;
 	HitCool = 0;
 
 	speed = 0;
 	fall = 12;
 	jump = 0;
 
-	LoadDivGraph("images/Enemy.png", 5, 5, 1, 64, 64, EImages);
+	LoadDivGraph("images/Slime.png", 5, 5, 1, 64, 64, EImages);
+	Anim = 0;
+	Turnflg = false;
 }
 
 void Slime::Update(Player* player)
 {
-	//落下とジャンプ
+	//ジャンプ強度
 	float fallinit = 12;
+
+	//プレイヤー認識範囲
+	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
+		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg)
+	{
+		E_AttackFlg = true;
+
+		if (player->GetX() < enex) Turnflg = true;
+		else Turnflg = false;
+	}
+	else if(!E_AttackFlg) {
+		if (Turnflg)
+		{
+			enex -= 3;
+			if (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
+				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
+			{
+				Turnflg = !Turnflg;
+			}
+		}
+		else
+		{
+			enex += 3;
+			if (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
+				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+			{
+				Turnflg = !Turnflg;
+			}
+		}
+	}
+
+	if (E_AttackFlg) 
+	{
+		Attack++;
+
+		if (Attack == 60) 
+		{
+			if (BLOCK_SIZE - 30 < eney - player->GetY())
+			{
+				fall = -fallinit * 1.2;
+				HighJump = true;
+			}
+			else
+			{
+				fall = -fallinit * 0.6;
+				HighJump = false;
+			}
+		}
+		else if (60 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		{
+			int jump = 9;
+
+			if (HighJump)
+			{
+				if (Turnflg)enex -= jump / 3;
+				else enex += jump / 3;
+			}
+			else
+			{
+				if (Turnflg)enex -= jump;
+				else enex += jump;
+			}
+		}
+		else if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		{
+			E_AttackFlg = false;
+			Attack = 0;
+		}
+	}
+
+	//壁に当たった時止める
+	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]||
+			!MapData[(eney +  Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+	{
+		enex--;
+		speed = 0;
+	}
+
+	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
+		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
+	{
+		enex++;
+		speed = 0;
+	}
+
+	//落下とジャンプ
 
 	if (fall < fallinit)
 	{
@@ -57,8 +147,8 @@ void Slime::Update(Player* player)
 	}
 	eney += fall;
 
-	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
-		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
+	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
+		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
 	{
 		eney++;
 		fall = 0;
@@ -73,47 +163,6 @@ void Slime::Update(Player* player)
 	}
 
 
-	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE * 1.5 >= player->GetX() && enex - BLOCK_SIZE * 1.5 <= player->GetX() &&
-		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY())
-	{
-		//プレイヤー追尾
-		if (enex >= player->GetX() && MIN_SPEED != speed)
-		{
-			--speed;
-		}
-
-		if (enex <= player->GetX() && MAX_SPEED != speed)
-		{
-			++speed;
-		}
-
-		if (eney >= player->GetY() && fall <= fallinit && jump == 0 && MAX_SPEED != jump)
-		{
-			fall *= -1;
-			jump++;
-		}
-
-		if (enex == player->GetX())
-		{
-			speed = 0;
-		}
-		enex += speed;
-	}
-
-	//壁に当たった時止める
-	while (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
-	{
-		enex--;
-		speed = 0;
-	}
-
-	while (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
-	{
-		enex++;
-		speed = 0;
-	}
-
 	//プレイヤーに当たった時攻撃
 	//if (enex == player->GetX() && eney == player->GetY())
 	//{
@@ -121,6 +170,8 @@ void Slime::Update(Player* player)
 	//}
 
 	if (HitCool)HitCool--;
+
+	Anim++;
 }
 
 void Slime::makeEnemy()
@@ -143,8 +194,16 @@ void Slime::Draw(int x,int y) const
 {
 	if (MakeEnemy == TRUE && HitCool % 4 < 2)
 	{
+		int WalkAnim = Anim / 18 % 2;
+
 		//敵の表示
-		DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[0], TRUE);
+		if(!E_AttackFlg)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
+		else 
+		{
+			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);
+			else if (fall < 0) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[3], TRUE, Turnflg, false);
+			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[4], TRUE, Turnflg, false);
+		}
 	}
 
 	if (Enemy_Hp == 0)

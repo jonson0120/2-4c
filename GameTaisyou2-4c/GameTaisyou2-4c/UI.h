@@ -7,10 +7,9 @@
 class UI
 {
 private:
+	Stat stat;
 
-	Player player;
-
-	int MaxHP;
+	float MaxHP;
 	float PlayerHP;
 
 	bool potionflag;
@@ -29,12 +28,12 @@ private:
 	int PotionImage2;
 	int PotionImage3;
 
-	
 	int PotionCount;
+
 public:
 	
 	UI();
-	void Update();
+	void Update(Player* player);
 	void Draw()const;
 };
 
