@@ -3,7 +3,7 @@
 #include"PadInput.h"
 #include"common.h"
 #include"GameMainScene.h"
-
+#include<cstdlib>
 TreasureBox::TreasureBox()
 {
 
@@ -31,9 +31,9 @@ TreasureBox::TreasureBox()
 
 	fall = 12;
 
-	ButtonFlag = false;
+	OpenBoxflag=false;
 
-
+	/*figure = rand % 100 + 1;*/
 }
 
 void TreasureBox::Update(Player* player)
@@ -89,25 +89,36 @@ void TreasureBox::Update(Player* player)
 
 	}
 	//プレイヤー認識範囲
-	if (lidx + BLOCK_SIZE * 0.3 >= player->GetX() && lidx - BLOCK_SIZE * 0.3 <= player->GetX() &&
+	if (lidx + BLOCK_SIZE * 0.4 >= player->GetX() && lidx - BLOCK_SIZE * 0.4 <= player->GetX() &&
 		lidy + BLOCK_SIZE >= player->GetY() && lidy - BLOCK_SIZE <= player->GetY())
 	{
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X))
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 		{
-			ButtonFlag = true;
+			OpenBoxflag = true;
 		}
 	}
 
-	/*if (ButtonFlag == true)
-	{
-		lidflag--;
-	}
+	{//宝箱
+		if (OpenBoxflag == false)
+		{
+			lidflag = 0;
+		}
 
-	if (lidflag < -40)
-	{
-		lidflag = -40;
+		if (OpenBoxflag == true)
+		{
+			lidflag--;
+			if (lidflag < -40)
+			{
+				lidflag = -40;
+
+				
+
+				OpenBox();
+			}
+			
+		}
 	}
-	*/
+	
 
 	
 }
@@ -117,10 +128,10 @@ void TreasureBox::Draw(int x, int y)const
 
 	if (MakeTreasureBox == TRUE)
 	{
-		DrawRotaGraph(Boxx - x + (SCREEN_WIDTH / 2), Boxy - y + (SCREEN_HEIGHT / 2), 0.2, 0, BoxImage, TRUE);
-		DrawRotaGraph(lidx - x + (SCREEN_WIDTH / 2), lidy - y + (SCREEN_HEIGHT / 2) , 0.2, 0, lidImage, TRUE);
+		DrawRotaGraph(Boxx - x + (SCREEN_WIDTH / 2), Boxy - y + (SCREEN_HEIGHT / 2), 0.3, 0, BoxImage, TRUE);
+		DrawRotaGraph(lidx - x + (SCREEN_WIDTH / 2), lidy - y + (SCREEN_HEIGHT / 2) +(lidflag/2), 0.3, 0, lidImage, TRUE);
 	}
-	if (ButtonFlag == true)
+	if (OpenBoxflag == true)
 	{
 		DrawString(0, 500, "TRUE", 0xffffff);
 	}
@@ -128,6 +139,8 @@ void TreasureBox::Draw(int x, int y)const
 }
 void TreasureBox::MakeBox()
 {
+	OpenBoxflag = false;
+
 	MakeTreasureBox = FALSE;
 	while (MakeTreasureBox == FALSE)
 	{
@@ -157,4 +170,9 @@ void TreasureBox::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 	}
 
 	MakeBox();
+}
+
+void TreasureBox::OpenBox()
+{
+	
 }
