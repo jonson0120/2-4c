@@ -6,6 +6,9 @@
 
 UI::UI()
 {
+	stat = { 0,0,0 };
+	PotionCount = 0;
+
 	Weapon = 0;
 
 	DaggerImage = LoadGraph("images/Dagger.png");
@@ -20,35 +23,22 @@ UI::UI()
 
 	Damage = 0;
 
-	PlayerHP = 60;
-	MaxHP=510;
+	PlayerHP = 0;
+	MaxHP = 0;
 
 	potionflag = false;
-
-	PlayerHP = 110+((MaxHP - 110) / 100 * PlayerHP);
 	
-	//ポーション使用回数
-	PotionCount = 0;
 }
 
-void UI::Update()
+void UI::Update(Player* player)
 {
-	player.Update();
-	/*if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER))
-	{
-		switch (Equip)
-		{
-		case weapons::dagger:
-			Equip = weapons::mace;
-			break;
+	stat = player->GetStat();
+	PlayerHP = stat.Hp;
+	MaxHP = stat.MaxHp;
 
-		case weapons::mace:
-			Equip = weapons::dagger;
-			break;
-		}
-	}*/
+	PotionCount = player->GetPotion();
 
-	switch (player.GetEquip())
+	switch (player->GetEquip())
 	{
 	case weapons::dagger:
 		Weapon = 0;
@@ -65,53 +55,6 @@ void UI::Update()
 	default:
 		break;
 	}
-
-	if (0 < PotionCount)
-	{
-		potionflag = true;
-	}
-
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_LEFT) && potionflag == true)
-	{
-
-		PotionCount = 0;
-
-	}
-
-
-
-	{
-		//Xボタンを押すと回復(3回まで使用可能)
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) && PotionCount < 3)
-		{
-
-			PotionCount++;
-
-			PlayerHP = PlayerHP + ((MaxHP - 110) / 100 * 20);
-		}
-
-		//HPは100以上回復しない
-		if (MaxHP < PlayerHP)
-		{
-			PlayerHP = MaxHP;
-		}
-	}
-
-	{
-		//ダメージ追加(後で消す)
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_DPAD_RIGHT))
-		{
-			Damage = GetRand(100);
-			PlayerHP = PlayerHP - ((MaxHP - 110) / 100 * Damage);
-		}
-
-		//HPは0以下にはならない
-		if (PlayerHP <= 110)
-		{
-			PlayerHP = 110;
-		}
-	}
-
 }
 
 void UI::Draw() const
@@ -122,14 +65,18 @@ void UI::Draw() const
 	DrawFormatString(0, 400, GetColor(255, 255, 255), "%d", Damage);*/
 
 	//ポーション使用時の●
-	DrawCircle(140, 75, 5, GetColor(255, 0, 0), TRUE);
-	DrawCircle(195, 75, 5, GetColor(255, 0, 0), TRUE);
-	DrawCircle(250, 75, 5, GetColor(255, 0, 0), TRUE);
+	for (int i = 0; i < PotionCount; i++) 
+	{
+		DrawCircle(140 + (i * 55), 75, 5, GetColor(255, 0, 0), TRUE);
+	}
 
 
 	//ポーション画像の表示
-	{
 
+	for (int i = 0; i < PotionCount; i++)
+	{
+		DrawRotaGraph(140 + (i * 55), 80, 0.3, 0, PotionImage1, TRUE);
+	}/*
 		if (PotionCount < 1)
 		{
 			DrawRotaGraph(250, 80, 0.3, 0, PotionImage1, TRUE);
@@ -141,10 +88,7 @@ void UI::Draw() const
 		if (PotionCount < 3)
 		{
 			DrawRotaGraph(140, 80, 0.3, 0, PotionImage3, TRUE);
-		}
-
-	}
-	
+		}*/
 	//武器
 	DrawCircle(50, 50, 50, GetColor(35, 59, 108), TRUE);
 	switch (Weapon)
@@ -165,13 +109,13 @@ void UI::Draw() const
 	}
 
 	//HP赤
-	DrawBox(110,10,510,50,GetColor(255,0,0),TRUE);
+	DrawBox(110, 10, 510, 50, GetColor(255, 0, 0), TRUE);
 
 	//HP緑
-	DrawBox(110, 10, PlayerHP, 50, GetColor(0, 255, 0), TRUE);
+	DrawBox(110, 10, 110 + (PlayerHP / MaxHP) * 400, 50, GetColor(0, 255, 0), TRUE);
 
 	//HPバーの枠(白)
-	DrawBox(110, 10, MaxHP, 50, GetColor(255,255, 255), FALSE);
+	DrawBox(110, 10, 110 + (PlayerHP / MaxHP) * 400, 50, GetColor(255, 255, 255), FALSE);
 
 }
 
