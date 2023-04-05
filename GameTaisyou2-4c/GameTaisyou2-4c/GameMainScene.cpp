@@ -51,7 +51,7 @@ GameMainScene::GameMainScene()
 	treasurebox.SetMapData(MapData);
 	
 
-	LoadDivGraph("images/Block4.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
 
