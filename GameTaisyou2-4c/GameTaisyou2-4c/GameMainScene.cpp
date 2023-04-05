@@ -76,6 +76,7 @@ AbstractScene* GameMainScene::Update()
 	{
 		if (player.WaitSearch())SearchEnemy();
 		player.Update();
+		ui.Update(&player);
 	}
 
 	for (int i = 0; i < ENEMY_MAX; i++)
@@ -95,7 +96,9 @@ AbstractScene* GameMainScene::Update()
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
-	ui.Update(&player);
+
+	
+
 	treasurebox.Update(&player);
 
 	switch (player.GetEquip())
