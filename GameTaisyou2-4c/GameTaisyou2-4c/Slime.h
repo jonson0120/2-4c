@@ -10,15 +10,25 @@ class Slime : public Enemy
 private:
 	int image;			//画像
 	int EImages[5];		//画像
+	int Anim;			//歩行アニメーション
+
 	int DropItem_Image;	//ドロップアイテム
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
-	int E_AttackFlg;
+
+	bool E_AttackFlg;
+	bool HighJump;
+	int Attack;			//攻撃アニメーション
+
+	bool Turnflg;		//画像反転
+
 	int Player_Damage;
 	int Enemy_Damage;
+
 	int Enemy_Hp;
 	int Player_Hp;
+
 	bool MakeEnemy;
 
 	//Player player;

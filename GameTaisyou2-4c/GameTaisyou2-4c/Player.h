@@ -28,6 +28,7 @@ struct Range
 struct Stat
 {
 	int Hp;
+	int MaxHp;
 	float Power;
 };
 
@@ -41,6 +42,7 @@ private:
 	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス
+	int PotionCount;	//回復回数
 
 	int x, y;		//X,Y座標
 	int Width, Height;	//プレイヤー高さ
@@ -117,6 +119,10 @@ public:
 	//装備取得・更新
 	weapons GetEquip()const { return Equip[EquipNum]; }
 	void ChangeEquip(weapons get) { Equip[EquipNum] = get; }
+
+	//ステータス取得
+	Stat GetStat() { return stat; }
+	int GetPotion() { return PotionCount; }
 
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
