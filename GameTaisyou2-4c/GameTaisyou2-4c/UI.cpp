@@ -70,25 +70,13 @@ void UI::Draw() const
 		DrawCircle(140 + (i * 55), 75, 5, GetColor(255, 0, 0), TRUE);
 	}
 
-
 	//ポーション画像の表示
 
 	for (int i = 0; i < PotionCount; i++)
 	{
 		DrawRotaGraph(140 + (i * 55), 80, 0.3, 0, PotionImage1, TRUE);
-	}/*
-		if (PotionCount < 1)
-		{
-			DrawRotaGraph(250, 80, 0.3, 0, PotionImage1, TRUE);
-		}
-		if (PotionCount < 2)
-		{
-			DrawRotaGraph(195, 80, 0.3, 0, PotionImage2, TRUE);
-		}
-		if (PotionCount < 3)
-		{
-			DrawRotaGraph(140, 80, 0.3, 0, PotionImage3, TRUE);
-		}*/
+	}
+
 	//武器
 	DrawCircle(50, 50, 50, GetColor(35, 59, 108), TRUE);
 	switch (Weapon)

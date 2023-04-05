@@ -80,7 +80,11 @@ AbstractScene* GameMainScene::Update()
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
-		if(enemy[i]!=nullptr)enemy[i]->Update(&player);
+		if (enemy[i] != nullptr)
+		{
+			enemy[i]->Update(&player);
+			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower());
+		}
 	}
 
 	for (int i = 0; i < ITEM_MAX; i++)

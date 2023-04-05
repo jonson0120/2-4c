@@ -61,7 +61,9 @@ private:
 
 	int a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
 
-	float Attack;	
+	float Attack;
+
+	int HitCool;	//被弾後無敵
 
 	bool TurnFlg;
 	bool FalseFlg;
@@ -154,6 +156,6 @@ public:
 	void SetNear(int X, int Y, int Dis);
 
 	//敵との当たり判定
-	void HitEnemy(float damage) { stat.Hp -= damage; }
+	void HitEnemy(float damage);
 };
 

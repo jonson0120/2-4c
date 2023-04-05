@@ -17,6 +17,8 @@ private:
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
 
+	int Power;			//攻撃力
+
 	bool E_AttackFlg;
 	bool HighJump;
 	int Attack;			//攻撃アニメーション
@@ -52,10 +54,13 @@ public:
 	virtual int GetWidth()const  { return Width; }
 	virtual int GetHeight()const   { return Height; }
 
+	virtual int GetPower()const { return Power; }
+
 	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) ;
 	virtual void makeEnemy() ;
 
 	bool CheckHp() ;
 
 	void HitPlayer(float damage);
+	bool EnemyAttack(int x, int y);
 };

@@ -5,6 +5,8 @@
 #include "Player.h"
 #include "GameMainScene.h"
 
+#include <math.h>
+
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
@@ -26,6 +28,8 @@ Slime::Slime() : Enemy()
 	Player_Damage = 1;
 	Enemy_Hp = 10;
 	Player_Hp = 10;
+
+	Power = 1;
 
 	MakeEnemy = FALSE;
 
@@ -55,12 +59,15 @@ void Slime::Update(Player* player)
 	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
 		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg)
 	{
+		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
 
+		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
 	}
 	else if(!E_AttackFlg) {
+		//通常の移動----------
 		if (Turnflg)
 		{
 			enex -= 3;
@@ -79,42 +86,52 @@ void Slime::Update(Player* player)
 				Turnflg = !Turnflg;
 			}
 		}
+		//-------------------
 	}
 
+	//攻撃行動
 	if (E_AttackFlg) 
 	{
 		Attack++;
 
+		//ジャンプ直前の待機
 		if (Attack == 60) 
 		{
+			//プレイヤーが一定以上高い位置にいると縦方向ジャンプになる
 			if (BLOCK_SIZE - 30 < eney - player->GetY())
 			{
 				fall = -fallinit * 1.2;
 				HighJump = true;
 			}
+			//水平方向ジャンプ
 			else
 			{
-				fall = -fallinit * 0.6;
+				fall = -fallinit * 0.5;
 				HighJump = false;
 			}
 		}
+		//ジャンプ
 		else if (60 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 		{
 			int jump = 9;
 
+			//縦方向ジャンプ
 			if (HighJump)
 			{
 				if (Turnflg)enex -= jump / 3;
 				else enex += jump / 3;
 			}
+			//横方向ジャンプ
 			else
 			{
 				if (Turnflg)enex -= jump;
 				else enex += jump;
 			}
 		}
+		//攻撃終了
 		else if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 		{
+			//ジャンプして着地すれば攻撃終了
 			E_AttackFlg = false;
 			Attack = 0;
 		}
@@ -246,4 +263,20 @@ void Slime::HitPlayer(float damage) {
 		Enemy_Hp -= damage;
 		HitCool = 30;
 	}
+}
+
+//プレイヤーへの攻撃
+bool Slime::EnemyAttack(int x, int y) 
+{
+	if (E_AttackFlg && 60 < Attack)
+	{
+		float DisX = pow(enex - x, 2);
+		float DisY = pow(eney - y, 2);
+
+		int Dis = (int)sqrt((int)(DisX + DisY));
+		
+		if (Dis < Width)return true;
+		else return false;
+	}
+	else return false;
 }
