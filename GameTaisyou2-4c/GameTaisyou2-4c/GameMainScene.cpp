@@ -51,9 +51,11 @@ GameMainScene::GameMainScene()
 	treasurebox.SetMapData(MapData);
 	
 
-	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block4.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
+
+	count = 0;
 
 	CameraX = 0;
 	CameraY = 0;
@@ -185,6 +187,7 @@ void GameMainScene::Draw() const
 	DrawFormatString(50, 650, 0xff0000, "%d", y);
 	DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
 	DrawFormatString(500, 200, 0xffffff, "%d", hit);
+	DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
 //マップ生成
@@ -498,16 +501,25 @@ void GameMainScene::NextMap() {
 		treasurebox.SetMapData(MapData);
 
 		MakeMap_flg = false;
+		count = 0;
 	}
 }
 
 void GameMainScene::ExitCheck() {
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
-		for (int i = 0; i < ENEMY_MAX; i++)
-		{
-			if (enemy[i] != nullptr)break;
-			if (i == 9)Exit_flg = true;
+		//Yボタン長押しで処理に入る
+		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
+			count++;
+			MoveStop_flg = false;
+			if (count >= 75) {
+				for (int i = 0; i < ENEMY_MAX; i++)
+				{
+					if (enemy[i] != nullptr)break;
+					if (i == 9)Exit_flg = true;
+				}
+			}
 		}
+		if (PAD_INPUT::OnRelease(XINPUT_BUTTON_Y))count = 0, MoveStop_flg = true;
 	}
 }
 

@@ -43,6 +43,7 @@ private:
 
 	int x, y;
 
+	int count;
 public:
 	GameMainScene();
 	//デストラクト
