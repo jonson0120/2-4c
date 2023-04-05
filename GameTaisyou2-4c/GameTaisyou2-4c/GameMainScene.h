@@ -4,6 +4,7 @@
 #include"common.h"
 #include"Player.h"
 #include"Enemy.h"
+#include"Item.h"
 #include "Enemy2.h"
 #include"UI.h"
 #include"TreasureBox.h"
@@ -21,7 +22,8 @@ private:
 	int time;
 	Player player;
 	Enemy** enemy;
-	Enemy2 enemy2;
+	Item** item;
+	//Enemy2 enemy2;
 	UI ui;
 	TreasureBox treasurebox;
 
@@ -41,6 +43,7 @@ private:
 
 	int x, y;
 
+	int count;
 public:
 	GameMainScene();
 	//デストラクト

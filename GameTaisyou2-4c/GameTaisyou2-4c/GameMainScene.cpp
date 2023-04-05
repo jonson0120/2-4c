@@ -6,23 +6,47 @@
 #include<math.h>
 #include<stdlib.h>
 
+#include"Slime.h"
+
 GameMainScene::GameMainScene()
 {
-	enemy = new Enemy * [10];
+	enemy = new Enemy * [ENEMY_MAX];
+	item = new Item * [ITEM_MAX];
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Enemy();
+	enemy[0] = new Slime();
+
+	for (int i = 0; i < ITEM_MAX; i++)
+	{
+		item[i] = nullptr;
+	}
+	item[0] = new Item(1, weapons::mace, { 880,880 });
 
 	MapExitX = 0;
 	MapExitY = 0;
 	MakeMap();
 	player.SetMapData(MapData);
-	enemy[0]->SetMapData(MapData);
-	enemy[0]->makeEnemy();
-	enemy2.SetMapData(MapData);
+
+	for (int i = 0; i < ENEMY_MAX; i++)
+	{
+		if (enemy[i] != nullptr) 
+		{
+			enemy[i]->SetMapData(MapData);
+			enemy[i]->makeEnemy();
+		}
+	}
+
+	for (int i = 0; i < ITEM_MAX; i++)
+	{
+		if (item[i] != nullptr)
+		{
+			item[i]->SetMapData(MapData);
+		}
+	}
+	//enemy2.SetMapData(MapData);
 
 	treasurebox.SetMapData(MapData);
 	
@@ -30,6 +54,8 @@ GameMainScene::GameMainScene()
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
+
+	count = 0;
 
 	CameraX = 0;
 	CameraY = 0;
@@ -53,9 +79,14 @@ AbstractScene* GameMainScene::Update()
 		ui.Update();
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if(enemy[i]!=nullptr)enemy[i]->Update(&player);
+	}
+
+	for (int i = 0; i < ITEM_MAX; i++)
+	{
+		if (item[i] != nullptr)item[i]->Update(&player);
 	}
 	//enemy2.Update(&player);
 	CameraX = player.GetX();
@@ -67,28 +98,28 @@ AbstractScene* GameMainScene::Update()
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitDagger(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
 		}
 		break;
 	case weapons::mace:
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitMace(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
 		}
 		break;
 	case weapons::spear:
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitSpear(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
 		}
 		break;
 	case weapons::katana:
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitKatana(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetPower());
@@ -98,7 +129,7 @@ AbstractScene* GameMainScene::Update()
 		break;
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr) 
 		{
@@ -106,10 +137,10 @@ AbstractScene* GameMainScene::Update()
 		}
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)break;
-		if (i == 9)MapData[MapExitX][MapExitY] = 3;
+		if (i == ENEMY_MAX - 1)MapData[MapExitX][MapExitY] = 3;
 	}
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
 
@@ -131,15 +162,21 @@ void GameMainScene::Draw() const
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
+
+	for (int i = 0; i < ITEM_MAX; i++)
+	{
+		if (item[i] != nullptr)item[i]->Draw({ player.GetX() ,player.GetY() });
+	}
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 	treasurebox.Draw(player.GetX(), player.GetY());
 	player.Draw();
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
-	enemy2.Draw(player.GetX(), player.GetY());
+
+	//enemy2.Draw(player.GetX(), player.GetY());
 
 	ui.Draw();
 
@@ -151,6 +188,7 @@ void GameMainScene::Draw() const
 	DrawFormatString(50, 650, 0xff0000, "%d", y);
 	DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
 	DrawFormatString(500, 200, 0xffffff, "%d", hit);
+	DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
 //マップ生成
@@ -452,28 +490,37 @@ void GameMainScene::NextMap() {
 		player.SetMapData(MapData);
 
 		enemy[0] = nullptr;
-		enemy[0] = new Enemy();
+		enemy[0] = new Slime();
 		enemy[1] = nullptr;
-		enemy[1] = new Enemy();
-		for (int i = 0; i < 10; i++)
+		enemy[1] = new Slime();
+		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
 		}
 
-		enemy2.SetMapData(MapData);
+		//enemy2.SetMapData(MapData);
 		treasurebox.SetMapData(MapData);
 
 		MakeMap_flg = false;
+		count = 0;
 	}
 }
 
 void GameMainScene::ExitCheck() {
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
-		for (int i = 0; i < 10; i++)
-		{
-			if (enemy[i] != nullptr)break;
-			if (i == 9)Exit_flg = true;
+		//Yボタン長押しで処理に入る
+		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
+			count++;
+			MoveStop_flg = false;
+			if (count >= 75) {
+				for (int i = 0; i < ENEMY_MAX; i++)
+				{
+					if (enemy[i] != nullptr)break;
+					if (i == 9)Exit_flg = true;
+				}
+			}
 		}
+		if (PAD_INPUT::OnRelease(XINPUT_BUTTON_Y))count = 0, MoveStop_flg = true;
 	}
 }
 
