@@ -6,7 +6,7 @@
 GameOver::GameOver()
 {
 	
-	
+	GameOverImage = LoadGraph("images/GameOver.png");
 }
 
 AbstractScene* GameOver::Update()
@@ -20,7 +20,9 @@ AbstractScene* GameOver::Update()
 
 void GameOver::Draw()const
 {
-	DrawString(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3, "Bボタン押してください", GetColor(255, 0, 0));
-	DrawString(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,"どんまい",GetColor(255,0,0));
+	DrawGraph(0, 0, GameOverImage, FALSE);
+	SetFontSize(30);
+	DrawString(430, 300 , "Bボタン押してください", GetColor(255, 0, 0));
+	/*DrawString(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,"GameOver",GetColor(255,0,0));*/
 	
 }
