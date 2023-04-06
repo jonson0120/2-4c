@@ -104,7 +104,20 @@ AbstractScene* GameMainScene::Update()
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
+
 	treasurebox.Update(&player);
+	if (treasurebox.DropItem())
+	{
+		for (int i = 0; i < ITEM_MAX; i++)
+		{
+			if (item[i] == nullptr)
+			{
+				item[i] = new Item(1, weapons::katana, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
+				item[i]->SetMapData(MapData);
+				break;
+			}
+		}
+	}
 
 	switch (player.GetEquip())
 	{
@@ -173,14 +186,15 @@ void GameMainScene::Draw() const
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
+	
+	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
+	treasurebox.Draw(player.GetX(), player.GetY());
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		if (item[i] != nullptr)item[i]->Draw({ player.GetX() ,player.GetY() });
 	}
-	
-	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
-	treasurebox.Draw(player.GetX(), player.GetY());
+
 	player.Draw();
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -518,6 +532,12 @@ void GameMainScene::NextMap() {
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
 		}
+
+		for (int i = 0; i < ITEM_MAX; i++)
+		{
+			item[i] = nullptr;
+		}
+
 
 		//enemy2.SetMapData(MapData);
 		treasurebox.SetMapData(MapData);

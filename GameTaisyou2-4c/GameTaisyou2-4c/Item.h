@@ -14,6 +14,8 @@ private:
 	int icon;		//アイコン画像
 	float size;		//画像サイズ比
 
+	float fall;		//落下速度
+
 	Range pos;		//アイテム座標
 	int Height, Width;	//アイテムサイズ
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ

@@ -33,6 +33,7 @@ TreasureBox::TreasureBox()
 
 	OpenBoxflag=false;
 
+	DropFlag = false;
 	/*figure = rand % 100 + 1;*/
 }
 
@@ -40,8 +41,6 @@ void TreasureBox::Update(Player* player)
 {
 
 	float fallinit = 12;
-
-	
 
 	
 		if (fall < fallinit)
@@ -90,7 +89,7 @@ void TreasureBox::Update(Player* player)
 	}
 	//プレイヤー認識範囲
 	if (lidx + BLOCK_SIZE * 0.4 >= player->GetX() && lidx - BLOCK_SIZE * 0.4 <= player->GetX() &&
-		lidy + BLOCK_SIZE >= player->GetY() && lidy - BLOCK_SIZE <= player->GetY())
+		lidy + BLOCK_SIZE >= player->GetY() && lidy - BLOCK_SIZE <= player->GetY() && !OpenBoxflag)
 	{
 		if (PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 		{
@@ -111,9 +110,7 @@ void TreasureBox::Update(Player* player)
 			{
 				lidflag = -40;
 
-				
 
-				OpenBox();
 			}
 			
 		}
@@ -169,10 +166,19 @@ void TreasureBox::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 		}
 	}
 
+	DropFlag = false;
 	MakeBox();
 }
 
-void TreasureBox::OpenBox()
+bool TreasureBox::DropItem()
 {
-	
+	if (-40 == lidflag && !DropFlag)
+	{
+		DropFlag = true;
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
 }
