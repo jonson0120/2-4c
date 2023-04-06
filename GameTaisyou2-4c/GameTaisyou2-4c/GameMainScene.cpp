@@ -186,7 +186,7 @@ void GameMainScene::Draw() const
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 
-	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
 
 		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
 		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
@@ -533,7 +533,7 @@ void GameMainScene::ExitCheck() {
 			//Yボタン長押しで処理に入る
 			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 				count++;
-				if (count >= 75) {
+				if (count >= 90) {
 					for (int i = 0; i < ENEMY_MAX; i++)
 					{
 						if (enemy[i] != nullptr)break;
