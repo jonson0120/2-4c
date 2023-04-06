@@ -51,7 +51,7 @@ GameMainScene::GameMainScene()
 	treasurebox.SetMapData(MapData);
 	
 
-	LoadDivGraph("images/Block4.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
 
@@ -68,6 +68,7 @@ GameMainScene::GameMainScene()
 	Anim_flg = false;
 	MakeMap_flg = false;
 	MoveStop_flg = true;
+	Pressed_flg = false;
 }
 
 AbstractScene* GameMainScene::Update() 
@@ -139,7 +140,7 @@ AbstractScene* GameMainScene::Update()
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)break;
-		if (i == ENEMY_MAX - 1)MapData[MapExitX][MapExitY] = 3;
+		if (i == ENEMY_MAX - 1)MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
 	}
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
 
@@ -501,25 +502,27 @@ void GameMainScene::NextMap() {
 		treasurebox.SetMapData(MapData);
 
 		MakeMap_flg = false;
+		Pressed_flg = false;
 		count = 0;
 	}
 }
 
 void GameMainScene::ExitCheck() {
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
-		//Yボタン長押しで処理に入る
-		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
-			count++;
-			MoveStop_flg = false;
-			if (count >= 75) {
-				for (int i = 0; i < ENEMY_MAX; i++)
-				{
-					if (enemy[i] != nullptr)break;
-					if (i == 9)Exit_flg = true;
+		if (Pressed_flg == true) {
+			//Yボタン長押しで処理に入る
+			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
+				count++;
+				if (count >= 75) {
+					for (int i = 0; i < ENEMY_MAX; i++)
+					{
+						if (enemy[i] != nullptr)break;
+						if (i == 9)Exit_flg = true;
+					}
 				}
 			}
+			if (PAD_INPUT::OnRelease(XINPUT_BUTTON_Y))count = 0;
 		}
-		if (PAD_INPUT::OnRelease(XINPUT_BUTTON_Y))count = 0, MoveStop_flg = true;
 	}
 }
 
