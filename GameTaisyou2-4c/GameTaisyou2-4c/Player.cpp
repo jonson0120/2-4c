@@ -491,62 +491,62 @@ void Player::Draw() const {
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 360, 0xffffff, "%d", wall);
+	//DrawFormatString(0, 360, 0xffffff, "%d", wall);
 
 
-	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
-	switch (Equip[0])
-	{
-	case weapons::dagger:	//短剣
-		DrawString(0, 130, "装備１：短剣", 0xffffff);
-		break;
+	//DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
+	//switch (Equip[0])
+	//{
+	//case weapons::dagger:	//短剣
+	//	DrawString(0, 130, "装備１：短剣", 0xffffff);
+	//	break;
 
-	case weapons::mace:		//メイス
-		DrawString(0, 130, "装備１：メイス", 0xffffff);
-		break;
+	//case weapons::mace:		//メイス
+	//	DrawString(0, 130, "装備１：メイス", 0xffffff);
+	//	break;
 
-	case weapons::spear:	//槍
-		DrawString(0, 130, "装備１：槍", 0xffffff);
-		break;
+	//case weapons::spear:	//槍
+	//	DrawString(0, 130, "装備１：槍", 0xffffff);
+	//	break;
 
-	case weapons::katana:	//刀
-		DrawString(0, 130, "装備１：刀", 0xffffff);
-		break;
+	//case weapons::katana:	//刀
+	//	DrawString(0, 130, "装備１：刀", 0xffffff);
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
-	switch (Equip[1])
-	{
-	case weapons::dagger:	//短剣
-		DrawString(0, 150, "装備２：短剣", 0xffffff);
-		break;
+	//switch (Equip[1])
+	//{
+	//case weapons::dagger:	//短剣
+	//	DrawString(0, 150, "装備２：短剣", 0xffffff);
+	//	break;
 
-	case weapons::mace:		//メイス
-		DrawString(0, 150, "装備２：メイス", 0xffffff);
-		break;
+	//case weapons::mace:		//メイス
+	//	DrawString(0, 150, "装備２：メイス", 0xffffff);
+	//	break;
 
-	case weapons::spear:	//槍
-		DrawString(0, 150, "装備２：槍", 0xffffff);
-		break;
+	//case weapons::spear:	//槍
+	//	DrawString(0, 150, "装備２：槍", 0xffffff);
+	//	break;
 
-	case weapons::katana:	//刀
-		DrawString(0, 150, "装備２：刀", 0xffffff);
-		break;
+	//case weapons::katana:	//刀
+	//	DrawString(0, 150, "装備２：刀", 0xffffff);
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
-	for (int i = 0; i < MAP_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAP_WIDTH; j++)
-		{
-			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xff0000, "9");
-			else DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-		}
-	}
+	//for (int i = 0; i < MAP_HEIGHT; i++)
+	//{
+	//	for (int j = 0; j < MAP_WIDTH; j++)
+	//	{
+	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xff0000, "9");
+	//		else DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+	//	}
+	//}
 	
 
 	//攻撃描画：プレイヤー後方
@@ -652,9 +652,9 @@ void Player::Draw() const {
 		}
 	}
 
-	DrawCircle(a, b, 3.0f, 0xff0000, true);
-	DrawCircle(c, d, 3.0f, 0x00ff00, true);
-	DrawCircle(e, f, 3.0f, 0x00ff00, true);
+	//DrawCircle(a, b, 3.0f, 0xff0000, true);
+	//DrawCircle(c, d, 3.0f, 0x00ff00, true);
+	//DrawCircle(e, f, 3.0f, 0x00ff00, true);
 }
 
 void Player::Spawn() {

@@ -216,15 +216,15 @@ void GameMainScene::Draw() const
 
 	ui.Draw();
 
-	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
-	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
-	DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
-	DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
-	DrawFormatString(0, 650, 0xff0000, "%d", x);
-	DrawFormatString(50, 650, 0xff0000, "%d", y);
-	DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
-	DrawFormatString(500, 200, 0xffffff, "%d", hit);
-	DrawFormatString(0, 700, 0xff0000, "%d", count);
+	//DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
+	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
+	//DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
+	//DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
+	//DrawFormatString(0, 650, 0xff0000, "%d", x);
+	//DrawFormatString(50, 650, 0xff0000, "%d", y);
+	//DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
+	//DrawFormatString(500, 200, 0xffffff, "%d", hit);
+	//DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
 //マップ生成
