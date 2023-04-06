@@ -21,8 +21,11 @@ public:
 	virtual int GetWidth()const = 0;
 	virtual int GetHeight()const = 0;
 
+	virtual int GetPower()const = 0;
+
 	virtual bool CheckHp() = 0;
 
 	virtual void HitPlayer(float damage) = 0;
+	virtual bool EnemyAttack(int x, int y) = 0;
 };
 

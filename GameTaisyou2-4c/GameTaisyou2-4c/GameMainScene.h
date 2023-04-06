@@ -42,6 +42,8 @@ private:
 	bool MoveStop_flg; //プレイヤーの行動制御フラグ
 	bool Pressed_flg; //出口に着いた時にボタン長押し入力を受け入れるか判定する
 
+	int DoorIcon[3];	//出口などに表示するアイコン
+
 	int x, y;
 
 	int count;

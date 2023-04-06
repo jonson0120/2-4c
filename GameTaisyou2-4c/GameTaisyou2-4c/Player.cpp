@@ -9,7 +9,9 @@ Player::Player() {
 	Walk = 0;
 
 	stat.Hp = 10;
+	stat.MaxHp = stat.Hp;
 	stat.Power = 0;
+	PotionCount = 3;
 
 	Width = 32;
 	Height = 56;
@@ -29,6 +31,7 @@ Player::Player() {
 	jump = 0;
 	wall = 0;
 
+	HitCool = 0;
 	Attack = 0;
 	Equip[0] = weapons::dagger;
 	Equip[1] = weapons::spear;
@@ -457,6 +460,26 @@ void Player::Update() {
 				ArmAngle_R = 0;
 			}
 		}
+
+		//回復
+
+		//Xボタンを押すと回復
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) && 0 < PotionCount)
+		{
+			PotionCount--;
+
+			stat.Hp += (stat.MaxHp  * 0.2);
+		}
+
+		//HP制限
+		if (stat.MaxHp < stat.Hp)
+		{
+			stat.Hp = stat.MaxHp;
+		}
+
+		if (stat.Hp < 0)stat.Hp = 0;
+
+		if (HitCool)HitCool--;
 }
 
 void Player::Draw() const {
@@ -552,77 +575,80 @@ void Player::Draw() const {
 		}
 	}
 
-	//腕：プレイヤー後方
-	if (TurnFlg || wall == 1 || wall == 3)
+	if (HitCool % 4 < 2)
 	{
-		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
-	}
-	else if (wall == 0)
-	{
-		DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
-	}
-
-	if (Attack && Equip[EquipNum] == weapons::katana)
-		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
-
-	//プレイヤー本体
-
-	//上半身
-	if (wall)
-	{
-		if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[2], TRUE, true);
-		if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[1], TRUE, false);
-		if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[3 + TurnFlg], TRUE, TurnFlg);
-	}
-	else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[0], TRUE, TurnFlg);
-
-	//下半身
-	if (wall)
-	{
-		if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[6], TRUE, true);
-		if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[5], TRUE, false);
-		if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[5 + TurnFlg], TRUE, TurnFlg);
-	}
-	else if (MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
-		MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160]) {
-		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[4], TRUE, TurnFlg);
-	}
-	else 
-	{
-		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[Walk / 10], TRUE, TurnFlg);
-	}
-
-	//腕：プレイヤー前面
-	if (TurnFlg)
-	{
-		if (wall == 0)DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
-	}
-	else
-	{
-		if (wall != 1 && (!Attack || Equip[EquipNum] != weapons::katana))
-		DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
-	}
-
-	//攻撃描画：プレイヤー前方
-	if (Attack)
-	{
-		switch (Equip[EquipNum])
+		//腕：プレイヤー後方
+		if (TurnFlg || wall == 1 || wall == 3)
 		{
-		case weapons::spear:	//槍
-			if (TurnFlg && !wall)DrawSpear();
-			break;
+			DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+		}
+		else if (wall == 0)
+		{
+			DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
+		}
 
-		case weapons::katana:	//刀
-			if (TurnFlg)
+		if (Attack && Equip[EquipNum] == weapons::katana)
+			DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+
+		//プレイヤー本体
+
+		//上半身
+		if (wall)
+		{
+			if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[2], TRUE, true);
+			if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[1], TRUE, false);
+			if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[3 + TurnFlg], TRUE, TurnFlg);
+		}
+		else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[0], TRUE, TurnFlg);
+
+		//下半身
+		if (wall)
+		{
+			if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[6], TRUE, true);
+			if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[5], TRUE, false);
+			if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[5 + TurnFlg], TRUE, TurnFlg);
+		}
+		else if (MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
+			MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160]) {
+			DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[4], TRUE, TurnFlg);
+		}
+		else
+		{
+			DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[Walk / 10], TRUE, TurnFlg);
+		}
+
+		//腕：プレイヤー前面
+		if (TurnFlg)
+		{
+			if (wall == 0)DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
+		}
+		else
+		{
+			if (wall != 1 && (!Attack || Equip[EquipNum] != weapons::katana))
+				DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+		}
+
+		//攻撃描画：プレイヤー前方
+		if (Attack)
+		{
+			switch (Equip[EquipNum])
 			{
-				DrawKatana();
-				DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180)* ArmAngle_R, ArmImg, true, false);
-				DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180)* ArmAngle_L, ArmImg, true, true);
-			}
-			break;
+			case weapons::spear:	//槍
+				if (TurnFlg && !wall)DrawSpear();
+				break;
 
-		default:
-			break;
+			case weapons::katana:	//刀
+				if (TurnFlg)
+				{
+					DrawKatana();
+					DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+					DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 	}
 
@@ -3007,4 +3033,15 @@ void Player::SetNear(int X, int Y, int Dis)
 	Search = false;
 	Near_Enemy = { X,Y };
 	NearEneDis = Dis;
+}
+
+//敵からの攻撃
+void Player::HitEnemy(float damage)
+{
+	if (!HitCool && !Dodgespd)
+	{
+		stat.Hp -= damage;
+		if (stat.Hp < 0)stat.Hp = 0;
+		HitCool = 30;
+	}
 }

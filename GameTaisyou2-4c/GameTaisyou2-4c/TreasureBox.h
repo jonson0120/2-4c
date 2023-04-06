@@ -19,11 +19,13 @@ private:
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];
 
-	bool ButtonFlag;
+	bool OpenBoxflag;
 
 	float fall;
 
 	int lidflag;
+
+	int figure;
 
 public:
 
@@ -40,9 +42,9 @@ public:
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
 
-
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 	void MakeBox();
 
+	void OpenBox();
 };
 
