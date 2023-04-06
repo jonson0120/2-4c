@@ -5,7 +5,7 @@
 #include"UI.h"
 #include<math.h>
 #include<stdlib.h>
-
+#include"GameOver.h"
 #include"Slime.h"
 
 GameMainScene::GameMainScene()
@@ -50,7 +50,6 @@ GameMainScene::GameMainScene()
 
 	treasurebox.SetMapData(MapData);
 	
-
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
@@ -72,6 +71,12 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
+	if (player.GetLife()<=0)
+	{
+		return new GameOver();
+	}
+	
+
 	if (MoveStop_flg == true)
 	{
 		if (player.WaitSearch())SearchEnemy();
@@ -95,9 +100,6 @@ AbstractScene* GameMainScene::Update()
 	//enemy2.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
-
-
-	
 
 	treasurebox.Update(&player);
 
