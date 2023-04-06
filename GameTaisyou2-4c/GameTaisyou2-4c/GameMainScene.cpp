@@ -64,6 +64,9 @@ GameMainScene::GameMainScene()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
+	LoadDivGraph("images/DoorGauge.png", 2, 2, 1, 32, 32, DoorIcon);
+	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
+
 	Exit_flg = false;
 	Anim_flg = false;
 	MakeMap_flg = false;
@@ -180,6 +183,16 @@ void GameMainScene::Draw() const
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
+	}
+
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
+
+		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
+		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
+
+		DrawRotaGraph(DoorX, DoorY, 1.2, 0, DoorIcon[0], true);
+		DrawCircleGauge(DoorX, DoorY, 100 * (count / 90.f), DoorIcon[1], 0, 1.2, false, false);
+		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
 	//enemy2.Draw(player.GetX(), player.GetY());
@@ -518,7 +531,7 @@ void GameMainScene::ExitCheck() {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 			count++;
 			MoveStop_flg = false;
-			if (count >= 75) {
+			if (count >= 90) {
 				for (int i = 0; i < ENEMY_MAX; i++)
 				{
 					if (enemy[i] != nullptr)break;

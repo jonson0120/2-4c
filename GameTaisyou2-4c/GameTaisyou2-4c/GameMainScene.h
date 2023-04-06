@@ -41,6 +41,8 @@ private:
 	bool MakeMap_flg; //マップを作るか判断する
 	bool MoveStop_flg; //プレイヤーの行動制御フラグ
 
+	int DoorIcon[3];	//出口などに表示するアイコン
+
 	int x, y;
 
 	int count;
