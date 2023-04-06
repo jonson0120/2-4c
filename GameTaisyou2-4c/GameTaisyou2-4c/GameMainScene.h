@@ -40,6 +40,7 @@ private:
 	bool Anim_flg; //アニメーション用のフラグ
 	bool MakeMap_flg; //マップを作るか判断する
 	bool MoveStop_flg; //プレイヤーの行動制御フラグ
+	bool Pressed_flg; //出口に着いた時にボタン長押し入力を受け入れるか判定する
 
 	int DoorIcon[3];	//出口などに表示するアイコン
 
