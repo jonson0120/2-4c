@@ -130,7 +130,7 @@ void TreasureBox::Draw(int x, int y)const
 	}
 	if (OpenBoxflag == true)
 	{
-		DrawString(0, 500, "TRUE", 0xffffff);
+		//DrawString(0, 500, "TRUE", 0xffffff);
 	}
 
 }
