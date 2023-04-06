@@ -23,7 +23,7 @@ GameMainScene::GameMainScene()
 	{
 		item[i] = nullptr;
 	}
-	item[0] = new Item(1, weapons::mace, { 880,880 });
+	//item[0] = new Item(1, weapons::mace, { 880,880 });
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -109,11 +109,28 @@ AbstractScene* GameMainScene::Update()
 	treasurebox.Update(&player);
 	if (treasurebox.DropItem())
 	{
+		weapons drop;
+		switch (GetRand(2))
+		{
+		case 0:
+			drop = weapons::mace;
+			break;
+		case 1:
+			drop = weapons::spear;
+			break;
+		case 2:
+			drop = weapons::katana;
+			break;
+		default:
+			drop = weapons::mace;
+			break;
+		}
+
 		for (int i = 0; i < ITEM_MAX; i++)
 		{
 			if (item[i] == nullptr)
 			{
-				item[i] = new Item(1, weapons::katana, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
+				item[i] = new Item(1, drop, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
 				item[i]->SetMapData(MapData);
 				break;
 			}
