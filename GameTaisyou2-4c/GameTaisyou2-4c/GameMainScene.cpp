@@ -202,7 +202,7 @@ void GameMainScene::Draw() const
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 
-	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
 
 		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
 		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
