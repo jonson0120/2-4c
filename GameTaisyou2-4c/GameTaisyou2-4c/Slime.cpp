@@ -26,7 +26,7 @@ Slime::Slime() : Enemy()
 
 	Enemy_Damage = 1;
 	Player_Damage = 1;
-	Enemy_Hp = 10;
+	Enemy_Hp = 5;
 	Player_Hp = 10;
 
 	Power = 1;
@@ -39,6 +39,8 @@ Slime::Slime() : Enemy()
 
 	HighJump = false;
 	Attack = 0;
+
+	AttackCool = 0;
 	HitCool = 0;
 
 	speed = 0;
@@ -57,7 +59,7 @@ void Slime::Update(Player* player)
 
 	//プレイヤー認識範囲
 	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
-		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg)
+		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg && !AttackCool)
 	{
 		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
@@ -66,7 +68,7 @@ void Slime::Update(Player* player)
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
 	}
-	else if(!E_AttackFlg) {
+	else if(!E_AttackFlg && !AttackCool) {
 		//通常の移動----------
 		if (Turnflg)
 		{
@@ -133,6 +135,7 @@ void Slime::Update(Player* player)
 		{
 			//ジャンプして着地すれば攻撃終了
 			E_AttackFlg = false;
+			AttackCool = 60;
 			Attack = 0;
 		}
 	}
@@ -187,6 +190,7 @@ void Slime::Update(Player* player)
 	//}
 
 	if (HitCool)HitCool--;
+	if (AttackCool)AttackCool--;
 
 	Anim++;
 }
@@ -214,7 +218,11 @@ void Slime::Draw(int x,int y) const
 		int WalkAnim = Anim / 18 % 2;
 
 		//敵の表示
-		if(!E_AttackFlg)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
+		if (!E_AttackFlg)
+		{
+			if (AttackCool)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);
+			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
+		}
 		else 
 		{
 			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);

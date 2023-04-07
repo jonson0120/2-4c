@@ -35,6 +35,7 @@ private:
 
 	//Player player;
 
+	int AttackCool;	//攻撃クールタイム
 	int HitCool;	//被弾クールタイム
 	
 	float speed; //移動速度
