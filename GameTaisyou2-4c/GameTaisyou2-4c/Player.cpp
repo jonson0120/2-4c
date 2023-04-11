@@ -875,7 +875,7 @@ void Player::DrawMace()const
 		int pow = stat.Power;
 		switch (pow)
 		{
-		case 1:
+		case 2:
 			switch (TurnFlg)
 			{
 			case true:
@@ -929,7 +929,7 @@ void Player::DrawMace()const
 				break;
 			}
 
-		case 2:
+		case 5:
 			switch (TurnFlg)
 			{
 			case true:
@@ -983,7 +983,7 @@ void Player::DrawMace()const
 				break;
 			}
 
-		case 3:
+		case 8:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1723,7 +1723,7 @@ void Player::MaceAtk()
 		int pow = stat.Power;
 		switch (pow)
 		{
-		case 1:
+		case 2:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1761,7 +1761,7 @@ void Player::MaceAtk()
 				break;
 			}
 
-		case 2:
+		case 5:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1799,7 +1799,7 @@ void Player::MaceAtk()
 				break;
 			}
 
-		case 3:
+		case 8:
 			switch (TurnFlg)
 			{
 			case true:
@@ -2390,7 +2390,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 			int power = stat.Power;
 			switch (power)
 			{
-			case 1:
+			case 2:
 				switch (TurnFlg)
 				{
 				case true:
@@ -2448,7 +2448,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-			case 2:
+			case 5:
 				switch (TurnFlg)
 				{
 				case true:
@@ -2506,7 +2506,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-			case 3:
+			case 8:
 				switch (TurnFlg)
 				{
 				case true:

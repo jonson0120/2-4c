@@ -1,5 +1,6 @@
 #include"TitleScene.h"
 #include"GameMainScene.h"
+#include"TestMap.h"
 
 Title::Title() {
 	Menu_Number = TITLE_MENU::START;
@@ -18,7 +19,7 @@ AbstractScene* Title::Update() {
 		select--;
 		interval = 0;
 	}
-	if (JoyPadY < MARGIN && interval >= 30) {
+	if (JoyPadY < -MARGIN && interval >= 30) {
 		select++;
 		interval = 0;
 	}
@@ -31,7 +32,7 @@ AbstractScene* Title::Update() {
 
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
 		if (TITLE_MENU::START == Menu_Number)return new GameMainScene();
-		if (TITLE_MENU::Debug == Menu_Number)return nullptr;
+		if (TITLE_MENU::Debug == Menu_Number)return new TestMap();
 		interval = 0;
 	}
 

@@ -1,11 +1,11 @@
 #include "GameOver.h"
+#include"TitleScene.h"
 #include"KeyManager.h"
 #include"GameMainScene.h"
 #include"common.h"
 
 GameOver::GameOver()
 {
-	
 	GameOverImage = LoadGraph("images/GameOver.png");
 }
 
@@ -13,7 +13,7 @@ AbstractScene* GameOver::Update()
 {
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
 	{
-		return new GameMainScene();
+		return new Title();
 	}
 	return this;
 }

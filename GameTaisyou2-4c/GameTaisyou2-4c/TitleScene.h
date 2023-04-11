@@ -2,8 +2,6 @@
 #include"AbstractScene.h"
 #include"PadInput.h"
 
-#define MARGIN 128
-
 class Title : public AbstractScene {
 private:
 	enum class TITLE_MENU {

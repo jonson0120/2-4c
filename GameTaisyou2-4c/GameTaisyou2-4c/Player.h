@@ -118,6 +118,9 @@ public:
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
 
+	//座標セット
+	void SetY(int Y) { y = Y; }
+
 	//装備取得・更新
 	weapons GetEquip()const { return Equip[EquipNum]; }
 	void ChangeEquip(weapons get) { Equip[EquipNum] = get; }

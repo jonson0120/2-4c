@@ -11,6 +11,7 @@ Item::Item(int Type, weapons Weapon ,Range position)
 	this->Weapon = Weapon;
 
 	CanGet = false;
+	Getted = false;
 
 	SetItem();
 
@@ -23,6 +24,8 @@ Item::Item(int Type, weapons Weapon ,Range position)
 
 void Item::Update(Player* player)
 {
+	Getted = false;
+
 	//プレイヤーがアイテムを取れる位置にいるか判定
 	int CanGetDistance = BLOCK_SIZE / 3;	//プレイヤーがアイテムを取れる境界
 	int dis = GetDis({ player->GetX(),player->GetY() });	//プレイヤー間の距離
@@ -39,6 +42,7 @@ void Item::Update(Player* player)
 		player->ChangeEquip(Weapon);
 		Weapon = old;
 		SetItem();
+		Getted = true;
 	}
 
 	//落下とジャンプ
