@@ -491,62 +491,62 @@ void Player::Draw() const {
 	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
 	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
 
-	DrawFormatString(0, 360, 0xffffff, "%d", wall);
+	//DrawFormatString(0, 360, 0xffffff, "%d", wall);
 
 
-	DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
-	switch (Equip[0])
-	{
-	case weapons::dagger:	//短剣
-		DrawString(0, 130, "装備１：短剣", 0xffffff);
-		break;
+	//DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
+	//switch (Equip[0])
+	//{
+	//case weapons::dagger:	//短剣
+	//	DrawString(0, 130, "装備１：短剣", 0xffffff);
+	//	break;
 
-	case weapons::mace:		//メイス
-		DrawString(0, 130, "装備１：メイス", 0xffffff);
-		break;
+	//case weapons::mace:		//メイス
+	//	DrawString(0, 130, "装備１：メイス", 0xffffff);
+	//	break;
 
-	case weapons::spear:	//槍
-		DrawString(0, 130, "装備１：槍", 0xffffff);
-		break;
+	//case weapons::spear:	//槍
+	//	DrawString(0, 130, "装備１：槍", 0xffffff);
+	//	break;
 
-	case weapons::katana:	//刀
-		DrawString(0, 130, "装備１：刀", 0xffffff);
-		break;
+	//case weapons::katana:	//刀
+	//	DrawString(0, 130, "装備１：刀", 0xffffff);
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
-	switch (Equip[1])
-	{
-	case weapons::dagger:	//短剣
-		DrawString(0, 150, "装備２：短剣", 0xffffff);
-		break;
+	//switch (Equip[1])
+	//{
+	//case weapons::dagger:	//短剣
+	//	DrawString(0, 150, "装備２：短剣", 0xffffff);
+	//	break;
 
-	case weapons::mace:		//メイス
-		DrawString(0, 150, "装備２：メイス", 0xffffff);
-		break;
+	//case weapons::mace:		//メイス
+	//	DrawString(0, 150, "装備２：メイス", 0xffffff);
+	//	break;
 
-	case weapons::spear:	//槍
-		DrawString(0, 150, "装備２：槍", 0xffffff);
-		break;
+	//case weapons::spear:	//槍
+	//	DrawString(0, 150, "装備２：槍", 0xffffff);
+	//	break;
 
-	case weapons::katana:	//刀
-		DrawString(0, 150, "装備２：刀", 0xffffff);
-		break;
+	//case weapons::katana:	//刀
+	//	DrawString(0, 150, "装備２：刀", 0xffffff);
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
-	for (int i = 0; i < MAP_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAP_WIDTH; j++)
-		{
-			if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xff0000, "9");
-			else DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-		}
-	}
+	//for (int i = 0; i < MAP_HEIGHT; i++)
+	//{
+	//	for (int j = 0; j < MAP_WIDTH; j++)
+	//	{
+	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xff0000, "9");
+	//		else DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xffffff, "%d", MapData[i][j]);
+	//	}
+	//}
 	
 
 	//攻撃描画：プレイヤー後方
@@ -652,9 +652,9 @@ void Player::Draw() const {
 		}
 	}
 
-	DrawCircle(a, b, 3.0f, 0xff0000, true);
-	DrawCircle(c, d, 3.0f, 0x00ff00, true);
-	DrawCircle(e, f, 3.0f, 0x00ff00, true);
+	//DrawCircle(a, b, 3.0f, 0xff0000, true);
+	//DrawCircle(c, d, 3.0f, 0x00ff00, true);
+	//DrawCircle(e, f, 3.0f, 0x00ff00, true);
 }
 
 void Player::Spawn() {
@@ -1052,7 +1052,7 @@ void Player::DrawSpear()const
 	double stX = 0, stY = 0;		//振りかぶる前の座標
 	double finX = 0, finY = 0;		//振りかぶった後の座標
 	double Dis = 0;			//体の中心からの距離
-	int thrust = 20;	//攻撃距離
+	int thrust = 15;	//攻撃距離
 
 	double finAng = spear_angle;	//攻撃する角度
 
@@ -1464,7 +1464,7 @@ void Player::DrawKatana()const
 void Player::DaggerAtk() 
 {
 	Attack++;
-	stat.Power = 1;
+	stat.Power = 2;
 	if (Yinput == Inp_UD::UP)	//上方向入力
 	{
 		if (20 < Attack) {	//攻撃終了
@@ -1625,17 +1625,17 @@ void Player::MaceAtk()
 	{
 		if (Attack < 20 || wall != 0)
 		{
-			stat.Power = 1;
+			stat.Power = 2;
 			Attack = 20;
 		}
 		else if (Attack < 40)
 		{
-			stat.Power = 2;
+			stat.Power = 5;
 			Attack = 20;
 		}
 		else
 		{
-			stat.Power = 3;
+			stat.Power = 8;
 			Attack = 20;
 		}
 	}
@@ -1856,7 +1856,7 @@ void Player::SpearAtk()
 	else stat.Power = 2;
 
 	//	腕のアニメーション
-	double thrust = 20;	//攻撃距離
+	double thrust = 15;	//攻撃距離
 	double Dis = Width; 
 	switch (Atkpt)
 	{
@@ -2216,145 +2216,147 @@ bool Player::HitDagger(int EneX, int EneY, int EneW, int EneH) {
 		EneX = EneX - GetX() + SCREEN_WIDTH / 2;
 		EneY = EneY - GetY() + SCREEN_HEIGHT / 2;
 
-		if (Yinput == Inp_UD::UP) {
-			switch (TurnFlg)
-			{
-			case true:	//左向き時
-				if (Attack < 10) {
-					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack);
-					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-
-					Rad = (3.14 / 180) * (-45 + ((90 / 10) * Attack));
-				}
-				else if (Attack < 20)
-				{
-					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10));
-					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-
-					Rad = (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10)));
-
-				}
-				break;
-			case false:	//右向き時
-				if (Attack < 10)
-				{
-
-					WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack);
-					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-
-					Rad = (3.14 / 180) * (45 - ((90 / 10) * Attack));
-				}
-				else if (Attack < 20)
-				{
-					WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10));
-					WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2;
-
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-
-					Rad = (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10)));
-				}
-				break;
-			default:
-				break;
-			}
-
-			int DisX = EneX - WeaponX;
-			int DisY = EneY - WeaponY;
-
-			int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
-
-			a = EneX;
-			b = EneY;
-			c = WeaponX;
-			d = WeaponY;
-
-			if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
-			{
-				return true;
-			}
-
-		}
-		else if (Attack && Attack < 10)
-		{
-
-			switch (Combo)
-			{
-			case 1:
+		for (int i = 0; i < 3; i++) {
+			if (Yinput == Inp_UD::UP) {
 				switch (TurnFlg)
 				{
-				case true:
-					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack) + gap);
+				case true:	//左向き時
+					if (Attack < 10) {
+						WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack);
+						WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2 - (10 * i);
+
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+
+						Rad = (3.14 / 180) * (-45 + ((90 / 10) * Attack));
+					}
+					else if (Attack < 20)
+					{
+						WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10));
+						WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2 - (10 * i);
+
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+
+						Rad = (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10)));
+
+					}
+					break;
+				case false:	//右向き時
+					if (Attack < 10)
+					{
+
+						WeaponX = SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack);
+						WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2 - (10 * i);
+
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+
+						Rad = (3.14 / 180) * (45 - ((90 / 10) * Attack));
+					}
+					else if (Attack < 20)
+					{
+						WeaponX = SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10));
+						WeaponY = SCREEN_HEIGHT / 2 - Height - range[0].Y / 2 - (10 * i);
+
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+
+						Rad = (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10)));
+					}
+					break;
+				default:
+					break;
+				}
+
+				int DisX = EneX - WeaponX;
+				int DisY = EneY - WeaponY;
+
+				int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+
+				a = EneX;
+				b = EneY;
+				c = WeaponX;
+				d = WeaponY;
+
+				if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
+				{
+					return true;
+				}
+
+			}
+			else if (Attack && Attack < 10)
+			{
+
+				switch (Combo)
+				{
+				case 1:
+					switch (TurnFlg)
+					{
+					case true:
+						WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width) + (10 * i);
+						WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+						Rad = (3.14 / 180) * (315 - ((90 / 10) * Attack) + gap);
+						break;
+
+					case false:
+
+						WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width) - (10 * i);
+						WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+						Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack) + gap);
+						break;
+
+					default:
+						break;
+					}
 					break;
 
-				case false:
+				case 2:
+					switch (TurnFlg)
+					{
+					case true:
+						WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width) + (10 * i);
+						WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+						Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack) + gap);
+						break;
 
-					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 - top + ((top * 2) / 10 * Attack);
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (45 + ((90 / 10) * Attack) + gap);
+					case false:
+						WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width) - (10 * i);
+						WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
+						RangeX = range[0].X / 2;
+						RangeY = range[0].Y / 2;
+						Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack) + gap);
+						break;
+
+					default:
+						break;
+					}
 					break;
 
 				default:
 					break;
 				}
-				break;
 
-			case 2:
-				switch (TurnFlg)
+				int DisX = EneX - WeaponX;
+				int DisY = EneY - WeaponY;
+
+				int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
+
+				a = EneX;
+				b = EneY;
+				c = WeaponX;
+				d = WeaponY;
+
+				if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
 				{
-				case true:
-					WeaponX = SCREEN_WIDTH / 2 - (1.6 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (225 + ((90 / 10) * Attack) + gap);
-					break;
-
-				case false:
-					WeaponX = SCREEN_WIDTH / 2 + (1.6 * Width);
-					WeaponY = SCREEN_HEIGHT / 2 + top - ((top * 2.1) / 10 * Attack);
-					RangeX = range[0].X / 2;
-					RangeY = range[0].Y / 2;
-					Rad = (3.14 / 180) * (135 - ((90 / 10) * Attack) + gap);
-					break;
-
-				default:
-					break;
+					return true;
 				}
-				break;
-
-			default:
-				break;
-			}
-
-			int DisX = EneX - WeaponX;
-			int DisY = EneY - WeaponY;
-
-			int Dis = sqrt(pow(DisX, 2) + pow(DisY, 2));
-
-			a = EneX;
-			b = EneY;
-			c = WeaponX;
-			d = WeaponY;
-
-			if (WeaponX < EneX + EneW / 2 && WeaponY < EneY + EneH / 2 && EneX - EneW / 2 < WeaponX && EneY - EneH / 2 < WeaponY)
-			{
-				return true;
 			}
 		}
 	}
@@ -2601,7 +2603,7 @@ bool Player::HitSpear(int EneX, int EneY, int EneW, int EneH) {
 	int RangeY = 0;
 
 	double finAng = spear_angle;	//攻撃する角度
-	int thrust = 20;	//攻撃距離
+	int thrust = 15;	//攻撃距離
 
 	EneX = EneX - GetX() + SCREEN_WIDTH / 2;
 	EneY = EneY - GetY() + SCREEN_HEIGHT / 2;

@@ -5,7 +5,7 @@
 #include"UI.h"
 #include<math.h>
 #include<stdlib.h>
-
+#include"GameOver.h"
 #include"Slime.h"
 
 GameMainScene::GameMainScene()
@@ -23,7 +23,7 @@ GameMainScene::GameMainScene()
 	{
 		item[i] = nullptr;
 	}
-	item[0] = new Item(1, weapons::mace, { 880,880 });
+	//item[0] = new Item(1, weapons::mace, { 880,880 });
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -50,7 +50,6 @@ GameMainScene::GameMainScene()
 
 	treasurebox.SetMapData(MapData);
 	
-
 	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
@@ -76,6 +75,12 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
+	if (player.GetLife()<=0)
+	{
+		return new GameOver();
+	}
+	
+
 	if (MoveStop_flg == true)
 	{
 		if (player.WaitSearch())SearchEnemy();
@@ -101,9 +106,36 @@ AbstractScene* GameMainScene::Update()
 	CameraY = player.GetY();
 
 
-	
-
 	treasurebox.Update(&player);
+	if (treasurebox.DropItem())
+	{
+		weapons drop;
+		switch (GetRand(2))
+		{
+		case 0:
+			drop = weapons::mace;
+			break;
+		case 1:
+			drop = weapons::spear;
+			break;
+		case 2:
+			drop = weapons::katana;
+			break;
+		default:
+			drop = weapons::mace;
+			break;
+		}
+
+		for (int i = 0; i < ITEM_MAX; i++)
+		{
+			if (item[i] == nullptr)
+			{
+				item[i] = new Item(1, drop, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
+				item[i]->SetMapData(MapData);
+				break;
+			}
+		}
+	}
 
 	switch (player.GetEquip())
 	{
@@ -172,14 +204,15 @@ void GameMainScene::Draw() const
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
+	
+	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
+	treasurebox.Draw(player.GetX(), player.GetY());
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		if (item[i] != nullptr)item[i]->Draw({ player.GetX() ,player.GetY() });
 	}
-	
-	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
-	treasurebox.Draw(player.GetX(), player.GetY());
+
 	player.Draw();
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -200,15 +233,15 @@ void GameMainScene::Draw() const
 
 	ui.Draw();
 
-	DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
-	DrawFormatString(0, 550, 0xff0000, "%d", Bright);
-	DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
-	DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
-	DrawFormatString(0, 650, 0xff0000, "%d", x);
-	DrawFormatString(50, 650, 0xff0000, "%d", y);
-	DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
-	DrawFormatString(500, 200, 0xffffff, "%d", hit);
-	DrawFormatString(0, 700, 0xff0000, "%d", count);
+	//DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
+	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
+	//DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
+	//DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
+	//DrawFormatString(0, 650, 0xff0000, "%d", x);
+	//DrawFormatString(50, 650, 0xff0000, "%d", y);
+	//DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
+	//DrawFormatString(500, 200, 0xffffff, "%d", hit);
+	//DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
 //マップ生成
@@ -517,6 +550,12 @@ void GameMainScene::NextMap() {
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
 		}
+
+		for (int i = 0; i < ITEM_MAX; i++)
+		{
+			item[i] = nullptr;
+		}
+
 
 		//enemy2.SetMapData(MapData);
 		treasurebox.SetMapData(MapData);

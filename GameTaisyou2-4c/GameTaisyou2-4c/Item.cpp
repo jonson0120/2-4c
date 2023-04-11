@@ -14,7 +14,10 @@ Item::Item(int Type, weapons Weapon ,Range position)
 
 	SetItem();
 
+	fall = -3;
+
 	pos = position;
+	pos.Y -= Height;
 
 }
 
@@ -38,18 +41,35 @@ void Item::Update(Player* player)
 		SetItem();
 	}
 
+	//落下とジャンプ
+	// 
+	//ジャンプ強度
+	float fallinit = 12;
+
+	if (fall < fallinit)
+	{
+		fall += (fallinit * 2) / 45;
+		if (fall > fallinit)
+		{
+			fall = fallinit;
+		}
+	}
+	pos.Y += fall;
+
 	//位置調整
-	while ((MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE]) ||
-		(MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE]))
+
+	while (!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE]||
+		   !MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
 	{
 		pos.Y++;
 	}
 
-	while ((!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE]) ||
-		(!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE]))
+	while (!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
+	 	   !MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
 	{
 		pos.Y--;
 	}
+
 }
 
 void Item::Draw(Range Player)const

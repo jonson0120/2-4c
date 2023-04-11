@@ -125,6 +125,7 @@ public:
 	//ステータス取得
 	Stat GetStat() { return stat; }
 	int GetPotion() { return PotionCount; }
+	int GetLife() { return stat.Hp; }
 
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
