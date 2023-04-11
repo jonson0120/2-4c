@@ -3,6 +3,7 @@
 #include"SceneManager.h"
 #include"GameMainScene.h"
 #include"PadInput.h"
+#include"TitleScene.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -20,7 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     //後で使うよ
 
-    SceneManager sceneMng((AbstractScene*)new GameMainScene());
+    SceneManager sceneMng((AbstractScene*)new Title());
   
 
     //ゲームループ
