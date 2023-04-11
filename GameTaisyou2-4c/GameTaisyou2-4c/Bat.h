@@ -5,12 +5,12 @@
 
 class Player;
 
-class Slime : public Enemy
+class Bat : public Enemy
 {
 private:
 	int image;			//画像
-	int EImages[5];		//画像
-	int Anim;			//歩行アニメーション
+	int EImages[3];		//画像
+	int Anim;			//アニメーション
 
 	int DropItem_Image;	//ドロップアイテム
 	int enex, eney;		//X,Y座標
@@ -22,7 +22,7 @@ private:
 	bool E_AttackFlg;
 	bool HighJump;
 	int Attack;			//攻撃アニメーション
-
+	int StopAttack;
 
 	bool Turnflg;		//画像反転
 
@@ -38,30 +38,30 @@ private:
 
 	int AttackCool;	//攻撃クールタイム
 	int HitCool;	//被弾クールタイム
-	
+
 	float speed; //移動速度
-	float fall;	 //落下速度
+	//float fall;	 //落下速度
 	int jump;	 //ジャンプ回数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Slime();
-	virtual void Update(Player* player) ;
-	virtual void Draw(int x, int y) const ;
+	Bat();
+	virtual void Update(Player* player);
+	virtual void Draw(int x, int y) const;
 
-	virtual int E_GetX()const  { return enex; }
-	virtual int E_GetY()const  { return eney; }
+	virtual int E_GetX()const { return enex; }
+	virtual int E_GetY()const { return eney; }
 
-	virtual int GetWidth()const  { return Width; }
-	virtual int GetHeight()const   { return Height; }
+	virtual int GetWidth()const { return Width; }
+	virtual int GetHeight()const { return Height; }
 
 	virtual int GetPower()const { return Power; }
 
-	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) ;
-	virtual void makeEnemy() ;
+	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
+	virtual void makeEnemy();
 
-	bool CheckHp() ;
+	bool CheckHp();
 
 	void HitPlayer(float damage);
 	bool EnemyAttack(int x, int y);
