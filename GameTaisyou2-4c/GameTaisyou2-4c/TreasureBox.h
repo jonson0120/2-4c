@@ -27,6 +27,7 @@ private:
 
 	int figure;
 
+	bool DropFlag;
 public:
 
 	TreasureBox();
@@ -45,6 +46,6 @@ public:
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 	void MakeBox();
 
-	void OpenBox();
+	bool DropItem();
 };
 
