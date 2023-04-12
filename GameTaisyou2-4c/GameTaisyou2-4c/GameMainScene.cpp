@@ -6,6 +6,7 @@
 #include<math.h>
 #include<stdlib.h>
 
+#include "Grim_Reaper.h"
 #include"Slime.h"
 
 GameMainScene::GameMainScene()
@@ -17,7 +18,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
+	enemy[0] = new Grim_Reaper();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{

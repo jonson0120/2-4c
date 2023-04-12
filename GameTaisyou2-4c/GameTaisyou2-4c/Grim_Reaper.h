@@ -18,7 +18,6 @@ private:
 	int Power;			//攻撃力
 
 	bool E_AttackFlg;
-	bool HighJump;
 	int Attack;			//攻撃アニメーション
 
 	bool Turnflg;		//画像反転

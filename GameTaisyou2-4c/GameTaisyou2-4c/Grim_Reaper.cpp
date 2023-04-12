@@ -21,8 +21,8 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 
 	MapData[eney][enex];
 
-	Width = 48;
-	Height = 64;
+	Width = 90;
+	Height = 100;
 
 	Enemy_Damage = 1;
 	Player_Damage = 1;
@@ -37,14 +37,13 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 
 	E_AttackFlg = FALSE;
 
-	HighJump = false;
 	Attack = 0;
 	HitCool = 0;
 
 	speed = 0;
 	fall = 12;
 
-	LoadDivGraph("images/Grim_Reaper.png", 5, 5, 1, 64, 64, EImages);
+	LoadDivGraph("images/enemysicklemen.png", 2, 2, 1, 90, 100, EImages);
 	Anim = 0;
 	Turnflg = false;
 }
@@ -59,12 +58,12 @@ void Grim_Reaper::Update(Player* player)
 		E_AttackFlg = true;
 
 		//プレイヤーの方向を向く
-		if (player->GetX() < enex) Turnflg = true;
-		else Turnflg = false;
+		if (player->GetX() < enex) Turnflg = false;
+		else Turnflg = true;
 	}
 	else if (!E_AttackFlg) {
 		//通常の移動----------
-		if (Turnflg)
+		if (!Turnflg)
 		{
 			enex -= 3;
 			if (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
@@ -85,20 +84,6 @@ void Grim_Reaper::Update(Player* player)
 		//-------------------
 	}
 
-	//攻撃行動
-	if (E_AttackFlg)
-	{
-		Attack++;
-
-		//攻撃終了
-		if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
-		{
-			//ジャンプして着地すれば攻撃終了
-			E_AttackFlg = false;
-			Attack = 0;
-		}
-	}
-
 	//壁に当たった時止める
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
@@ -114,10 +99,24 @@ void Grim_Reaper::Update(Player* player)
 		speed = 0;
 	}
 
+
+	int fallinit = 12;
+
+	if (fall < fallinit)
+	{
+		fall += (fallinit * 2) / 45;
+		if (fall > fallinit)
+		{
+			fall = fallinit;
+		}
+	}
+	eney += fall;
+
 	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
 	{
 		eney++;
+		fall = 0;
 	}
 
 	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
@@ -126,12 +125,25 @@ void Grim_Reaper::Update(Player* player)
 		eney--;
 	}
 
+	//攻撃行動
+	if (E_AttackFlg)
+	{
+		Attack++;
+
+		//攻撃終了
+		if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		{
+			//ジャンプして着地すれば攻撃終了
+			E_AttackFlg = false;
+			Attack = 0;
+		}
+	}
 
 	//プレイヤーに当たった時攻撃
-	//if (enex == player->GetX() && eney == player->GetY())
-	//{
-	//	player->HitEnemy(float damage);
-	//}
+	if (enex == player->GetX() && eney == player->GetY())
+	{
+		player->HitEnemy(1);
+	}
 
 	if (HitCool)HitCool--;
 
@@ -158,15 +170,14 @@ void Grim_Reaper::Draw(int x, int y) const
 {
 	if (MakeEnemy == TRUE && HitCool % 4 < 2)
 	{
-		int WalkAnim = Anim / 18 % 2;
+		int WalkAnim = Anim / 60 % 2;
 
 		//敵の表示
 		if (!E_AttackFlg)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
 		else
 		{
-			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);
-			else if (fall < 0) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[3], TRUE, Turnflg, false);
-			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[4], TRUE, Turnflg, false);
+			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
+			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
 		}
 	}
 
