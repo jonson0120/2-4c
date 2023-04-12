@@ -39,10 +39,10 @@ void Item::Update(Player* player)
 	if (Type == 1 && CanGet && !player->GetAttack() && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 	{
 		weapons old = player->GetEquip();
-		player->ChangeEquip(Weapon);
-		Weapon = old;
-		SetItem();
-		Getted = true;
+			player->ChangeEquip(Weapon);
+			Weapon = old;
+			SetItem();
+			Getted = true;
 	}
 
 	//—Ž‰º‚ÆƒWƒƒƒ“ƒv

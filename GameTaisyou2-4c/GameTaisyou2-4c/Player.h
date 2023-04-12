@@ -123,7 +123,11 @@ public:
 
 	//装備取得・更新
 	weapons GetEquip()const { return Equip[EquipNum]; }
-	void ChangeEquip(weapons get) { Equip[EquipNum] = get; }
+	weapons Secondary()const { return Equip[1]; }
+
+	void ChangeEquip(weapons get) { if(Equip[1]==weapons::NONE) Equip[1] = get;
+									else Equip[EquipNum] = get;
+	}
 
 	//ステータス取得
 	Stat GetStat() { return stat; }

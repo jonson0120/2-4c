@@ -44,8 +44,6 @@ private:
 	bool MoveStop_flg; //プレイヤーの行動制御フラグ
 	bool Pressed_flg; //出口に着いた時にボタン長押し入力を受け入れるか判定する
 
-	int DoorIcon[3];	//出口などに表示するアイコン
-
 	int x, y;
 
 	int count;
@@ -58,6 +56,9 @@ public:
 	};
 	//描画以外の更新を実装する
 	virtual AbstractScene* Update()override;
+
+	void SortEnemy();
+	void SortItem();
 
 	//描画に関するころを実装する
 	virtual void Draw()const override;

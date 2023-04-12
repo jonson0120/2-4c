@@ -67,9 +67,6 @@ TestMap::TestMap()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
-	LoadDivGraph("images/DoorGauge.png", 2, 2, 1, 32, 32, DoorIcon);
-	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
-
 	LoadDivGraph("images/Art.png", 5, 5, 1, 64, 64, Art);
 	LoadDivGraph("images/Info.png", 3, 3, 1, 128,128, info);
 
@@ -108,8 +105,14 @@ AbstractScene* TestMap::Update()
 	{
 		if (item[i] != nullptr)
 		{
+			bool Second;
+			if (player.Secondary() == weapons::NONE)Second = true;
+			else Second = false;
+
 			item[i]->Update(&player);
-			if (item[i]->GetGet())break;
+			if (Second && item[i]->GetGet())item[i] = nullptr;
+
+			if (item[i] == nullptr || item[i]->GetGet())break;
 		}
 	}
 	//enemy2.Update(&player);
@@ -240,7 +243,34 @@ AbstractScene* TestMap::Update()
 		}
 	}
 
+	SortEnemy();
+	SortItem();
+
 	return this;
+}
+
+void TestMap::SortEnemy()
+{
+	for (int i = 0; i < ENEMY_MAX - 1; i++)
+	{
+		if (enemy[i] == nullptr)
+		{
+			enemy[i] = enemy[i + 1];
+			enemy[i + 1] = nullptr;
+		}
+	}
+}
+
+void TestMap::SortItem()
+{
+	for (int i = 0; i < ITEM_MAX - 1; i++)
+	{
+		if (item[i] == nullptr)
+		{
+			item[i] = item[i + 1];
+			item[i + 1] = nullptr;
+		}
+	}
 }
 
 void TestMap::Draw() const
@@ -275,16 +305,6 @@ void TestMap::Draw() const
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
-	}
-
-	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
-
-		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
-		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
-
-		DrawRotaGraph(DoorX, DoorY, 1.2, 0, DoorIcon[0], true);
-		DrawCircleGauge(DoorX, DoorY, 100 * (count / 90.f), DoorIcon[1], 0, 1.2, false, false);
-		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
 	//enemy2.Draw(player.GetX(), player.GetY());

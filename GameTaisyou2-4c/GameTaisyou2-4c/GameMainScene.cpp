@@ -23,7 +23,6 @@ GameMainScene::GameMainScene()
 	{
 		item[i] = nullptr;
 	}
-	//item[0] = new Item(1, weapons::mace, { 880,880 });
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -43,8 +42,8 @@ GameMainScene::GameMainScene()
 	{
 		if (item[i] != nullptr)
 		{
-			item[i]->Update(&player);
-			if (item[i]->GetGet())break;
+			item[i]->SetMapData(MapData);
+			item[i]->SetItem();
 		}
 	}
 	//enemy2.SetMapData(MapData);
@@ -64,7 +63,7 @@ GameMainScene::GameMainScene()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
-	LoadDivGraph("images/DoorGauge.png", 2, 2, 1, 32, 32, DoorIcon);
+	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 
 	Exit_flg = false;
@@ -100,7 +99,17 @@ AbstractScene* GameMainScene::Update()
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
-		if (item[i] != nullptr)item[i]->Update(&player);
+		if (item[i] != nullptr)
+		{
+			bool Second;
+			if (player.Secondary() == weapons::NONE)Second = true;
+			else Second = false;
+
+			item[i]->Update(&player);
+			if (Second && item[i]->GetGet())item[i] = nullptr;
+
+			if (item[i] == nullptr || item[i]->GetGet())break;
+		}
 	}
 	//enemy2.Update(&player);
 	CameraX = player.GetX();
@@ -192,7 +201,35 @@ AbstractScene* GameMainScene::Update()
 	x= MapExitY * 160 + 80;
 	y= MapExitX * 160 + 131;
 	time++;
+
+	SortEnemy();
+	SortItem();
+
 	return this;
+}
+
+void GameMainScene::SortEnemy()
+{
+	for (int i = 0; i < ENEMY_MAX - 1; i++)
+	{
+		if (enemy[i] == nullptr)
+		{
+			enemy[i] = enemy[i + 1];
+			enemy[i + 1] = nullptr;
+		}
+	}
+}
+
+void GameMainScene::SortItem()
+{
+	for (int i = 0; i < ITEM_MAX - 1; i++)
+	{
+		if (item[i] == nullptr)
+		{
+			item[i] = item[i + 1];
+			item[i + 1] = nullptr;
+		}
+	}
 }
 
 void GameMainScene::Draw() const

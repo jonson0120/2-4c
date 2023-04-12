@@ -34,7 +34,7 @@ Player::Player() {
 	HitCool = 0;
 	Attack = 0;
 	Equip[0] = weapons::dagger;
-	Equip[1] = weapons::spear;
+	Equip[1] = weapons::NONE;
 
 	Yinput = Inp_UD::NONE;
 	Combo = 0;
@@ -85,13 +85,14 @@ void Player::Update() {
 	float CorSpeed = 1;			//移動速度補正
 
 	//壁面移動・Aボタン長押しで処理に入る
-	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_A))
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) || (wall && PAD_INPUT::OnPressed(XINPUT_BUTTON_A)) ||
+											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2))
 	{
 		//壁面移動・左壁
 		//壁面移動中か左側が壁なら入る
 		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
 		{
-			if (JoypadX <= -MARGIN && !Attack) {
+			if ((JoypadX <= -MARGIN && !Attack) || (wall == 3 && PAD_INPUT::OnClick(XINPUT_BUTTON_A))) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 
@@ -113,7 +114,7 @@ void Player::Update() {
 		//壁面移動中か右側が壁なら入る
 		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
 		{
-			if (MARGIN <= JoypadX && !Attack) {
+			if ((MARGIN <= JoypadX && !Attack) || (wall == 3 && PAD_INPUT::OnClick(XINPUT_BUTTON_A))) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 
@@ -282,6 +283,10 @@ void Player::Update() {
 		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER) && !Attack)
 		{
 			if (1 < ++EquipNum) EquipNum = 0;
+			if (Equip[EquipNum] == weapons::NONE)
+			{
+				if (1 < ++EquipNum) EquipNum = 0;
+			}
 			Attack = 0;
 			Combo = 0;
 			stat.Power = 0;
