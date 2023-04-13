@@ -155,6 +155,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fps.cpp" />
     <ClCompile Include="GameOver.cpp" />
+    <ClCompile Include="Grim_Reaper.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Slime.cpp" />
     <ClCompile Include="Enemy2.cpp" />
@@ -165,6 +166,8 @@
     <ClCompile Include="potion.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="KeyManager.cpp" />
+    <ClCompile Include="TestMap.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
@@ -174,6 +177,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fps.h" />
     <ClInclude Include="GameOver.h" />
+    <ClInclude Include="Grim_Reaper.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Slime.h" />
     <ClInclude Include="Enemy2.h" />
@@ -183,6 +187,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="potion.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="TestMap.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>

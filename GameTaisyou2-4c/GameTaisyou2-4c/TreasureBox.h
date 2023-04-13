@@ -8,8 +8,9 @@ class TreasureBox : public Player
 private:
 
 	//宝箱画像
-	int lidImage;     //蓋画像
-	int BoxImage;     //箱画像
+	int lidImage;	//蓋画像
+	int BoxImage;	//箱画像
+	int Button;		//ボタン画像
 
 	//宝箱の位置
 	int lidx, lidy;    //蓋のx,y座標
@@ -19,6 +20,7 @@ private:
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];
 
+	bool CanOpen;		//宝箱を開けるか
 	bool OpenBoxflag;
 
 	float fall;

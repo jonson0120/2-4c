@@ -1,15 +1,16 @@
-ï»¿#include"DxLib.h"
-#include"GameMainScene.h"
+#include"DxLib.h"
+#include"TestMap.h"
 #include"KeyManager.h"
+#include"TitleScene.h"
 #include"AbstractScene.h"
 #include"UI.h"
 #include<math.h>
 #include<stdlib.h>
-#include "Grim_Reaper.h"
 #include"GameOver.h"
 #include"Slime.h"
+#include "Grim_Reaper.h"
 
-GameMainScene::GameMainScene()
+TestMap::TestMap()
 {
 	enemy = new Enemy * [ENEMY_MAX];
 	item = new Item * [ITEM_MAX];
@@ -18,21 +19,27 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		item[i] = nullptr;
 	}
+	item[0] = new Item(1, weapons::dagger, { 240,1600 });
+	item[1] = new Item(1, weapons::mace, { 320,1600 });
+	item[2] = new Item(1, weapons::spear, { 400, 1600 });
+	item[3] = new Item(1, weapons::katana, { 480,1600 });
 
 	MapExitX = 0;
 	MapExitY = 0;
+
+	MapType = 0;
 	MakeMap();
 	player.SetMapData(MapData);
+	player.SetY(BLOCK_SIZE * 9.5);
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
-		if (enemy[i] != nullptr) 
+		if (enemy[i] != nullptr)
 		{
 			enemy[i]->SetMapData(MapData);
 			enemy[i]->makeEnemy();
@@ -44,14 +51,11 @@ GameMainScene::GameMainScene()
 		if (item[i] != nullptr)
 		{
 			item[i]->SetMapData(MapData);
-			item[i]->SetItem();
 		}
 	}
 	//enemy2.SetMapData(MapData);
 
-	treasurebox.SetMapData(MapData);
-	
-	LoadDivGraph("images/Block1.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
 
@@ -64,8 +68,8 @@ GameMainScene::GameMainScene()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
-	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
-	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
+	LoadDivGraph("images/Art.png", 6, 6, 1, 64, 64, Art);
+	LoadDivGraph("images/Info.png", 3, 3, 1, 128,128, info);
 
 	Exit_flg = false;
 	Anim_flg = false;
@@ -74,13 +78,13 @@ GameMainScene::GameMainScene()
 	Pressed_flg = false;
 }
 
-AbstractScene* GameMainScene::Update() 
+AbstractScene* TestMap::Update()
 {
-	if (player.GetLife()<=0)
+	if (player.GetLife() <= 0)
 	{
-		return new GameOver();
+		player.Reset();
 	}
-	
+
 
 	if (MoveStop_flg == true)
 	{
@@ -115,38 +119,6 @@ AbstractScene* GameMainScene::Update()
 	//enemy2.Update(&player);
 	CameraX = player.GetX();
 	CameraY = player.GetY();
-
-
-	treasurebox.Update(&player);
-	if (treasurebox.DropItem())
-	{
-		weapons drop;
-		switch (GetRand(2))
-		{
-		case 0:
-			drop = weapons::mace;
-			break;
-		case 1:
-			drop = weapons::spear;
-			break;
-		case 2:
-			drop = weapons::katana;
-			break;
-		default:
-			drop = weapons::mace;
-			break;
-		}
-
-		for (int i = 0; i < ITEM_MAX; i++)
-		{
-			if (item[i] == nullptr)
-			{
-				item[i] = new Item(1, drop, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
-				item[i]->SetMapData(MapData);
-				break;
-			}
-		}
-	}
 
 	switch (player.GetEquip())
 	{
@@ -184,7 +156,7 @@ AbstractScene* GameMainScene::Update()
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
-		if (enemy[i] != nullptr) 
+		if (enemy[i] != nullptr)
 		{
 			if (enemy[i]->CheckHp())enemy[i] = nullptr;
 		}
@@ -199,9 +171,91 @@ AbstractScene* GameMainScene::Update()
 
 	ExitCheck();
 	if (Exit_flg == true) NextMap();
-	x= MapExitY * 160 + 80;
-	y= MapExitX * 160 + 131;
+	x = MapExitY * 160 + 80;
+	y = MapExitX * 160 + 131;
 	time++;
+
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_Y)) 
+	{
+		if (player.GetY() / BLOCK_SIZE == 8 && player.GetX() / BLOCK_SIZE == 1) 
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				enemy[i] = nullptr;
+			}
+			MapType = 0;
+			MakeMap();
+			player.SetMapData(MapData);
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 8 && player.GetX() / BLOCK_SIZE == 2)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				enemy[i] = nullptr;
+			}
+			MapType = 1;
+			MakeMap();
+			player.SetMapData(MapData);
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 8 && player.GetX() / BLOCK_SIZE == 3)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				enemy[i] = nullptr;
+			}
+			MapType = 2;
+			MakeMap();
+			player.SetMapData(MapData);
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 6 && player.GetX() / BLOCK_SIZE == 3)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				enemy[i] = nullptr;
+			}
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 6 && player.GetX() / BLOCK_SIZE == 2)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] == nullptr) 
+				{
+					enemy[i] = new Slime();
+					enemy[i]->SetMapData(MapData);
+					break;
+				}
+			}
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 4 && player.GetX() / BLOCK_SIZE == 2)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] == nullptr)
+				{
+					enemy[i] = new Grim_Reaper();
+					enemy[i]->SetMapData(MapData);
+					break;
+				}
+			}
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 1 && player.GetX() / BLOCK_SIZE == 1)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				for (int i = 0; i < ENEMY_MAX; i++)
+				{
+					enemy[i] = nullptr;
+				}
+				return new Title();
+			}
+		}
+	}
 
 	SortEnemy();
 	SortItem();
@@ -209,7 +263,7 @@ AbstractScene* GameMainScene::Update()
 	return this;
 }
 
-void GameMainScene::SortEnemy()
+void TestMap::SortEnemy()
 {
 	for (int i = 0; i < ENEMY_MAX - 1; i++)
 	{
@@ -221,7 +275,7 @@ void GameMainScene::SortEnemy()
 	}
 }
 
-void GameMainScene::SortItem()
+void TestMap::SortItem()
 {
 	for (int i = 0; i < ITEM_MAX - 1; i++)
 	{
@@ -233,7 +287,7 @@ void GameMainScene::SortItem()
 	}
 }
 
-void GameMainScene::Draw() const
+void TestMap::Draw() const
 {
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -243,9 +297,19 @@ void GameMainScene::Draw() const
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
 		}
 	}
-	
+
+	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 7.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, info[0], true);
+	DrawRotaGraph(BLOCK_SIZE * 1.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 7.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, info[1], true);
+	DrawRotaGraph(BLOCK_SIZE * 1.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 1.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, info[2], true);
+
+	DrawRotaGraph(BLOCK_SIZE * 1.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 8.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[0], true);
+	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 8.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[1], true);
+	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 8.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[2], true);
+	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[3], true);
+	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[4], true);
+	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 4.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[5], true);
+
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
-	treasurebox.Draw(player.GetX(), player.GetY());
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -256,16 +320,6 @@ void GameMainScene::Draw() const
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
-	}
-
-	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
-
-		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
-		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
-
-		DrawRotaGraph(DoorX, DoorY, 1.2, 0, DoorIcon[0], true);
-		DrawCircleGauge(DoorX, DoorY, 100 * (count / 90.f), DoorIcon[1], 0, 1.2, false, false);
-		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
 	//enemy2.Draw(player.GetX(), player.GetY());
@@ -283,134 +337,22 @@ void GameMainScene::Draw() const
 	//DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
-//ãƒžãƒƒãƒ—ç”Ÿæˆ
-void GameMainScene::MakeMap()
+//ƒ}ƒbƒv¶¬
+void TestMap::MakeMap()
 {
-	//å£ãƒ»ç©ºé–“ãƒ‘ã‚¿ãƒ¼ãƒ³
-	int parts_max = 0;
-	int map_parts[][3][3] = {
+	//•ÇE‹óŠÔƒpƒ^[ƒ“
 
-		{{1,1,1},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{{1,1,1},
-		 {1,0,1},
-		 {1,1,1},},
-
-		{{0,1,0},
-		 {1,1,1},
-		 {0,1,0},},
-
-		{{0,0,0},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{{1,1,1},
-		 {0,0,0},
-		 {1,1,1},},
-
-		{{1,1,1},
-		 {1,1,1},
-		 {0,0,0},},
-
-		{{0,1,1},
-		 {0,1,1},
-		 {0,1,1},},
-
-		{{1,0,1},
-		 {1,0,1},
-		 {1,0,1},},
-
-		{{1,1,0},
-		 {1,1,0},
-		 {1,1,0},},
-
-		{{0,1,1},
-		 {1,0,1},
-		 {1,1,0},},
-
-		{{1,1,0},
-		 {1,0,1},
-		 {0,1,1},},
-
-		{{1,1,1},
-		 {1,1,1},
-		 {0,1,1},},
-
-		{{1,1,1},
-		 {1,1,1},
-		 {1,1,0},},
-
-		{{1,1,0},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{{0,1,1},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{{1,1,0},
-		 {1,0,0},
-		 {0,0,1},},
-
-		{{1,0,0},
-		 {0,0,1},
-		 {0,1,1},},
-
-		{{0,1,1},
-		 {0,0,1},
-		 {1,0,0},},
-
-		{{0,0,1},
-		 {1,0,0},
-		 {1,1,0},},
-
-		{{1,1,1},
-		 {1,1,1},
-		 {1,1,0},},
-
-		{{1,1,0},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{{1,1,1},
-		 {1,1,1},
-		 {0,1,1},},
-
-		{{0,1,1},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{{1,1,1},
-		 {1,1,1},
-		 {0,0,1},},
-
-		{{1,1,1},
-		 {1,1,0},
-		 {1,1,0},},
-
-		{{1,0,0},
-		 {1,1,1},
-		 {1,1,1},},
-
-		{ {0,1,1},
-		  {0,1,1},
-		  {1,1,1}, },
-	};
-	parts_max = sizeof(map_parts) / sizeof(*map_parts);
-
-	//å‡ºå£ç”Ÿæˆãƒã‚§ãƒƒã‚¯
+	//oŒû¶¬ƒ`ƒFƒbƒN
 	bool MakeExit = false;
 
-	int Space = 0;				//ç©ºé–“ã®æ•°
+	int Space = 0;				//‹óŠÔ‚Ì”
 
 	int x = player.GetX();
 
-	//ãƒžãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ä½œæˆ
+	//ƒ}ƒbƒvƒf[ƒ^ì¬
 	do {
 
-		//ãƒã‚§ãƒƒã‚¯ã«ä½¿ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ãƒªã‚»ãƒƒãƒˆ-------
+		//ƒ`ƒFƒbƒN‚ÉŽg—p‚·‚éƒf[ƒ^ƒŠƒZƒbƒg-------
 		Space = 0;
 		MakeExit = false;
 		for (int i = 0; i < MAP_HEIGHT; i++)
@@ -422,31 +364,9 @@ void GameMainScene::MakeMap()
 			}
 		}
 		//-------------------------------------------
-		
-		//å£ç”Ÿæˆ----------------------------------------------------
-		for (int i = 1; i < MAP_HEIGHT - 1; i += 3)
-		{
-			for (int j = 1; j < MAP_WIDTH - 1; j += 3)
-			{
-				int parts = GetRand(parts_max - 1);	//ä½¿ç”¨ã™ã‚‹ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’æ±ºã‚ã‚‹
 
-				//ãƒ‘ã‚¿ãƒ¼ãƒ³ã«å¿œã˜ã¦å£ã‚’ä½œã‚‹
-				MapData[i][j] = map_parts[parts][0][0];
-				MapData[i + 1][j] = map_parts[parts][1][0];
-				MapData[i + 2][j] = map_parts[parts][2][0];
 
-				MapData[i][j + 1] = map_parts[parts][0][1];
-				MapData[i + 1][j + 1] = map_parts[parts][1][1];
-				MapData[i + 2][j + 1] = map_parts[parts][2][1];
-
-				MapData[i][j + 2] = map_parts[parts][0][2];
-				MapData[i + 1][j + 2] = map_parts[parts][1][2];
-				MapData[i + 2][j + 2] = map_parts[parts][2][2];
-			}
-		}
-		//---------------------------------------------------------------
-
-		//ãƒžãƒƒãƒ—ç«¯ã®å£ãƒ»å¤©äº•-----------------------
+		//ƒ}ƒbƒv’[‚Ì•ÇE“Vˆä-----------------------
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
 			for (int j = 0; j < MAP_WIDTH; j++)
@@ -455,25 +375,40 @@ void GameMainScene::MakeMap()
 				{
 					MapData[i][j] = 0;
 				}
-				//else MapData[i][j] = 1;
+				else MapData[i][j] = 1;
 
 				if (i == MAP_HEIGHT - 1 || i == 0)
 				{
 					MapData[i][j] = 0;
 				}
+
+				if (i == 7 && j < 4) MapData[i][j] = 0;
+				if (i == 5 && 1 < j && j < 5) MapData[i][j] = 0;
+
+				if (MapType == 1) 
+				{
+					if (i == 9 && 4 < j && j < 8) MapData[i][j] = 0;
+					if (i == 8 && 8 < j) MapData[i][j] = 0;
+				}
+
+				if (MapType == 2)
+				{
+					if (i == 5 && 9 < j) MapData[i][j] = 0;
+					if (i == 6 && 8 < j) MapData[i][j] = 0;
+					if (i == 7 && 7 < j) MapData[i][j] = 0;
+					if (i == 8 && 6 < j) MapData[i][j] = 0;
+					if (i == 9 && 5 < j) MapData[i][j] = 0;
+				}
 			}
 		}
 		//------------------------------------------
 
-		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸä½ç½®ã‚’è¶³å ´ã®ã‚ã‚‹ç©ºé–“ã«ã™ã‚‹
-		MapData[player.GetY() / 160][player.GetX() / 160] = 1;
-		MapData[player.GetY() / 160][(player.GetX() / 160) + 1] = 1;
-		MapData[player.GetY() / 160 + 1][player.GetX() / 160] = 0;
+		//ƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’u‚ð‘«ê‚Ì‚ ‚é‹óŠÔ‚É‚·‚é
 
-		//ç©ºé–“æ•°ãƒã‚§ãƒƒã‚¯
+		//‹óŠÔ”ƒ`ƒFƒbƒN
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
-		//å‡ºå£ã‚’è¨­ç½®
+		//oŒû‚ðÝ’u
 		/*for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
 		{
 			for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
@@ -489,29 +424,13 @@ void GameMainScene::MakeMap()
 		}*/
 
 
-		//ç©ºé–“æ•°ãŒä¸€å®šä»¥ä¸‹ãªã‚‰å†ç”Ÿæˆ
+		//‹óŠÔ”‚ªˆê’èˆÈ‰º‚È‚çÄ¶¬
 	} while (Space < 70);
 
 	MakeExit = MakeExit;
-	
-	while (MakeExit == false)
-	{
-		int i = GetRand(MAP_HEIGHT);
-		int j = GetRand(MAP_WIDTH - 3) + 2;
-		if (i != CameraY / 160 && j != CameraX / 160) {
-			if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
-			{
-				MapData[i][j] = 2;
-				MapExitX = i;
-				MapExitY = j;
-				MakeExit = true;
-				//break;
-			}
-		}
-		//ç©ºé–“æ•°ãŒä¸€å®šä»¥ä¸‹ãªã‚‰å†ç”Ÿæˆ
-	} while (Space < 70);
 
-	//å­¤ç«‹ã—ãŸç©ºé–“ã‚’åŸ‹ã‚ã‚‹
+
+	//ŒÇ—§‚µ‚½‹óŠÔ‚ð–„‚ß‚é
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -519,41 +438,40 @@ void GameMainScene::MakeMap()
 			if (CheckData[i][j] == 0)MapData[i][j] = 5;
 		}
 	}
-	MapData[player.GetY() / 160][player.GetX() / 160] = 3;
 }
 
-int GameMainScene::CheckSpace(int y, int x, int* cnt)
+int TestMap::CheckSpace(int y, int x, int* cnt)
 {
-		
-		//å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ãŒå¤–æž ãªã‚‰å‡¦ç†ã‚’æŠœã‘ã‚‹
-		if (x == 0 || x == MAP_WIDTH - 1 || y == MAP_HEIGHT - 1 || y == 0)return 0;
-	
-		CheckData[y][x] = 1;
-		(*cnt)++;
-	
-		if (MapData[y + 1][x] && !CheckData[y + 1][x])CheckSpace(y + 1, x, cnt);
-		else CheckData[y + 1][x] = 1;
 
-		if (MapData[y - 1][x] && !CheckData[y - 1][x])CheckSpace(y - 1, x, cnt);
-		else CheckData[y - 1][x] = 1;
+	//‘ÎÛƒuƒƒbƒN‚ªŠO˜g‚È‚çˆ—‚ð”²‚¯‚é
+	if (x == 0 || x == MAP_WIDTH - 1 || y == MAP_HEIGHT - 1 || y == 0)return 0;
 
-		if (MapData[y][x + 1] && !CheckData[y][x + 1])CheckSpace(y, x + 1, cnt);
-		else CheckData[y][x + 1] = 1;
+	CheckData[y][x] = 1;
+	(*cnt)++;
 
-		if (MapData[y][x - 1] && !CheckData[y][x - 1])CheckSpace(y, x - 1, cnt);
-		else CheckData[y][x - 1] = 1;
-	
-		return 0;
+	if (MapData[y + 1][x] && !CheckData[y + 1][x])CheckSpace(y + 1, x, cnt);
+	else CheckData[y + 1][x] = 1;
+
+	if (MapData[y - 1][x] && !CheckData[y - 1][x])CheckSpace(y - 1, x, cnt);
+	else CheckData[y - 1][x] = 1;
+
+	if (MapData[y][x + 1] && !CheckData[y][x + 1])CheckSpace(y, x + 1, cnt);
+	else CheckData[y][x + 1] = 1;
+
+	if (MapData[y][x - 1] && !CheckData[y][x - 1])CheckSpace(y, x - 1, cnt);
+	else CheckData[y][x - 1] = 1;
+
+	return 0;
 }
 
-void GameMainScene::NextMap() {
+void TestMap::NextMap() {
 	AnimTimer++;
 	MoveStop_flg = false;
-	
+
 	if (0 <= Bright && Anim_flg == false) {
-		// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆå‡¦ç†
+		// ƒtƒF[ƒhƒAƒEƒgˆ—
 		if (AnimTimer % 5 == 0) {
-			// æç”»è¼åº¦ã‚’ã‚»ãƒƒãƒˆ
+			// •`‰æ‹P“x‚ðƒZƒbƒg
 			SetDrawBright(Bright, Bright, Bright);
 			Bright -= Bright_minus;
 		}
@@ -561,7 +479,7 @@ void GameMainScene::NextMap() {
 	}
 	else {
 		if (AnimTimer % 5 == 0) {
-			// æç”»è¼åº¦ã‚’ã‚»ãƒƒãƒˆ
+			// •`‰æ‹P“x‚ðƒZƒbƒg
 			SetDrawBright(Bright, Bright, Bright);
 			Bright += Bright_minus;
 			Anim_flg = true;
@@ -573,7 +491,7 @@ void GameMainScene::NextMap() {
 			}
 		}
 	}
-		//æ¬¡ã®ãƒžãƒƒãƒ—ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
+	//ŽŸ‚Ìƒ}ƒbƒv‚ð¶¬‚·‚éˆ—
 	if (MakeMap_flg == true) {
 		MapExitX = 0;
 		MapExitY = 0;
@@ -584,7 +502,7 @@ void GameMainScene::NextMap() {
 		enemy[0] = nullptr;
 		enemy[0] = new Slime();
 		enemy[1] = nullptr;
-		enemy[1] = new Grim_Reaper();
+		enemy[1] = new Slime();
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
@@ -595,20 +513,16 @@ void GameMainScene::NextMap() {
 			item[i] = nullptr;
 		}
 
-
-		//enemy2.SetMapData(MapData);
-		treasurebox.SetMapData(MapData);
-
 		MakeMap_flg = false;
 		Pressed_flg = false;
 		count = 0;
 	}
 }
 
-void GameMainScene::ExitCheck() {
+void TestMap::ExitCheck() {
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
 		if (Pressed_flg == true) {
-			//Yãƒœã‚¿ãƒ³é•·æŠ¼ã—ã§å‡¦ç†ã«å…¥ã‚‹
+			//Yƒ{ƒ^ƒ“’·‰Ÿ‚µ‚Åˆ—‚É“ü‚é
 			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 				count++;
 				if (count >= 90) {
@@ -619,25 +533,25 @@ void GameMainScene::ExitCheck() {
 					}
 				}
 			}
-			else if (--count < 0)count = 0;
+			if (PAD_INPUT::OnRelease(XINPUT_BUTTON_Y))count = 0;
 		}
 	}
 }
 
-void GameMainScene::SearchEnemy() 
+void TestMap::SearchEnemy()
 {
-	//è¿‘ãã®æ•µã®ãƒŠãƒ³ãƒãƒ¼ã¨è·é›¢
+	//‹ß‚­‚Ì“G‚Ìƒiƒ“ƒo[‚Æ‹——£
 	int NearEnemy = -1;
 	int NearDistance = -1;
 
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨æ•µã®åº§æ¨™
+	//ƒvƒŒƒCƒ„[‚Æ“G‚ÌÀ•W
 	int PlayerX = player.GetX();
 	int PlayerY = player.GetY();
 	int EnemyX = 0, EnemyY = 0;
 
 	for (int i = 0; i < 10; i++)
 	{
-		if (enemy[i] != nullptr) 
+		if (enemy[i] != nullptr)
 		{
 			EnemyX = enemy[i]->E_GetX();
 			EnemyY = enemy[i]->E_GetY();
@@ -652,6 +566,6 @@ void GameMainScene::SearchEnemy()
 		}
 	}
 
-	if (0 <= NearEnemy) player.SetNear(enemy[NearEnemy]->E_GetX(), enemy[NearEnemy]->E_GetY(),NearDistance);
+	if (0 <= NearEnemy) player.SetNear(enemy[NearEnemy]->E_GetX(), enemy[NearEnemy]->E_GetY(), NearDistance);
 	else player.SetNear(-1, -1, -1);
 }

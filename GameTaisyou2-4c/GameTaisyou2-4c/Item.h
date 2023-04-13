@@ -9,6 +9,7 @@ private:
 	int Type;		//アイテム種類 1:武器
 	weapons Weapon;	//武器種類	
 	bool CanGet;		//拾える範囲にいるか
+	bool Getted;		//同フレームにおいて拾われたか
 
 	int image;		//アイテム画像
 	int icon;		//アイコン画像
@@ -29,6 +30,8 @@ public :
 	void SetItem();
 
 	int GetType() { return Type; }
+	bool GetGet() { return Getted; }
+
 	weapons GetweaponType() { return Weapon; }
 	int GetDis(Range Player);
 

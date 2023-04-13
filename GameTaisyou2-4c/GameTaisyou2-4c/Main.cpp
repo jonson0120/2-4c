@@ -4,6 +4,7 @@
 #include"SceneManager.h"
 #include"GameMainScene.h"
 #include"PadInput.h"
+#include"TitleScene.h"
 
 #define FLAME 60
 
@@ -23,9 +24,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     //後で使うよ
 
-    SceneManager sceneMng((AbstractScene*)new GameMainScene());
-
-    float NextTime = GetNowCount();		//フレーム毎の経過時間
+    SceneManager sceneMng((AbstractScene*)new Title());
+  
 
     Fps fps;
 
