@@ -15,7 +15,7 @@ private:
 	int DropItem_Image;	//ドロップアイテム
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
-	int direction;		//敵の向き
+	bool Turnflg;		//敵の向き
 
 	int Power;			//攻撃力
 
@@ -23,13 +23,7 @@ private:
 	bool HighJump;
 	int Attack;			//攻撃アニメーション
 
-	bool Turnflg;		//画像反転
-
-	int Player_Damage;
-	int Enemy_Damage;
-
 	int Enemy_Hp;
-	int Player_Hp;
 
 	bool MakeEnemy;
 
@@ -49,19 +43,26 @@ public:
 	virtual void Update(Player* player) ;
 	virtual void Draw(int x, int y) const ;
 
+	//座標取得
 	virtual int E_GetX()const  { return enex; }
 	virtual int E_GetY()const  { return eney; }
 
+	//幅、高さ取得
 	virtual int GetWidth()const  { return Width; }
 	virtual int GetHeight()const   { return Height; }
 
+	//攻撃力取得
 	virtual int GetPower()const { return Power; }
 
+	//敵配置
 	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) ;
 	virtual void makeEnemy() ;
 
 	bool CheckHp() ;
 
+	//ダメージを受ける
 	void HitPlayer(float damage);
+
+	//敵の攻撃当たり
 	bool EnemyAttack(int x, int y);
 };
