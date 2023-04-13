@@ -18,7 +18,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Grim_Reaper();
+	enemy[0] = new Slime();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -584,7 +584,7 @@ void GameMainScene::NextMap() {
 		enemy[0] = nullptr;
 		enemy[0] = new Slime();
 		enemy[1] = nullptr;
-		enemy[1] = new Slime();
+		enemy[1] = new Grim_Reaper();
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);

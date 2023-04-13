@@ -189,7 +189,7 @@ void Grim_Reaper::Draw(int x, int y) const
 			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
 	}
 
-	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
+	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
