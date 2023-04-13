@@ -618,7 +618,7 @@ void GameMainScene::ExitCheck() {
 					}
 				}
 			}
-			if (PAD_INPUT::OnRelease(XINPUT_BUTTON_Y))count = 0;
+			else if (--count < 0)count = 0;
 		}
 	}
 }

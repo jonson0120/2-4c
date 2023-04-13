@@ -92,7 +92,7 @@ void Player::Update() {
 		//壁面移動中か左側が壁なら入る
 		if ((wall == 1 || !MapData[y / 160][(x - 1 - Width / 2) / 160]))
 		{
-			if ((JoypadX <= -MARGIN && !Attack) || (wall == 3 && PAD_INPUT::OnClick(XINPUT_BUTTON_A))) {
+			if ((JoypadX <= -MARGIN && !Attack && PAD_INPUT::OnClick(XINPUT_BUTTON_A)) || wall == 3) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 
@@ -114,7 +114,7 @@ void Player::Update() {
 		//壁面移動中か右側が壁なら入る
 		if ((wall == 2 || !MapData[y / 160][(x + 1 + Width / 2) / 160]))
 		{
-			if ((MARGIN <= JoypadX && !Attack) || (wall == 3 && PAD_INPUT::OnClick(XINPUT_BUTTON_A))) {
+			if ((MARGIN <= JoypadX && !Attack && PAD_INPUT::OnClick(XINPUT_BUTTON_A)) || wall == 3 ) {
 				fall = 0;	//落下速度0
 				jump = 1;	//ジャンプ回数
 

@@ -165,5 +165,8 @@ public:
 
 	//敵との当たり判定
 	void HitEnemy(float damage);
+
+	//状態リセット(デバッグルーム用)
+	void Reset() { stat.Hp = stat.MaxHp; }
 };
 

@@ -81,7 +81,7 @@ AbstractScene* TestMap::Update()
 {
 	if (player.GetLife() <= 0)
 	{
-		return new GameOver();
+		player.Reset();
 	}
 
 

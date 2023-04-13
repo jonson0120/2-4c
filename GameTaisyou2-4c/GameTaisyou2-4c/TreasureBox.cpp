@@ -10,6 +10,7 @@ TreasureBox::TreasureBox()
 	//ïÛî†âÊëú
 	lidImage = LoadGraph("images/Treasure2.png", TRUE);     //äWâÊëú
 	BoxImage = LoadGraph("images/Treasure3.png", TRUE);     //î†âÊëú
+	Button = LoadGraph("images/ItemIcon.png", TRUE);
 
 	//äWÇÃx,yç¿ïW
 	lidx = 0;
@@ -31,7 +32,8 @@ TreasureBox::TreasureBox()
 
 	fall = 12;
 
-	OpenBoxflag=false;
+	OpenBoxflag = false;
+	CanOpen = false;
 
 	DropFlag = false;
 	/*figure = rand % 100 + 1;*/
@@ -95,6 +97,8 @@ void TreasureBox::Update(Player* player)
 		{
 			OpenBoxflag = true;
 		}
+		if (!OpenBoxflag)CanOpen = true;
+		else CanOpen = false;
 	}
 
 	{//ïÛî†
@@ -128,9 +132,9 @@ void TreasureBox::Draw(int x, int y)const
 		DrawRotaGraph(Boxx - x + (SCREEN_WIDTH / 2), Boxy - y + (SCREEN_HEIGHT / 2), 0.3, 0, BoxImage, TRUE);
 		DrawRotaGraph(lidx - x + (SCREEN_WIDTH / 2), lidy - y + (SCREEN_HEIGHT / 2) +(lidflag/2), 0.3, 0, lidImage, TRUE);
 	}
-	if (OpenBoxflag == true)
+	if (CanOpen)
 	{
-		//DrawString(0, 500, "TRUE", 0xffffff);
+		DrawRotaGraph(Boxx - x + (SCREEN_WIDTH / 2), Boxy - y + (SCREEN_HEIGHT / 2) - Height , 1, 0, Button, TRUE);
 	}
 
 }
