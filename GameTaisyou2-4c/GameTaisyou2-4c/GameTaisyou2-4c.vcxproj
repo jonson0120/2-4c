@@ -155,6 +155,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fps.cpp" />
     <ClCompile Include="GameOver.cpp" />
+    <ClCompile Include="Grim_Reaper.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Slime.cpp" />
     <ClCompile Include="Enemy2.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fps.h" />
     <ClInclude Include="GameOver.h" />
+    <ClInclude Include="Grim_Reaper.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Slime.h" />
     <ClInclude Include="Enemy2.h" />
