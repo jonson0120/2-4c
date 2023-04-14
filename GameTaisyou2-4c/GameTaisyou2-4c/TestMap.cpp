@@ -4,11 +4,14 @@
 #include"TitleScene.h"
 #include"AbstractScene.h"
 #include"UI.h"
+
 #include<math.h>
 #include<stdlib.h>
+
 #include"GameOver.h"
 #include"Slime.h"
 #include "Grim_Reaper.h"
+#include "Weapon.h"
 
 TestMap::TestMap()
 {
@@ -24,10 +27,10 @@ TestMap::TestMap()
 	{
 		item[i] = nullptr;
 	}
-	item[0] = new Item(1, weapons::dagger, { 240,1600 });
-	item[1] = new Item(1, weapons::mace, { 320,1600 });
-	item[2] = new Item(1, weapons::spear, { 400, 1600 });
-	item[3] = new Item(1, weapons::katana, { 480,1600 });
+	item[0] = new Weapon(weapons::dagger, { 240,1600 });
+	item[1] = new Weapon(weapons::mace, { 320,1600 });
+	item[2] = new Weapon(weapons::spear, { 400, 1600 });
+	item[3] = new Weapon(weapons::katana, { 480,1600 });
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -106,14 +109,22 @@ AbstractScene* TestMap::Update()
 	{
 		if (item[i] != nullptr)
 		{
-			bool Second;
-			if (player.Secondary() == weapons::NONE)Second = true;
-			else Second = false;
-
 			item[i]->Update(&player);
-			if (Second && item[i]->GetGet())item[i] = nullptr;
 
-			if (item[i] == nullptr || item[i]->GetGet())break;
+			if (item[i]->GetType() == Equip)
+			{
+				bool Second;
+				if (player.Secondary() == weapons::NONE)Second = true;
+				else Second = false;
+
+				if (Second && item[i]->GetGet())item[i] = nullptr;
+
+				if (item[i] == nullptr || item[i]->GetGet())break;
+			}
+
+			if (item[i]->GetType() == ItemType::Shard)
+			{
+			}
 		}
 	}
 	//enemy2.Update(&player);

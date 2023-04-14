@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include"DxLib.h"
-#include"Enemy.h"
 #include"common.h"
 
-class Player
+class HowToPlayer
 {
 private:
 	int PImages[5];	//画像：上半身
@@ -50,7 +49,7 @@ private:
 	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
 
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
+	int MapData[MAP_HEIGHT][MAP_WIDTH_T];	//マップデータ
 
 	int JoypadX, JoypadY;	//パッド入力値
 	float PadangL;			//パッド入力角度
@@ -75,7 +74,7 @@ private:
 public:
 
 	void InitPad();
-	Player();
+	HowToPlayer();
 	void Update();
 	void Draw() const;
 
@@ -93,6 +92,7 @@ public:
 	void SetY(int Y) { y = Y; }
 
 	//装備取得・更新
+	void SetDagger() { Equip[0] = weapons::dagger; }
 	weapons GetEquip()const { return Equip[EquipNum]; }
 	weapons Secondary()const { return Equip[1]; }
 
@@ -113,25 +113,16 @@ public:
 	//void GetShard() { stat.Shard++; }
 
 	//マップデータ取得
-	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
+	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH_T]);
 
 	//武器描画
 	void DrawDagger()const;
-	void DrawMace()const;
-	void DrawSpear()const;
-	void DrawKatana()const;
 
 	//武器アニメーション管理
 	void DaggerAtk();
-	void MaceAtk();
-	void SpearAtk();
-	void KatanaAtk();
 
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
-	bool HitMace(int EneX, int EneY, int EneW, int EneH);
-	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
-	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
 
 	//攻撃入力・攻撃力取得
 	float GetAttack() { return Attack; }

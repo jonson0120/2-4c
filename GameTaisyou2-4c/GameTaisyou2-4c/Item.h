@@ -1,40 +1,29 @@
 #pragma once
-#include"DxLib.h"
-#include"Player.h"
-#include"common.h"
+#include "Player.h"
+#include "common.h"
+
+enum ItemType
+{
+	Shard,
+	Equip
+};
 
 class Item
 {
-private:
-	int Type;		//アイテム種類 1:武器
-	weapons Weapon;	//武器種類	
-	bool CanGet;		//拾える範囲にいるか
-	bool Getted;		//同フレームにおいて拾われたか
 
-	int image;		//アイテム画像
-	int icon;		//アイコン画像
-	float size;		//画像サイズ比
+public:
+	Item() {};
 
-	float fall;		//落下速度
+	virtual void Update(Player* player) = 0;
+	virtual void Draw(Range pos)const = 0;
 
-	Range pos;		//アイテム座標
-	int Height, Width;	//アイテムサイズ
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
+	virtual	void SetItem() = 0;
 
-public :
-	Item(int Type, weapons Weapon, Range position);
+	virtual bool GetGet() = 0;
+	virtual ItemType GetType() = 0;
 
-	void Update(Player* player);
-	void Draw(Range pos)const;
+	virtual int GetDis(Range Player) = 0;
 
-	void SetItem();
-
-	int GetType() { return Type; }
-	bool GetGet() { return Getted; }
-
-	weapons GetweaponType() { return Weapon; }
-	int GetDis(Range Player);
-
-	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
+	virtual	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) = 0;
 };
 

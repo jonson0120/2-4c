@@ -10,7 +10,10 @@ Player::Player() {
 
 	stat.Hp = 10;
 	stat.MaxHp = stat.Hp;
+	stat.Atk = 1;
 	stat.Power = 0;
+	stat.Shard = 0;
+
 	PotionCount = 3;
 
 	Width = 32;

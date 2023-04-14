@@ -1,7 +1,6 @@
 #pragma once
 #include "Player.h"
 #include"PadInput.h"
-#include"Player.h"
 
 
 class UI
