@@ -118,9 +118,16 @@ public:
 	int GetWidth()const { return Width; }
 	int GetHeight()const { return Height; }
 
+	//座標セット
+	void SetY(int Y) { y = Y; }
+
 	//装備取得・更新
 	weapons GetEquip()const { return Equip[EquipNum]; }
-	void ChangeEquip(weapons get) { Equip[EquipNum] = get; }
+	weapons Secondary()const { return Equip[1]; }
+
+	void ChangeEquip(weapons get) { if(Equip[1]==weapons::NONE) Equip[1] = get;
+									else Equip[EquipNum] = get;
+	}
 
 	//ステータス取得
 	Stat GetStat() { return stat; }
@@ -158,5 +165,8 @@ public:
 
 	//敵との当たり判定
 	void HitEnemy(float damage);
+
+	//状態リセット(デバッグルーム用)
+	void Reset() { stat.Hp = stat.MaxHp; }
 };
 

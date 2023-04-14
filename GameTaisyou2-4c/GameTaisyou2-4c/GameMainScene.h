@@ -57,6 +57,9 @@ public:
 	//描画以外の更新を実装する
 	virtual AbstractScene* Update()override;
 
+	void SortEnemy();
+	void SortItem();
+
 	//描画に関するころを実装する
 	virtual void Draw()const override;
 
