@@ -90,6 +90,23 @@ void Bat::Update(Player* player)
 		//-------------------
 	}
 
+	
+
+	//壁に当たった時止める
+	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
+		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+	{
+		enex--;
+		speed = 0;
+	}
+
+	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
+		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
+	{
+		enex++;
+		speed = 0;
+	}
+
 	//攻撃行動
 	if (E_AttackFlg)
 	{
@@ -110,6 +127,7 @@ void Bat::Update(Player* player)
 				//fall = -fallinit * 0.5;
 				HighJump = false;
 			}
+	
 		}
 		//ジャンプ
 		else if (120 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
@@ -119,18 +137,22 @@ void Bat::Update(Player* player)
 			//縦方向ジャンプ
 			if (HighJump)
 			{
-				if (Turnflg)enex -= jump / 3;
-				else enex += jump / 3;
+				if (Turnflg)eney -= jump / 3;
+				//else enex += jump / 3;
+				else eney += player->GetY();
+				//enex += player->GetX();
 			}
 			//横方向ジャンプ
-			else
 			{
 				if (Turnflg)enex -= jump;
 				else enex += jump;
+				//else enex += player->GetX();
+				//eney += player->GetY();
 			}
+			
 		}
 		//攻撃終了
-		else if (120 < Attack )
+		else if (120 < Attack)
 		{
 			//ジャンプして着地すれば攻撃終了
 			E_AttackFlg = false;
@@ -138,6 +160,7 @@ void Bat::Update(Player* player)
 			Attack = 0;
 		}
 	}
+
 
 	//壁に当たった時止める
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
@@ -153,7 +176,6 @@ void Bat::Update(Player* player)
 		enex++;
 		speed = 0;
 	}
-
 	//落下とジャンプ
 
 	/*if (fall < fallinit)
@@ -166,20 +188,7 @@ void Bat::Update(Player* player)
 	}
 	eney += fall;*/
 
-	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
-		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
-	{
-		eney++;
-		//fall = 0;
-		//jump = 0;
-	}
-
-	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
-		(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
-	{
-		eney--;
-		//jump = 0;
-	}
+	
 
 
 	//プレイヤーに当たった時攻撃
