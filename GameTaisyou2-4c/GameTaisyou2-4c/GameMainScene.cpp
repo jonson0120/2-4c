@@ -13,6 +13,7 @@
 
 #include"Item.h"
 #include"Weapon.h"
+#include"Shard.h"
 
 GameMainScene::GameMainScene()
 {
@@ -123,8 +124,9 @@ AbstractScene* GameMainScene::Update()
 				if (item[i] == nullptr || item[i]->GetGet())break;
 			}
 
-			if (item[i]->GetType() == ItemType::Shard)
+			if (item[i]->GetType() == ItemType::Sh)
 			{
+				if (item[i]->GetGet())item[i] = nullptr;
 			}
 		}
 	}
@@ -202,7 +204,21 @@ AbstractScene* GameMainScene::Update()
 	{
 		if (enemy[i] != nullptr) 
 		{
-			if (enemy[i]->CheckHp())enemy[i] = nullptr;
+			if (enemy[i]->CheckHp())
+			{
+				int Dlop = 0;
+				for (int j = 0; j < ITEM_MAX - 1 && Dlop < 2; j++)
+				{
+					if (item[j] == nullptr)
+					{
+						item[j] = new Shard({ enemy[i]->E_GetX(),enemy[i]->E_GetY() });
+						item[j]->SetMapData(MapData);
+						Dlop++;
+					}
+				}
+				enemy[i] = nullptr;
+				break;
+			}
 		}
 	}
 

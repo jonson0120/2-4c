@@ -4,8 +4,8 @@
 
 enum ItemType
 {
-	Shard,
-	Equip
+	Sh,		//ƒVƒƒ[ƒh
+	Equip	//‘•”õ
 };
 
 class Item

@@ -19,7 +19,7 @@ HowToMap::HowToMap()
 
 	//enemy2.SetMapData(MapData);
 	
-	LoadDivGraph("images/Block1.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/HowToBlock.png", 8, 4, 2, 160, 160, MapImg);
 
 	LoadDivGraph("images/HowDagger.png", 2, 2, 1, 60, 53, Dagger);
 	Icon = LoadGraph("images/ItemIcon.png");
@@ -74,6 +74,7 @@ AbstractScene* HowToMap::Update()
 		NextMap();
 	}
 
+	if (CheckHitKey(KEY_INPUT_Q)) player.SetX(BLOCK_SIZE * 40);
 
 	if (GoMain_flg)return new GameMainScene();
 

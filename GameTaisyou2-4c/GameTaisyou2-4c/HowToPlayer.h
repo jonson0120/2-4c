@@ -89,6 +89,7 @@ public:
 	int GetHeight()const { return Height; }
 
 	//座標セット
+	void SetX(int X) { x = X; }
 	void SetY(int Y) { y = Y; }
 
 	//装備取得・更新

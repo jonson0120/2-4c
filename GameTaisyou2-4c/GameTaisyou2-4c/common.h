@@ -41,5 +41,7 @@ struct Stat
 	int MaxHp;		//最大体力
 	int Atk;		//基礎攻撃力
 	float Power;	//攻撃倍率
+	int Potion;		//ポーション所持数
+	int PotionMax;	//ポーション最大所持数
 	int Shard;		//シャード所持数
 };

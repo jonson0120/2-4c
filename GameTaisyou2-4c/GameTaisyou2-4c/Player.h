@@ -34,7 +34,8 @@ private:
 
 	float Attack;
 
-	int HitCool;	//被弾後無敵
+	int UsePotion = 0;	//ポーション使用カウント
+	int HitCool;		//被弾後無敵
 
 	bool TurnFlg;
 	bool FalseFlg;
@@ -94,6 +95,11 @@ public:
 
 	//装備取得・更新
 	weapons GetEquip()const { return Equip[EquipNum]; }
+	weapons GetSecond()const {
+		if (EquipNum)return Equip[0];
+		else return Equip[1];
+	}
+
 	weapons Secondary()const { return Equip[1]; }
 
 	void ChangeEquip(weapons get) { if(Equip[1]==weapons::NONE) Equip[1] = get;
@@ -102,15 +108,21 @@ public:
 
 	//ステータス取得---------------------------
 	Stat GetStat() { return stat; }
-	int GetPotion() { return PotionCount; }
+
 	int GetLife() { return stat.Hp; }
 	int GetMaxLife() { return stat.MaxHp; }
+
 	int GetAtk() { return stat.Atk; }
+
+	int GetPotion() { return stat.Potion; }
+	int GetPotionMax() { return stat.PotionMax; }
+
 	int GetShard() { return stat.Shard; }
 	//-----------------------------------------
+	int UseP() { return UsePotion; }
 
 	//ステータス変化
-	//void GetShard() { stat.Shard++; }
+	void AddShard() { stat.Shard++; }
 
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);

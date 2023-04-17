@@ -122,7 +122,7 @@ AbstractScene* TestMap::Update()
 				if (item[i] == nullptr || item[i]->GetGet())break;
 			}
 
-			if (item[i]->GetType() == ItemType::Shard)
+			if (item[i]->GetType() == ItemType::Sh)
 			{
 			}
 		}
