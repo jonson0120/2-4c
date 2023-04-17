@@ -22,7 +22,8 @@ private:
 	bool E_AttackFlg;
 	bool HighJump;
 	int Attack;			//攻撃アニメーション
-	int StopAttack;
+	int AttackSpeed;
+	int Dive;
 
 	bool Turnflg;		//画像反転
 

@@ -8,6 +8,7 @@
 #include "Grim_Reaper.h"
 #include"GameOver.h"
 #include"Slime.h"
+#include"Bat.h"
 
 GameMainScene::GameMainScene()
 {
@@ -18,7 +19,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
+	enemy[0] = new Bat();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -582,7 +583,7 @@ void GameMainScene::NextMap() {
 		player.SetMapData(MapData);
 
 		enemy[0] = nullptr;
-		enemy[0] = new Slime();
+		enemy[0] = new Bat();
 		enemy[1] = nullptr;
 		enemy[1] = new Grim_Reaper();
 		for (int i = 0; i < ENEMY_MAX; i++)

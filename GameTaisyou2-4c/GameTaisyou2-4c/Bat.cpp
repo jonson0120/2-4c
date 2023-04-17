@@ -39,7 +39,8 @@ Bat::Bat() : Enemy()
 
 	HighJump = false;
 	Attack = 0;
-	StopAttack = 0;
+	AttackSpeed = 0;
+	Dive = 0;
 
 	AttackCool = 0;
 	HitCool = 0;
@@ -55,8 +56,8 @@ Bat::Bat() : Enemy()
 
 void Bat::Update(Player* player)
 {
-	//ジャンプ強度
-	//float fallinit = 12;
+	//ジ強度
+	AttackSpeed = 0;
 
 	//プレイヤー認識範囲
 	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
@@ -64,7 +65,7 @@ void Bat::Update(Player* player)
 	{
 		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
-
+		Dive = 9;
 		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
@@ -111,9 +112,10 @@ void Bat::Update(Player* player)
 	if (E_AttackFlg)
 	{
 		Attack++;
+		AttackSpeed++;
 
 		//ジャンプ直前の待機
-		if (Attack == 120)
+		if (Attack <= 60)
 		{
 			//プレイヤーが一定以上高い位置にいると縦方向ジャンプになる
 			if (BLOCK_SIZE - 30 < eney - player->GetY())
@@ -130,34 +132,25 @@ void Bat::Update(Player* player)
 	
 		}
 		//ジャンプ
-		else if (120 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		else if (Attack < 90)
 		{
-			int jump = 9;
 
-			//縦方向ジャンプ
-			if (HighJump)
-			{
-				if (Turnflg)eney -= jump / 3;
-				//else enex += jump / 3;
-				else eney += player->GetY();
-				//enex += player->GetX();
-			}
-			//横方向ジャンプ
-			{
-				if (Turnflg)enex -= jump;
-				else enex += jump;
-				//else enex += player->GetX();
+				if (Turnflg)enex -= Dive;
+				//else enex += jump;
+				else enex += Dive;
 				//eney += player->GetY();
-			}
-			
 		}
 		//攻撃終了
-		else if (120 < Attack)
+		else
 		{
-			//ジャンプして着地すれば攻撃終了
-			E_AttackFlg = false;
-			AttackCool = 60;
-			Attack = 0;
+			//速度が0になれば攻撃終了
+			if (--Dive <= 0)
+			{
+				E_AttackFlg = false;
+				AttackCool = 60;
+				Dive = 0;
+				Attack = 0;
+			}
 		}
 	}
 
