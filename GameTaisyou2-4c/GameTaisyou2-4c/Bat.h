@@ -21,6 +21,7 @@ private:
 
 	bool E_AttackFlg;
 	bool HighJump;
+	bool LowJump;
 	int Attack;			//攻撃アニメーション
 	int AttackSpeed;
 	int Dive;

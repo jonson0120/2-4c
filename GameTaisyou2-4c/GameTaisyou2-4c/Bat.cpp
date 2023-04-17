@@ -38,6 +38,7 @@ Bat::Bat() : Enemy()
 	E_AttackFlg = FALSE;
 
 	HighJump = false;
+	LowJump = false;
 	Attack = 0;
 	AttackSpeed = 0;
 	Dive = 0;
@@ -49,14 +50,14 @@ Bat::Bat() : Enemy()
 	//fall = 12;
 	jump = 0;
 
-	LoadDivGraph("images/bat3.png", 3, 3, 1, 51, 64, EImages);
+	LoadDivGraph("images/bat3.png", 3, 3, 1, 76, 96, EImages);
 	Anim = 0;
 	Turnflg = false;
 }
 
 void Bat::Update(Player* player)
 {
-	//ジ強度
+	
 	AttackSpeed = 0;
 
 	//プレイヤー認識範囲
@@ -65,7 +66,7 @@ void Bat::Update(Player* player)
 	{
 		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
-		Dive = 9;
+		Dive = 6;
 		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
@@ -118,31 +119,61 @@ void Bat::Update(Player* player)
 		if (Attack <= 60)
 		{
 			//プレイヤーが一定以上高い位置にいると縦方向ジャンプになる
-			if (BLOCK_SIZE - 30 < eney - player->GetY())
+			if (BLOCK_SIZE - 10 < eney - player->GetY())
 			{
-				//fall = -fallinit * 1.2;
 				HighJump = true;
 			}
 			//水平方向ジャンプ
 			else
 			{
-				//fall = -fallinit * 0.5;
 				HighJump = false;
+			}
+
+			//プレイヤーが一定以下低い位置にいると縦方向ジャンプになる
+			if (BLOCK_SIZE - 10 < eney + player->GetY())
+			{
+				LowJump = true;
+			}
+			//水平方向ジャンプ
+			else
+			{
+				LowJump = false;
 			}
 	
 		}
 		//ジャンプ
 		else if (Attack < 90)
-		{
+
+			if (HighJump)
+			{
+
+				if (Turnflg)eney -= Dive;
+				else  eney -= Dive;
+				enex += Dive;
+			}
+
+			else
+			{
 
 				if (Turnflg)enex -= Dive;
-				//else enex += jump;
 				else enex += Dive;
-				//eney += player->GetY();
+			}
+
+		if (LowJump)
+		{
+			if (Turnflg)eney -= Dive;
+			else  eney += Dive;
+			enex += Dive;
 		}
-		//攻撃終了
+
 		else
 		{
+
+			if (Turnflg)enex -= Dive;
+			else enex += Dive;
+		}
+		//攻撃終了
+		
 			//速度が0になれば攻撃終了
 			if (--Dive <= 0)
 			{
@@ -151,7 +182,7 @@ void Bat::Update(Player* player)
 				Dive = 0;
 				Attack = 0;
 			}
-		}
+		
 	}
 
 
@@ -169,26 +200,7 @@ void Bat::Update(Player* player)
 		enex++;
 		speed = 0;
 	}
-	//落下とジャンプ
-
-	/*if (fall < fallinit)
-	{
-		fall += (fallinit * 2) / 45;
-		if (fall > fallinit)
-		{
-			fall = fallinit;
-		}
-	}
-	eney += fall;*/
-
 	
-
-
-	//プレイヤーに当たった時攻撃
-	//if (enex == player->GetX() && eney == player->GetY())
-	//{
-	//	player->HitEnemy(float damage);
-	//}
 
 	if (HitCool)HitCool--;
 	if (AttackCool)AttackCool--;
