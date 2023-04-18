@@ -92,85 +92,47 @@ void Bat::Update(Player* player)
 		//-------------------
 	}
 
-	
-
-	//壁に当たった時止める
-	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
-		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
-	{
-		enex--;
-		speed = 0;
-	}
-
-	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
-		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
-	{
-		enex++;
-		speed = 0;
-	}
-
 	//攻撃行動
 	if (E_AttackFlg)
 	{
 		Attack++;
 		AttackSpeed++;
+		double vector = atan2(static_cast<double>(player->GetY()) - eney, static_cast<double>(player->GetX()) - enex);
 
 		//ジャンプ直前の待機
 		if (Attack <= 60)
 		{
-			//プレイヤーが一定以上高い位置にいると縦方向ジャンプになる
-			if (BLOCK_SIZE - 10 < eney - player->GetY())
-			{
-				HighJump = true;
-			}
-			//水平方向ジャンプ
-			else
-			{
-				HighJump = false;
-			}
-
-			//プレイヤーが一定以下低い位置にいると縦方向ジャンプになる
-			if (BLOCK_SIZE - 10 < eney + player->GetY())
-			{
-				LowJump = true;
-			}
-			//水平方向ジャンプ
-			else
-			{
-				LowJump = false;
-			}
-	
+			
 		}
 		//ジャンプ
 		else if (Attack < 90)
 		{
-
-			if (HighJump)
+			enex += Dive * cos(vector);
+			while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
+				!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 			{
-
-				if (Turnflg)eney -= Dive;
-				else  eney -= Dive;
-				enex += Dive;
+				enex--;
+				speed = 0;
 			}
 
-			else
+			while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
+				!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 			{
-
-				if (Turnflg)enex -= Dive;
-				else enex += Dive;
+				enex++;
+				speed = 0;
 			}
 
-			if (LowJump)
+			eney += Dive * sin(vector);
+			while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
+				(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
 			{
-				if (Turnflg)eney += Dive;
-				else  eney += Dive;
-				enex += Dive;
+				eney++;
 			}
-			else
+
+			while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
+				(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
 			{
-				if (Turnflg)enex += Dive;
-				else eney += Dive;
-					 enex -= Dive;
+				eney--;
 			}
 
 		}

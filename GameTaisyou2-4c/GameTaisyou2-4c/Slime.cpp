@@ -165,6 +165,7 @@ void Slime::Update(Player* player)
 			fall = fallinit;
 		}
 	}
+
 	eney += fall;
 
 	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
