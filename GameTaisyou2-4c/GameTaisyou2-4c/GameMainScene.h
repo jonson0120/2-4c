@@ -19,6 +19,9 @@ private:
 	int MapExitX; //マップの出口のX座標
 	int MapExitY; //マップの出口のY座標
 
+	int Level;		//階層
+	bool SafeZone;	//安全地帯を作る?
+
 	int time;
 	Player player;
 	Enemy** enemy;

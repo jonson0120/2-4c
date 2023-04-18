@@ -15,6 +15,8 @@
 #include"Weapon.h"
 #include"Shard.h"
 
+#define DEBUG
+
 GameMainScene::GameMainScene()
 {
 	enemy = new Enemy * [ENEMY_MAX];
@@ -30,6 +32,10 @@ GameMainScene::GameMainScene()
 	{
 		item[i] = nullptr;
 	}
+
+	Level = 1;
+	SafeZone = false;
+
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -238,6 +244,32 @@ AbstractScene* GameMainScene::Update()
 	SortEnemy();
 	SortItem();
 
+#ifdef DEBUG
+
+	if (CheckHitKey(KEY_INPUT_Q))
+	{
+		for (int i = 0; i < ENEMY_MAX; i++)
+		{
+			if (enemy[i] != nullptr)
+			{
+				enemy[i] = nullptr;
+			}
+		}
+	}
+
+	if (CheckHitKey(KEY_INPUT_W))
+	{
+		player.SetX(MapExitY * 160 + 80);
+		player.SetY(MapExitX * 160 + 131);
+	}
+
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_E))
+	{
+		Level++;
+	}
+
+#endif // DEBUG
+
 	return this;
 }
 
@@ -303,6 +335,14 @@ void GameMainScene::Draw() const
 	//enemy2.Draw(player.GetX(), player.GetY());
 
 	ui.Draw();
+
+#ifdef DEBUG
+
+	DrawFormatString(0, 500, 0xff0000, "%d", Level);
+	DrawFormatString(0, 510, 0xff0000, "%d", SafeZone);
+
+#endif // DEBUG
+
 
 	//DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
@@ -440,108 +480,149 @@ void GameMainScene::MakeMap()
 	int x = player.GetX();
 
 	//マップデータ作成
-	do {
+	if (!SafeZone)
+	{
+		do {
 
-		//チェックに使用するデータリセット-------
-		Space = 0;
-		MakeExit = false;
-		for (int i = 0; i < MAP_HEIGHT; i++)
-		{
-			for (int j = 0; j < MAP_WIDTH; j++)
+			//チェックに使用するデータリセット-------
+			Space = 0;
+			MakeExit = false;
+			for (int i = 0; i < MAP_HEIGHT; i++)
 			{
-				CheckData[i][j] = 0;
-				MapData[i][j] = 0;
-			}
-		}
-		//-------------------------------------------
-		
-		//壁生成----------------------------------------------------
-		for (int i = 1; i < MAP_HEIGHT - 1; i += 3)
-		{
-			for (int j = 1; j < MAP_WIDTH - 1; j += 3)
-			{
-				int parts = GetRand(parts_max - 1);	//使用するパターンを決める
-
-				//パターンに応じて壁を作る
-				MapData[i][j] = map_parts[parts][0][0];
-				MapData[i + 1][j] = map_parts[parts][1][0];
-				MapData[i + 2][j] = map_parts[parts][2][0];
-
-				MapData[i][j + 1] = map_parts[parts][0][1];
-				MapData[i + 1][j + 1] = map_parts[parts][1][1];
-				MapData[i + 2][j + 1] = map_parts[parts][2][1];
-
-				MapData[i][j + 2] = map_parts[parts][0][2];
-				MapData[i + 1][j + 2] = map_parts[parts][1][2];
-				MapData[i + 2][j + 2] = map_parts[parts][2][2];
-			}
-		}
-		//---------------------------------------------------------------
-
-		//マップ端の壁・天井-----------------------
-		for (int i = 0; i < MAP_HEIGHT; i++)
-		{
-			for (int j = 0; j < MAP_WIDTH; j++)
-			{
-				if (j == MAP_WIDTH - 1 || j == 0)
+				for (int j = 0; j < MAP_WIDTH; j++)
 				{
-					MapData[i][j] = 0;
-				}
-				//else MapData[i][j] = 1;
-
-				if (i == MAP_HEIGHT - 1 || i == 0)
-				{
+					CheckData[i][j] = 0;
 					MapData[i][j] = 0;
 				}
 			}
-		}
-		//------------------------------------------
+			//-------------------------------------------
 
-		//プレイヤーの初期位置を足場のある空間にする
-		MapData[player.GetY() / 160][player.GetX() / 160] = 1;
-		MapData[player.GetY() / 160][(player.GetX() / 160) + 1] = 1;
-		MapData[player.GetY() / 160 + 1][player.GetX() / 160] = 0;
-
-		//空間数チェック
-		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
-
-		//出口を設置
-		/*for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
-		{
-			for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
+			//壁生成----------------------------------------------------
+			for (int i = 1; i < MAP_HEIGHT - 1; i += 3)
 			{
+				for (int j = 1; j < MAP_WIDTH - 1; j += 3)
+				{
+					int parts = GetRand(parts_max - 1);	//使用するパターンを決める
+
+					//パターンに応じて壁を作る
+					MapData[i][j] = map_parts[parts][0][0];
+					MapData[i + 1][j] = map_parts[parts][1][0];
+					MapData[i + 2][j] = map_parts[parts][2][0];
+
+					MapData[i][j + 1] = map_parts[parts][0][1];
+					MapData[i + 1][j + 1] = map_parts[parts][1][1];
+					MapData[i + 2][j + 1] = map_parts[parts][2][1];
+
+					MapData[i][j + 2] = map_parts[parts][0][2];
+					MapData[i + 1][j + 2] = map_parts[parts][1][2];
+					MapData[i + 2][j + 2] = map_parts[parts][2][2];
+				}
+			}
+			//---------------------------------------------------------------
+
+			//マップ端の壁・天井-----------------------
+			for (int i = 0; i < MAP_HEIGHT; i++)
+			{
+				for (int j = 0; j < MAP_WIDTH; j++)
+				{
+					if (j == MAP_WIDTH - 1 || j == 0)
+					{
+						MapData[i][j] = 0;
+					}
+					//else MapData[i][j] = 1;
+
+					if (i == MAP_HEIGHT - 1 || i == 0)
+					{
+						MapData[i][j] = 0;
+					}
+				}
+			}
+			//------------------------------------------
+
+			//プレイヤーの初期位置を足場のある空間にする
+			MapData[player.GetY() / 160][player.GetX() / 160] = 1;
+			MapData[player.GetY() / 160][(player.GetX() / 160) + 1] = 1;
+			MapData[player.GetY() / 160 + 1][player.GetX() / 160] = 0;
+
+			//空間数チェック
+			CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
+
+			//出口を設置
+			/*for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
+			{
+				for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
+				{
+					if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+					{
+						MapData[i][j] = 2;
+						MapExitX = i;
+						MapExitY = j;
+						MakeExit = true;
+					}
+				}
+			}*/
+
+
+			//空間数が一定以下なら再生成
+		} while (Space < 70);
+
+		MakeExit = MakeExit;
+
+		while (MakeExit == false)
+		{
+			int i = GetRand(MAP_HEIGHT);
+			int j = GetRand(MAP_WIDTH - 3) + 2;
+			if (i != CameraY / 160 && j != CameraX / 160) {
 				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
 				{
 					MapData[i][j] = 2;
 					MapExitX = i;
 					MapExitY = j;
 					MakeExit = true;
+					//break;
 				}
 			}
-		}*/
+			//空間数が一定以下なら再生成
+		} while (Space < 70);
 
-
-		//空間数が一定以下なら再生成
-	} while (Space < 70);
-
-	MakeExit = MakeExit;
-	
-	while (MakeExit == false)
+	}
+	else
 	{
-		int i = GetRand(MAP_HEIGHT);
-		int j = GetRand(MAP_WIDTH - 3) + 2;
-		if (i != CameraY / 160 && j != CameraX / 160) {
-			if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+	player.SetY(BLOCK_SIZE * 9.5);
+
+	Space = 0;
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			CheckData[i][j] = 0;
+			MapData[i][j] = 0;
+		}
+	}
+
+		for (int i = 0; i < MAP_HEIGHT; i++)
+		{
+			for (int j = 0; j < MAP_WIDTH; j++)
 			{
-				MapData[i][j] = 2;
-				MapExitX = i;
-				MapExitY = j;
-				MakeExit = true;
-				//break;
+				if (MAP_WIDTH - 3 <= j || j == 0)
+				{
+					MapData[i][j] = 0;
+				}
+				else MapData[i][j] = 1;
+
+				if (MAP_HEIGHT - 1 <= i || i <= 5)
+				{
+					MapData[i][j] = 0;
+				}
 			}
 		}
-		//空間数が一定以下なら再生成
-	} while (Space < 70);
+
+		MapData[MAP_HEIGHT - 2][MAP_WIDTH - 3] = 2;
+		MapExitX = MAP_HEIGHT - 2;
+		MapExitY = MAP_WIDTH - 3;
+
+		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
+	}
 
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -589,7 +670,13 @@ void GameMainScene::NextMap() {
 			SetDrawBright(Bright, Bright, Bright);
 			Bright -= Bright_minus;
 		}
-		if (Bright <= 0)MakeMap_flg = true;
+		if (Bright <= 0)
+		{
+			MakeMap_flg = true;
+
+			if (SafeZone)SafeZone = false;
+			else if (++Level % 10 == 0)SafeZone = true;
+		}
 	}
 	else {
 		if (AnimTimer % 5 == 0) {
@@ -613,19 +700,27 @@ void GameMainScene::NextMap() {
 		MakeMap();
 		player.SetMapData(MapData);
 
-		enemy[0] = nullptr;
-		enemy[0] = new Slime();
-		enemy[1] = nullptr;
-		enemy[1] = new Grim_Reaper();
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
-			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
+			if (enemy[i] != nullptr)enemy[i] = nullptr;
 		}
 
 		for (int i = 0; i < ITEM_MAX; i++)
 		{
 			item[i] = nullptr;
 		}
+
+		if (!SafeZone) {
+			enemy[0] = nullptr;
+			enemy[0] = new Slime();
+			enemy[1] = nullptr;
+			enemy[1] = new Grim_Reaper();
+		}
+		for (int i = 0; i < ENEMY_MAX; i++)
+		{
+			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
+		}
+
 
 
 		//enemy2.SetMapData(MapData);

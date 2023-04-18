@@ -91,6 +91,7 @@ public:
 	int GetHeight()const { return Height; }
 
 	//座標セット
+	void SetX(int X) { x = X; }
 	void SetY(int Y) { y = Y; }
 
 	//装備取得・更新
@@ -123,6 +124,15 @@ public:
 
 	//ステータス変化
 	void AddShard() { stat.Shard++; }
+
+	bool UseShard(int amount) { 
+
+		if (amount <= stat.Shard) {
+			stat.Shard -= amount;
+			return true;
+		}
+		else return false;
+	}
 
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
