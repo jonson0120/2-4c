@@ -10,8 +10,12 @@ Player::Player() {
 
 	stat.Hp = 10;
 	stat.MaxHp = stat.Hp;
+	stat.Atk = 1;
 	stat.Power = 0;
-	PotionCount = 3;
+	stat.Potion = 3;
+	stat.PotionMax = stat.Potion;
+	stat.Shard = 0;
+
 
 	Width = 32;
 	Height = 56;
@@ -469,12 +473,15 @@ void Player::Update() {
 		//回復
 
 		//Xボタンを押すと回復
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) && 0 < PotionCount)
+		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_X) && 0 < stat.Potion)
 		{
-			PotionCount--;
-
-			stat.Hp += (stat.MaxHp  * 0.2);
+			if (60 == ++UsePotion)
+			{
+				stat.Potion--;
+				stat.Hp += (stat.MaxHp * 0.2);
+			}
 		}
+		else UsePotion = 0;
 
 		//HP制限
 		if (stat.MaxHp < stat.Hp)
