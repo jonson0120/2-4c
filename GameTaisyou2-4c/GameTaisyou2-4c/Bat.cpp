@@ -143,6 +143,7 @@ void Bat::Update(Player* player)
 		}
 		//ジャンプ
 		else if (Attack < 90)
+		{
 
 			if (HighJump)
 			{
@@ -159,21 +160,22 @@ void Bat::Update(Player* player)
 				else enex += Dive;
 			}
 
-		if (LowJump)
-		{
-			if (Turnflg)eney -= Dive;
-			else  eney += Dive;
-			enex += Dive;
-		}
+			if (LowJump)
+			{
+				if (Turnflg)eney += Dive;
+				else  eney += Dive;
+				enex += Dive;
+			}
+			else
+			{
+				if (Turnflg)enex += Dive;
+				else eney += Dive;
+					 enex -= Dive;
+			}
 
-		else
-		{
-
-			if (Turnflg)enex -= Dive;
-			else enex += Dive;
 		}
 		//攻撃終了
-		
+		else {
 			//速度が0になれば攻撃終了
 			if (--Dive <= 0)
 			{
@@ -182,7 +184,8 @@ void Bat::Update(Player* player)
 				Dive = 0;
 				Attack = 0;
 			}
-		
+
+		}
 	}
 
 
