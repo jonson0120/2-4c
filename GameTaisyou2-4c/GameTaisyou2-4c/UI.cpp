@@ -21,14 +21,18 @@ UI::UI()
 	LoadDivGraph("images/Gauge.png", 3, 3, 1, 34, 34, Gauge);
 
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, Number);
+	LoadDivGraph("images/sign.png", 3, 3, 1, 11, 11, Sign);
 
-	PotionImage1 = LoadGraph("images/potion2.png");
+	ItemImg[0] = LoadGraph("images/potion2.png");
+	ItemImg[1] = LoadGraph("images/shard.png");
+
 	LoadDivGraph("images/UiButton.png", 2, 2, 1, 21, 21, ButtonImg);
 
 	Damage = 0;
 
 	PlayerHP = 0;
-	MaxHP = 0;
+	MaxHP = 0; 
+	Shard = 0;
 
 	potionflag = false;
 	
@@ -39,6 +43,8 @@ void UI::Update(Player* player)
 	stat = player->GetStat();
 	PlayerHP = stat.Hp;
 	MaxHP = stat.MaxHp;
+
+	Shard = player->GetShard();
 
 	PotionCount = player->GetPotion();
 	PotionMax = player->GetPotionMax();
@@ -105,7 +111,7 @@ void UI::Draw() const
 
 	for (int i = 0; i < PotionCount; i++)
 	{
-		DrawRotaGraph(165 + (i * 55), 80, 0.3, 0, PotionImage1, TRUE);
+		DrawRotaGraph(165 + (i * 55), 80, 0.3, 0, ItemImg[0], TRUE);
 	}
 
 	DrawRotaGraph(140, 100, 1.2, 0, Gauge[0], true);
@@ -165,22 +171,48 @@ void UI::Draw() const
 	DrawBox(135, 10, 135 + (PlayerHP / MaxHP) * 400, 50, GetColor(255, 255, 255), FALSE);
 
 	//HP表示
+	int danger = 0;
+	if (PlayerHP / MaxHP <= 0.21)danger = 33;
+	else if (PlayerHP / MaxHP <= 0.41)danger = 22;
+
 	//100の位
 	if (100 < MaxHP)
 	{
-		if (100 <= PlayerHP)DrawRotaGraph(150, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10], TRUE);
+		if (100 <= PlayerHP)DrawRotaGraph(150, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10 + danger], TRUE);
 		DrawRotaGraph(218, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10], TRUE);
 	}
 
 	//10の位
-	if(10 <= PlayerHP)DrawRotaGraph(167, 30, 1.5, 0, Number[(int)PlayerHP / 10 % 10], TRUE);
-	DrawRotaGraph(235, 30, 1.5, 0, Number[(int)MaxHP / 10 % 10], TRUE);
+	if(10 <= PlayerHP)DrawRotaGraph(167, 30, 1.5, 0, Number[(int)PlayerHP / 10 % 10 + danger], TRUE);
+	DrawRotaGraph(235, 30, 1.5, 0, Number[(int)MaxHP / 10 % 10 + danger], TRUE);
 
 	//1の位
-	DrawRotaGraph(184, 30, 1.5, 0, Number[(int)PlayerHP % 10], TRUE);
-	DrawRotaGraph(252, 30, 1.5, 0, Number[(int)MaxHP % 10], TRUE);
+	DrawRotaGraph(184, 30, 1.5, 0, Number[(int)PlayerHP % 10 + danger], TRUE);
+	DrawRotaGraph(252, 30, 1.5, 0, Number[(int)MaxHP % 10 + danger], TRUE);
 
-	DrawRotaGraph(201, 30, 1.5, 0, Number[10], TRUE);
+	//スラッシュ
+	DrawRotaGraph(201, 30, 1.5, 0, Number[10 + danger], TRUE);
+
+
+	//シャード所持数
+	//シャード
+	DrawRotaGraph(25, 125, 1, 0, ItemImg[1], TRUE);
+
+	//×印
+	DrawRotaGraph(45, 130, 1, 0, Sign[0], TRUE);
+
+	//100の位
+	if (100 <= Shard) DrawRotaGraph(62, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
+
+	//10の位
+	if (100 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
+	else if (10 <= Shard)DrawRotaGraph(62, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
+
+	//1の位
+	if (100 <= Shard)(96, 125, 1.5, 0, Number[Shard % 10], TRUE);
+	else if (10 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard % 10], TRUE);
+	else DrawRotaGraph(62, 125, 1.5, 0, Number[Shard % 10], TRUE);
+
 }
 
 

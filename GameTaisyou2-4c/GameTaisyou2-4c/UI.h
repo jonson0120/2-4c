@@ -11,6 +11,8 @@ private:
 	float MaxHP;
 	float PlayerHP;
 
+	int Shard;
+
 	bool potionflag;
 
 	int Damage;
@@ -26,10 +28,12 @@ private:
 	 
 	int Gauge[3];
 
-	int PotionImage1;
 	int ButtonImg[2];
 
+	int ItemImg[2];
+
 	int Number[44];
+	int Sign[3];
 
 	int PotionCount;
 	int PotionMax;
