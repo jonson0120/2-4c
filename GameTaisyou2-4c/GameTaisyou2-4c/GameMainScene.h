@@ -20,7 +20,8 @@ private:
 	int MapExitY; //マップの出口のY座標
 
 	int Level;		//階層
-	bool SafeZone;	//安全地帯を作る?
+	bool SafeZone;	//今いるのは安全地帯?
+	bool UpGrade = false;	//アップグレードメニューを開く?
 
 	int time;
 	Player player;
@@ -28,7 +29,7 @@ private:
 	Item** item;
 	//Enemy2 enemy2;
 	UI ui;
-	TreasureBox treasurebox;
+	TreasureBox** treasurebox;
 
 	int CameraX;
 	int CameraY;
@@ -45,7 +46,7 @@ private:
 	bool MoveStop_flg; //プレイヤーの行動制御フラグ
 	bool Pressed_flg; //出口に着いた時にボタン長押し入力を受け入れるか判定する
 
-	int DoorIcon[3];	//出口などに表示するアイコン
+	int DoorIcon[4];	//出口などに表示するアイコン
 
 	int x, y;
 

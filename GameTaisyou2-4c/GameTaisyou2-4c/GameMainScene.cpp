@@ -7,6 +7,8 @@
 #include<math.h>
 #include<stdlib.h>
 
+#include"TreasureBox.h"
+
 #include "Grim_Reaper.h"
 #include"GameOver.h"
 #include"Slime.h"
@@ -21,6 +23,7 @@ GameMainScene::GameMainScene()
 {
 	enemy = new Enemy * [ENEMY_MAX];
 	item = new Item * [ITEM_MAX];
+	treasurebox = new TreasureBox * [TREASURE_MAX];
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -60,8 +63,13 @@ GameMainScene::GameMainScene()
 		}
 	}
 	//enemy2.SetMapData(MapData);
+	for (int i = 0; i < TREASURE_MAX; i++)
+	{
+		treasurebox[i] = nullptr;
+	}
 
-	treasurebox.SetMapData(MapData);
+	treasurebox[0] = new TreasureBox();
+	treasurebox[0]->SetMapData(MapData);
 	
 	LoadDivGraph("images/Block1.png", 4, 4, 1, 160, 160, MapImg);
 
@@ -78,11 +86,12 @@ GameMainScene::GameMainScene()
 
 	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
+	DoorIcon[3] = LoadGraph("images/ItemIcon.png");
 
 	Exit_flg = true;
 	Anim_flg = true;
 	MakeMap_flg = false;
-	MoveStop_flg = false;
+	MoveStop_flg = true;
 	Pressed_flg = false;
 
 	SetDrawBright(Bright, Bright, Bright);
@@ -97,12 +106,24 @@ AbstractScene* GameMainScene::Update()
 	}
 	
 
-	if (MoveStop_flg == true || Bright == 0)
+	if ((!MoveStop_flg || Bright == 0) && !UpGrade)
 	{
 		if (player.WaitSearch())SearchEnemy();
 		player.Update();
-		ui.Update(&player);
 	}
+
+	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6 && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
+	{
+		UpGrade = true;
+	}
+
+	if (UpGrade) 
+	{
+		if (!ui.UpGradeUI(&player))UpGrade = false;
+	}
+
+	ui.Update(&player);
+
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -117,13 +138,13 @@ AbstractScene* GameMainScene::Update()
 	{
 		if (item[i] != nullptr)
 		{
-			item[i]->Update(&player);
-
 			if (item[i]->GetType() == Equip)
 			{
 				bool Second;
 				if (player.Secondary() == weapons::NONE)Second = true;
 				else Second = false;
+
+				item[i]->Update(&player);
 
 				if (Second && item[i]->GetGet())item[i] = nullptr;
 
@@ -132,6 +153,7 @@ AbstractScene* GameMainScene::Update()
 
 			if (item[i]->GetType() == ItemType::Sh)
 			{
+				item[i]->Update(&player);
 				if (item[i]->GetGet())item[i] = nullptr;
 			}
 		}
@@ -140,34 +162,39 @@ AbstractScene* GameMainScene::Update()
 	CameraX = player.GetX();
 	CameraY = player.GetY();
 
-
-	treasurebox.Update(&player);
-	if (treasurebox.DropItem())
+	for (int i = 0; i < TREASURE_MAX; i++)
 	{
-		weapons drop;
-		switch (GetRand(2))
+		if (treasurebox[i] != nullptr)
 		{
-		case 0:
-			drop = weapons::mace;
-			break;
-		case 1:
-			drop = weapons::spear;
-			break;
-		case 2:
-			drop = weapons::katana;
-			break;
-		default:
-			drop = weapons::mace;
-			break;
-		}
-
-		for (int i = 0; i < ITEM_MAX; i++)
-		{
-			if (item[i] == nullptr)
+			treasurebox[i]->Update(&player);
+			if (treasurebox[i]->DropItem())
 			{
-				item[i] = new Weapon(drop, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
-				item[i]->SetMapData(MapData);
-				break;
+				weapons drop;
+				switch (GetRand(2))
+				{
+				case 0:
+					drop = weapons::mace;
+					break;
+				case 1:
+					drop = weapons::spear;
+					break;
+				case 2:
+					drop = weapons::katana;
+					break;
+				default:
+					drop = weapons::mace;
+					break;
+				}
+
+				for (int i = 0; i < ITEM_MAX; i++)
+				{
+					if (item[i] == nullptr)
+					{
+						item[i] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() });
+						item[i]->SetMapData(MapData);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -235,8 +262,18 @@ AbstractScene* GameMainScene::Update()
 	}
 	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
 
+
 	ExitCheck();
-	if (Exit_flg == true) NextMap();
+	if (Exit_flg == true)
+	{
+		MoveStop_flg = true;
+		NextMap();
+	}
+	else
+	{
+		MoveStop_flg = false;
+	}
+
 	x= MapExitY * 160 + 80;
 	y= MapExitX * 160 + 131;
 	time++;
@@ -266,6 +303,11 @@ AbstractScene* GameMainScene::Update()
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_E))
 	{
 		Level++;
+	}
+
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A))
+	{
+		player.AddShard();
 	}
 
 #endif // DEBUG
@@ -309,7 +351,12 @@ void GameMainScene::Draw() const
 	}
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
-	treasurebox.Draw(player.GetX(), player.GetY());
+
+	for (int i = 0; i < TREASURE_MAX; i++)
+	{
+		if (treasurebox[i] != nullptr)treasurebox[i]->Draw(player.GetX(), player.GetY());
+	}
+
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -332,9 +379,14 @@ void GameMainScene::Draw() const
 		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
+	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6) 
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100 , 1, 0, DoorIcon[3], true);
+	}
 	//enemy2.Draw(player.GetX(), player.GetY());
 
 	ui.Draw();
+	if (UpGrade)ui.UpGradeDraw();
 
 #ifdef DEBUG
 
@@ -661,7 +713,6 @@ int GameMainScene::CheckSpace(int y, int x, int* cnt)
 
 void GameMainScene::NextMap() {
 	AnimTimer++;
-	MoveStop_flg = false;
 	
 	if (0 <= Bright && Anim_flg == false) {
 		// フェードアウト処理
@@ -687,7 +738,6 @@ void GameMainScene::NextMap() {
 			if (Bright >= 255) {
 				Exit_flg = false;
 				Anim_flg = false;
-				MoveStop_flg = true;
 				AnimTimer = 0, Bright = 255;
 			}
 		}
@@ -710,21 +760,30 @@ void GameMainScene::NextMap() {
 			item[i] = nullptr;
 		}
 
+		for (int i = 0; i < TREASURE_MAX; i++)
+		{
+			treasurebox[i] = nullptr;
+		}
+
 		if (!SafeZone) {
 			enemy[0] = nullptr;
 			enemy[0] = new Slime();
 			enemy[1] = nullptr;
 			enemy[1] = new Grim_Reaper();
+			treasurebox[0] = new TreasureBox();
 		}
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
 		}
-
+;
+		for (int i = 0; i < TREASURE_MAX; i++)
+		{
+			if (treasurebox[i] != nullptr)treasurebox[i]->SetMapData(MapData);
+		}
 
 
 		//enemy2.SetMapData(MapData);
-		treasurebox.SetMapData(MapData);
 
 		MakeMap_flg = false;
 		Pressed_flg = false;

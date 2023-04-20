@@ -125,6 +125,20 @@ public:
 	//ステータス変化
 	void AddShard() { stat.Shard++; }
 
+	void StrHP(int add) 
+	{
+		stat.MaxHp += add;
+		stat.Hp += add;
+	}
+
+	void StrAtk() { stat.Atk++; }
+	void StrHeal() 
+	{
+		stat.PotionMax++;
+		stat.Potion++;
+		stat.PotionPower += 0.05;
+	}
+
 	bool UseShard(int amount) { 
 
 		if (amount <= stat.Shard) {

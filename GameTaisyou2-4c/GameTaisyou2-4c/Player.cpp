@@ -14,6 +14,7 @@ Player::Player() {
 	stat.Power = 0;
 	stat.Potion = 3;
 	stat.PotionMax = stat.Potion;
+	stat.PotionPower = 0.25;
 	stat.Shard = 0;
 
 
@@ -478,7 +479,7 @@ void Player::Update() {
 			if (60 == ++UsePotion)
 			{
 				stat.Potion--;
-				stat.Hp += (stat.MaxHp * 0.2);
+				stat.Hp += (stat.MaxHp * stat.PotionPower);
 			}
 		}
 		else UsePotion = 0;
