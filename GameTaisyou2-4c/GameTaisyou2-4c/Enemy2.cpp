@@ -41,7 +41,7 @@
 //
 //void Enemy2::Update(Player* player)
 //{
-//	//—Ž‰º‚ÆƒWƒƒƒ“ƒv
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ÆƒWï¿½ï¿½ï¿½ï¿½ï¿½v
 //	float fallinit = 14;
 //	ene2y += fall;
 //	while (!MapData[(ene2y + Height / 2) / BLOCK_SIZE][(ene2x - Width / 2) / BLOCK_SIZE])
@@ -59,7 +59,7 @@
 //		}
 //	}
 //
-//	//•Ç‚É“–‚½‚Á‚½ŽžŽ~‚ß‚é
+//	//ï¿½Ç‚É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½~ï¿½ß‚ï¿½
 //	while (!MapData[ene2y / BLOCK_SIZE][(ene2x + Width / 2) / BLOCK_SIZE])
 //	{
 //		if (MIN_SPEED != ene2x)
@@ -78,11 +78,11 @@
 //		}
 //	}
 //
-//	//ƒvƒŒƒCƒ„[”FŽ¯”ÍˆÍ
+//	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Fï¿½ï¿½ï¿½Íˆï¿½
 //	if (ene2x + BLOCK_SIZE * 1.5 >= player->GetX() && ene2x - BLOCK_SIZE * 1.5 <= player->GetX() &&
 //		ene2y + BLOCK_SIZE >= player->GetY() && ene2y - BLOCK_SIZE <= player->GetY())
 //	{
-//		//ƒvƒŒƒCƒ„[’Ç”ö
+//		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ç”ï¿½
 //		if (ene2x >= player->GetX() && MIN_SPEED != speed)
 //		{
 //			--speed;
@@ -106,7 +106,7 @@
 //		ene2x += speed;
 //	}
 //
-//	//ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½ŽžUŒ‚
+//	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Uï¿½ï¿½
 //	//if (enex == player->GetX() && eney == player->GetY())
 //	//{
 //	//	player->HitEnemy(float damage);
@@ -133,13 +133,13 @@
 //{
 //	//if (MakeEnemy2 == TRUE)
 //	//{
-//	//	//“G‚Ì•\Ž¦
+//	//	//ï¿½Gï¿½Ì•\ï¿½ï¿½
 //	//	DrawRotaGraph(ene2x - x + (SCREEN_WIDTH / 2), ene2y - y + (SCREEN_HEIGHT / 2), 1.0, 0, E2Images[0], TRUE);
 //	//}
 //
 //	if (MakeEnemy2 == TRUE)
 //	{
-//		//“G‚Ì•\Ž¦
+//		//ï¿½Gï¿½Ì•\ï¿½ï¿½
 //		DrawRotaGraph(ene2x - x + (SCREEN_WIDTH / 2), ene2y - y + (SCREEN_HEIGHT / 2), 1.0, 0, image, TRUE);
 //	}
 //
