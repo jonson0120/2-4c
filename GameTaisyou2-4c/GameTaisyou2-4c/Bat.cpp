@@ -170,7 +170,7 @@ void Bat::Update(Player* player)
 	if (HitCool)HitCool--;
 	if (AttackCool)AttackCool--;
 
-	//Anim++;
+	Anim++;
 }
 
 void Bat::makeEnemy()
@@ -193,7 +193,7 @@ void Bat::Draw(int x, int y) const
 {
 	if (MakeEnemy == TRUE && HitCool % 4 < 2)
 	{
-		int WalkAnim = Anim / 18 % 6;
+		int WalkAnim = Anim / 18 % 2;
 
 		//敵の表示
 		if (!E_AttackFlg)
