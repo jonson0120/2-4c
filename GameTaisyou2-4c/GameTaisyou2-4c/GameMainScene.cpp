@@ -3,11 +3,18 @@
 #include"KeyManager.h"
 #include"AbstractScene.h"
 #include"UI.h"
+
 #include<math.h>
 #include<stdlib.h>
+
 #include "Grim_Reaper.h"
 #include"GameOver.h"
 #include"Slime.h"
+#include"Bat.h"
+
+#include"Item.h"
+#include"Weapon.h"
+#include"Shard.h"
 
 GameMainScene::GameMainScene()
 {
@@ -18,7 +25,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
+	enemy[0] = new Bat();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -51,7 +58,7 @@ GameMainScene::GameMainScene()
 
 	treasurebox.SetMapData(MapData);
 	
-	LoadDivGraph("images/Block1.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block02.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
 
@@ -63,7 +70,7 @@ GameMainScene::GameMainScene()
 	CameraX = 0;
 	CameraY = 0;
 
-	Bright = 255;
+	Bright = 0;
 	Bright_minus = 10;
 	AnimTimer = 0;
 
@@ -71,22 +78,25 @@ GameMainScene::GameMainScene()
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 	LoadDivGraph("images/number.png", 10, 10, 1, 160, 160, hierarchy_font);
 
-	Exit_flg = false;
-	Anim_flg = false;
+	Exit_flg = true;
+	Anim_flg = true;
 	MakeMap_flg = false;
-	MoveStop_flg = true;
+	MoveStop_flg = false;
 	Pressed_flg = false;
+
+	SetDrawBright(Bright, Bright, Bright);
+
 }
 
 AbstractScene* GameMainScene::Update() 
 {
-	if (player.GetLife()<=0)
+	if (player.GetLife() <= 0)
 	{
 		return new GameOver();
 	}
 	
 
-	if (MoveStop_flg == true)
+	if (MoveStop_flg == true || Bright == 0)
 	{
 		if (player.WaitSearch())SearchEnemy();
 		player.Update();
@@ -106,14 +116,23 @@ AbstractScene* GameMainScene::Update()
 	{
 		if (item[i] != nullptr)
 		{
-			bool Second;
-			if (player.Secondary() == weapons::NONE)Second = true;
-			else Second = false;
-
 			item[i]->Update(&player);
-			if (Second && item[i]->GetGet())item[i] = nullptr;
 
-			if (item[i] == nullptr || item[i]->GetGet())break;
+			if (item[i]->GetType() == Equip)
+			{
+				bool Second;
+				if (player.Secondary() == weapons::NONE)Second = true;
+				else Second = false;
+
+				if (Second && item[i]->GetGet())item[i] = nullptr;
+
+				if (item[i] == nullptr || item[i]->GetGet())break;
+			}
+
+			if (item[i]->GetType() == ItemType::Sh)
+			{
+				if (item[i]->GetGet())item[i] = nullptr;
+			}
 		}
 	}
 	//enemy2.Update(&player);
@@ -145,7 +164,7 @@ AbstractScene* GameMainScene::Update()
 		{
 			if (item[i] == nullptr)
 			{
-				item[i] = new Item(1, drop, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
+				item[i] = new Weapon(drop, { treasurebox.Box_GetX(), treasurebox.Box_GetY() });
 				item[i]->SetMapData(MapData);
 				break;
 			}
@@ -190,7 +209,21 @@ AbstractScene* GameMainScene::Update()
 	{
 		if (enemy[i] != nullptr) 
 		{
-			if (enemy[i]->CheckHp())enemy[i] = nullptr;
+			if (enemy[i]->CheckHp())
+			{
+				int Dlop = 0;
+				for (int j = 0; j < ITEM_MAX - 1 && Dlop < 2; j++)
+				{
+					if (item[j] == nullptr)
+					{
+						item[j] = new Shard({ enemy[i]->E_GetX(),enemy[i]->E_GetY() });
+						item[j]->SetMapData(MapData);
+						Dlop++;
+					}
+				}
+				enemy[i] = nullptr;
+				break;
+			}
 		}
 	}
 
@@ -268,7 +301,7 @@ void GameMainScene::Draw() const
 		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
 
 		DrawRotaGraph(DoorX, DoorY, 1.2, 0, DoorIcon[0], true);
-		DrawCircleGauge(DoorX, DoorY, 100 * (count / 90.f), DoorIcon[1], 0, 1.2, false, false);
+		DrawCircleGauge(DoorX, DoorY, 100 * (count / 60.f), DoorIcon[1], 0, 1.2, false, false);
 		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
@@ -590,7 +623,7 @@ void GameMainScene::NextMap() {
 		if (number1 > 9)number1 = 0, number2++;
 
 		enemy[0] = nullptr;
-		enemy[0] = new Slime();
+		enemy[0] = new Bat();
 		enemy[1] = nullptr;
 		enemy[1] = new Grim_Reaper();
 		for (int i = 0; i < ENEMY_MAX; i++)
@@ -619,7 +652,7 @@ void GameMainScene::ExitCheck() {
 			//Yボタン長押しで処理に入る
 			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 				count++;
-				if (count >= 90) {
+				if (count >= 60) {
 					for (int i = 0; i < ENEMY_MAX; i++)
 					{
 						if (enemy[i] != nullptr)break;

@@ -152,11 +152,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bat.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fps.cpp" />
     <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="Grim_Reaper.cpp" />
+    <ClCompile Include="HowToMap.cpp" />
+    <ClCompile Include="HowToPlayer.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Shard.cpp" />
+    <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="Slime.cpp" />
     <ClCompile Include="Enemy2.cpp" />
     <ClCompile Include="GameMainScene.cpp" />
@@ -173,12 +178,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractScene.h" />
+    <ClInclude Include="Bat.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fps.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="Grim_Reaper.h" />
+    <ClInclude Include="HowToMap.h" />
+    <ClInclude Include="HowToPlayer.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="Shard.h" />
+    <ClInclude Include="Weapon.h" />
     <ClInclude Include="Slime.h" />
     <ClInclude Include="Enemy2.h" />
     <ClInclude Include="GameMainScene.h" />
