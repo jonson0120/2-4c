@@ -12,6 +12,7 @@
 #include "Grim_Reaper.h"
 #include"GameOver.h"
 #include"Slime.h"
+#include"Bat.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -29,7 +30,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
+	enemy[0] = new Bat();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -71,9 +72,12 @@ GameMainScene::GameMainScene()
 	treasurebox[0] = new TreasureBox();
 	treasurebox[0]->SetMapData(MapData);
 	
-	LoadDivGraph("images/Block1.png", 4, 4, 1, 160, 160, MapImg);
+	LoadDivGraph("images/Block02.png", 4, 4, 1, 160, 160, MapImg);
 
 	time = 0;
+
+	number1 = 1;
+	number2 = 0;
 
 	count = 0;
 
@@ -394,9 +398,6 @@ void GameMainScene::Draw() const
 	DrawFormatString(0, 510, 0xff0000, "%d", SafeZone);
 
 #endif // DEBUG
-
-
-	//DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
 	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
 	//DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
 	//DrawFormatString(50, 600, 0xff0000, "%d", CameraY);

@@ -177,6 +177,7 @@ void Slime::Update(Player* player)
 			fall = fallinit;
 		}
 	}
+
 	eney += fall;
 
 	//壁にめり込んだ時に補正
