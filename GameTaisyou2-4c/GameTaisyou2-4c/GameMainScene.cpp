@@ -55,6 +55,9 @@ GameMainScene::GameMainScene()
 
 	time = 0;
 
+	number1 = 1;
+	number2 = 0;
+
 	count = 0;
 
 	CameraX = 0;
@@ -66,6 +69,7 @@ GameMainScene::GameMainScene()
 
 	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
+	LoadDivGraph("images/number.png", 10, 10, 1, 160, 160, hierarchy_font);
 
 	Exit_flg = false;
 	Anim_flg = false;
@@ -271,8 +275,9 @@ void GameMainScene::Draw() const
 	//enemy2.Draw(player.GetX(), player.GetY());
 
 	ui.Draw();
-
-	//DrawFormatString(0, 500, 0xff0000, "%d", AnimTimer);
+	DrawGraph(1150,10, hierarchy_font[number1], TRUE);
+	DrawGraph(1080, 10, hierarchy_font[number2], TRUE);
+	/*DrawFormatString(100, 300, 0xff0000, "%d", AnimTimer);*/
 	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
 	//DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
 	//DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
@@ -557,7 +562,7 @@ void GameMainScene::NextMap() {
 			SetDrawBright(Bright, Bright, Bright);
 			Bright -= Bright_minus;
 		}
-		if (Bright <= 0)MakeMap_flg = true;
+		if (Bright <= 0) MakeMap_flg = true;
 	}
 	else {
 		if (AnimTimer % 5 == 0) {
@@ -580,6 +585,9 @@ void GameMainScene::NextMap() {
 		player.Spawn();
 		MakeMap();
 		player.SetMapData(MapData);
+
+		number1++;
+		if (number1 > 9)number1 = 0, number2++;
 
 		enemy[0] = nullptr;
 		enemy[0] = new Slime();
