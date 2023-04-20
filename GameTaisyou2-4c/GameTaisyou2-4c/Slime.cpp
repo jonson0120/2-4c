@@ -16,37 +16,43 @@ Slime::Slime() : Enemy()
 
 	DropItem_Image = LoadGraph("shard.png", TRUE);
 
+	//敵座標
 	enex = 0;
 	eney = 0;
 
+	//マップデータ
 	MapData[eney][enex];
 
+	//敵サイズ
 	Width = 48;
 	Height = 64;
 
-	Enemy_Damage = 1;
-	Player_Damage = 1;
+	//敵ステータス
 	Enemy_Hp = 5;
-	Player_Hp = 10;
 
+	//敵攻撃力
 	Power = 1;
 
 	MakeEnemy = FALSE;
 
-	direction = 0;
-
 	E_AttackFlg = FALSE;
 
+	//攻撃関連
 	HighJump = false;
 	Attack = 0;
 
+	//攻撃後の硬直時間
 	AttackCool = 0;
+
+	//被弾後の無敵時間
 	HitCool = 0;
 
+	//移動関連
 	speed = 0;
 	fall = 12;
 	jump = 0;
 
+	//画像関連
 	LoadDivGraph("images/Slime.png", 5, 5, 1, 64, 64, EImages);
 	Anim = 0;
 	Turnflg = false;
@@ -73,6 +79,7 @@ void Slime::Update(Player* player)
 		if (Turnflg)
 		{
 			enex -= 3;
+			//壁にぶつかると向きを反転させる
 			if (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
 				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 			{
@@ -82,6 +89,7 @@ void Slime::Update(Player* player)
 		else
 		{
 			enex += 3;
+			//壁にぶつかると向きを反転させる
 			if (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
 				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 			{
@@ -140,7 +148,7 @@ void Slime::Update(Player* player)
 		}
 	}
 
-	//壁に当たった時止める
+	//壁にめり込んだ時に補正
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]||
 			!MapData[(eney +  Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 	{
@@ -148,6 +156,7 @@ void Slime::Update(Player* player)
 		speed = 0;
 	}
 
+	//壁にめり込んだ時に補正
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
@@ -159,7 +168,10 @@ void Slime::Update(Player* player)
 
 	if (fall < fallinit)
 	{
+		//落下速度を加算
 		fall += (fallinit * 2) / 45;
+
+		//fallinit＝加速最大値
 		if (fall > fallinit)
 		{
 			fall = fallinit;
@@ -168,6 +180,7 @@ void Slime::Update(Player* player)
 
 	eney += fall;
 
+	//壁にめり込んだ時に補正
 	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
 	{
@@ -176,6 +189,7 @@ void Slime::Update(Player* player)
 		jump = 0;
 	}
 
+	//壁にめり込んだ時に補正
 	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
 	{
@@ -190,6 +204,7 @@ void Slime::Update(Player* player)
 	//	player->HitEnemy(float damage);
 	//}
 
+	//攻撃待機時間・無敵時間を減らす
 	if (HitCool)HitCool--;
 	if (AttackCool)AttackCool--;
 

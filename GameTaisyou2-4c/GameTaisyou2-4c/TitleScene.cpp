@@ -1,4 +1,5 @@
 #include"TitleScene.h"
+#include"HowToMap.h"
 #include"GameMainScene.h"
 #include"TestMap.h"
 
@@ -31,7 +32,7 @@ AbstractScene* Title::Update() {
 	if (select > 1)select = 0;
 
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
-		if (TITLE_MENU::START == Menu_Number)return new GameMainScene();
+		if (TITLE_MENU::START == Menu_Number)return new HowToMap();
 		if (TITLE_MENU::Debug == Menu_Number)return new TestMap();
 		interval = 0;
 	}

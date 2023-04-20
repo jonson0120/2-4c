@@ -1,7 +1,6 @@
 #pragma once
 #include "Player.h"
 #include"PadInput.h"
-#include"Player.h"
 
 
 class UI
@@ -12,24 +11,34 @@ private:
 	float MaxHP;
 	float PlayerHP;
 
+	int Shard;
+
 	bool potionflag;
 
 	int Damage;
 
-	int Weapon;
+	int Weapon;	//Œ»İ‘•”õ‚µ‚Ä‚¢‚é•Ší
+	int Second;	//Œ»İ‘•”õ‚µ‚Ä‚¢‚È‚¢•Ší
 
 	int DaggerImage;
 	int MaceImage;
 	int SpearImage;
 	int KatanaImage;
+	int NoneImage;
 	 
+	int Gauge[3];
 
-	int PotionImage1;
-	int PotionImage2;
-	int PotionImage3;
+	int ButtonImg[2];
+
+	int ItemImg[2];
+
+	int Number[44];
+	int Sign[3];
 
 	int PotionCount;
+	int PotionMax;
 
+	int UseCount = 0;
 public:
 	
 	UI();

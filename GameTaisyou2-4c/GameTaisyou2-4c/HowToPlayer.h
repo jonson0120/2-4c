@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include"DxLib.h"
-#include"Enemy.h"
 #include"common.h"
 
-class Player
+class HowToPlayer
 {
 private:
 	int PImages[5];	//画像：上半身
@@ -34,8 +33,7 @@ private:
 
 	float Attack;
 
-	int UsePotion = 0;	//ポーション使用カウント
-	int HitCool;		//被弾後無敵
+	int HitCool;	//被弾後無敵
 
 	bool TurnFlg;
 	bool FalseFlg;
@@ -51,7 +49,7 @@ private:
 	Inp_UD Yinput;	//上下入力
 	int Combo;		//コンボ数
 
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
+	int MapData[MAP_HEIGHT][MAP_WIDTH_T];	//マップデータ
 
 	int JoypadX, JoypadY;	//パッド入力値
 	float PadangL;			//パッド入力角度
@@ -76,7 +74,7 @@ private:
 public:
 
 	void InitPad();
-	Player();
+	HowToPlayer();
 	void Update();
 	void Draw() const;
 
@@ -91,15 +89,12 @@ public:
 	int GetHeight()const { return Height; }
 
 	//座標セット
+	void SetX(int X) { x = X; }
 	void SetY(int Y) { y = Y; }
 
 	//装備取得・更新
+	void SetDagger() { Equip[0] = weapons::dagger; }
 	weapons GetEquip()const { return Equip[EquipNum]; }
-	weapons GetSecond()const {
-		if (EquipNum)return Equip[0];
-		else return Equip[1];
-	}
-
 	weapons Secondary()const { return Equip[1]; }
 
 	void ChangeEquip(weapons get) { if(Equip[1]==weapons::NONE) Equip[1] = get;
@@ -108,42 +103,27 @@ public:
 
 	//ステータス取得---------------------------
 	Stat GetStat() { return stat; }
-
+	int GetPotion() { return PotionCount; }
 	int GetLife() { return stat.Hp; }
 	int GetMaxLife() { return stat.MaxHp; }
-
 	int GetAtk() { return stat.Atk; }
-
-	int GetPotion() { return stat.Potion; }
-	int GetPotionMax() { return stat.PotionMax; }
-
 	int GetShard() { return stat.Shard; }
 	//-----------------------------------------
-	int UseP() { return UsePotion; }
 
 	//ステータス変化
-	void AddShard() { stat.Shard++; }
+	//void GetShard() { stat.Shard++; }
 
 	//マップデータ取得
-	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
+	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH_T]);
 
 	//武器描画
 	void DrawDagger()const;
-	void DrawMace()const;
-	void DrawSpear()const;
-	void DrawKatana()const;
 
 	//武器アニメーション管理
 	void DaggerAtk();
-	void MaceAtk();
-	void SpearAtk();
-	void KatanaAtk();
 
 	//当たり判定
 	bool HitDagger(int EneX, int EneY, int EneW, int EneH);
-	bool HitMace(int EneX, int EneY, int EneW, int EneH);
-	bool HitSpear(int EneX, int EneY, int EneW, int EneH);
-	bool HitKatana(int EneX, int EneY, int EneW, int EneH);
 
 	//攻撃入力・攻撃力取得
 	float GetAttack() { return Attack; }
