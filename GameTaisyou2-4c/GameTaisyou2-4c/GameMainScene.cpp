@@ -768,9 +768,33 @@ void GameMainScene::NextMap() {
 
 		if (!SafeZone) {
 			enemy[0] = nullptr;
-			enemy[0] = new Slime();
+			switch (GetRand(2))
+			{
+			case 0:
+				enemy[0] = new Slime();
+				break;
+			case 1:
+				enemy[0] = new Bat();
+				break;
+			case 2:
+				enemy[0] = new Grim_Reaper();
+				break;
+			}
+
 			enemy[1] = nullptr;
-			enemy[1] = new Grim_Reaper();
+			switch (GetRand(2))
+			{
+			case 0:
+				enemy[1] = new Slime();
+				break;
+			case 1:
+				enemy[1] = new Bat();
+				break;
+			case 2:
+				enemy[1] = new Grim_Reaper();
+				break;
+			}
+
 			treasurebox[0] = new TreasureBox();
 		}
 		for (int i = 0; i < ENEMY_MAX; i++)
