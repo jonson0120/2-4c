@@ -17,6 +17,9 @@ private:
 	int background_image;
 
 	int select_image;
+	int Title_font;
+	int Start_font;
+	int Debug_font;
 public:
 	Title();
 
