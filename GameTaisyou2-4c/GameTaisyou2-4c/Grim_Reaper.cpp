@@ -4,17 +4,16 @@
 #include "common.h"
 #include "Player.h"
 #include "GameMainScene.h"
-
 #include <math.h>
 
-#define MAX_SPEED 3
-#define MIN_SPEED -3
+#define MAX_SPEED 2
+#define MIN_SPEED -2
 
 Grim_Reaper::Grim_Reaper() : Enemy()
 {
 	image = 0;
 
-	DropItem_Image = LoadGraph("shard.png", TRUE);
+	DropItem_Image = LoadGraph("images/shard.png", TRUE);
 
 	enex = 0;
 	eney = 0;
@@ -43,6 +42,7 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 	speed = 0;
 	fall = 12;
 
+	SickleImg = LoadGraph("images/sickle.png", TRUE);
 	LoadDivGraph("images/enemysicklemen.png", 2, 2, 1, 90, 100, EImages);
 	Anim = 0;
 	Turnflg = false;
@@ -189,8 +189,12 @@ void Grim_Reaper::Draw(int x, int y) const
 			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
 	}
 
+	if (E_AttackFlg == true)
+	{
+		DrawSickle();
+	}
+	
 	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
-
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 }
@@ -224,15 +228,34 @@ void Grim_Reaper::HitPlayer(float damage) {
 }
 
 //プレイヤーへの攻撃
+void Grim_Reaper::DrawSickle()const
+{
+	double stX = 0, stY = 0;	//振りかぶる前の座標
+	double finX = 0, finY = 0;	//振りかぶった後の座標
+	double Dis = 0;				//体の中心からの距離
+	double stAng, finAng = 0;	//振りかぶる角度
+
+	if (E_AttackFlg && 60 < Attack)
+	{
+		stAng = 90;
+		finAng = 130;
+		stX = SCREEN_WIDTH / 2;
+		stY = SCREEN_HEIGHT / 2;
+		Dis = Width * 1.5;
+
+		finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+		finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+	}
+	DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * finAng, SickleImg, true, false);
+}
+
 bool Grim_Reaper::EnemyAttack(int x, int y)
 {
 	if (E_AttackFlg && 60 < Attack)
 	{
 		float DisX = pow(enex - x, 2);
 		float DisY = pow(eney - y, 2);
-
 		int Dis = (int)sqrt((int)(DisX + DisY));
-
 		if (Dis < Width)return true;
 		else return false;
 	}

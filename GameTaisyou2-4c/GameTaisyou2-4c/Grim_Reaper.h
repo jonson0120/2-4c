@@ -6,6 +6,7 @@
 class Grim_Reaper : public Enemy
 {
 private:
+	int SickleImg;		//武器画像
 	int image;			//画像
 	int EImages[2];		//画像
 	int Anim;			//歩行アニメーション
@@ -43,6 +44,7 @@ public:
 	Grim_Reaper();
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
+	void DrawSickle()const;
 
 	virtual int E_GetX()const { return enex; }
 	virtual int E_GetY()const { return eney; }
