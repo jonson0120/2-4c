@@ -24,6 +24,7 @@ private:
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
 	float Dodgespd;	//回避速度
+	float KnockBack;//ノックバック速度
 	
 	float fall;	//落下速度
 	float Dodgefall;	//回避ジャンプ速度
@@ -178,9 +179,13 @@ public:
 	void SetNear(int X, int Y, int Dis);
 
 	//敵との当たり判定
-	void HitEnemy(float damage);
+	void HitEnemy(float damage, int EneX);
 
-	//状態リセット(デバッグルーム用)
-	void Reset() { stat.Hp = stat.MaxHp; }
+	//全回復
+	void Reset() 
+	{
+		stat.Hp = stat.MaxHp;
+		stat.Potion = stat.PotionMax;
+	}
 };
 

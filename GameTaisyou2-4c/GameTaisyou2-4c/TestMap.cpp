@@ -11,6 +11,7 @@
 #include"GameOver.h"
 #include"Slime.h"
 #include "Grim_Reaper.h"
+#include"Bat.h"
 #include "Weapon.h"
 
 TestMap::TestMap()
@@ -71,7 +72,7 @@ TestMap::TestMap()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
-	LoadDivGraph("images/Art.png", 6, 6, 1, 64, 64, Art);
+	LoadDivGraph("images/Art.png", 7, 7, 1, 64, 64, Art);
 	LoadDivGraph("images/Info.png", 3, 3, 1, 128,128, info);
 
 	Exit_flg = false;
@@ -101,7 +102,7 @@ AbstractScene* TestMap::Update()
 		if (enemy[i] != nullptr)
 		{
 			enemy[i]->Update(&player);
-			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower());
+			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
 		}
 	}
 
@@ -242,6 +243,19 @@ AbstractScene* TestMap::Update()
 			}
 		}
 
+		if (player.GetY() / BLOCK_SIZE == 6 && player.GetX() / BLOCK_SIZE == 1)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] == nullptr)
+				{
+					enemy[i] = new Bat();
+					enemy[i]->SetMapData(MapData);
+					break;
+				}
+			}
+		}
+
 		if (player.GetY() / BLOCK_SIZE == 4 && player.GetX() / BLOCK_SIZE == 2)
 		{
 			for (int i = 0; i < ENEMY_MAX; i++)
@@ -318,6 +332,7 @@ void TestMap::Draw() const
 	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 8.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[2], true);
 	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[3], true);
 	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[4], true);
+	DrawRotaGraph(BLOCK_SIZE * 1.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[6], true);
 	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 4.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[5], true);
 
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
