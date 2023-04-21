@@ -683,7 +683,7 @@ void Player::Draw() const {
 
 void Player::Spawn() {
 	x = BLOCK_SIZE + BLOCK_SIZE / 2;
-	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
+	y = BLOCK_SIZE * 9;
 
 	y += BLOCK_SIZE - Height / 2;
 }

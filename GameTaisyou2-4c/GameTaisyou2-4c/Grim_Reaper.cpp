@@ -164,6 +164,10 @@ void Grim_Reaper::makeEnemy()
 			MakeEnemy = TRUE;
 		}
 	}
+	while ((MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][enex / BLOCK_SIZE]))
+	{
+		eney++;
+	}
 }
 
 void Grim_Reaper::Draw(int x, int y) const

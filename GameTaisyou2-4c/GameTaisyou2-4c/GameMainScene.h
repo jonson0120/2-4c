@@ -14,6 +14,9 @@ class GameMainScene : public AbstractScene
 {
 private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
+	int MaplimitX;						//マップ制限
+	int MaplimitY;						//マップ制限
+
 	int CheckData[MAP_HEIGHT][MAP_WIDTH];	//空間チェック用マップデータ
 	int MapImg[4];			//マップ画像
 	int MapExitX; //マップの出口のX座標
@@ -75,6 +78,9 @@ public:
 	int CheckSpace(int y, int x, int* cnt);
 	void NextMap();
 	void ExitCheck();
+
+	//敵を出現させる
+	void MakeEnemy();
 
 	void SearchEnemy();
 };

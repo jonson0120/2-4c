@@ -30,7 +30,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Bat();
+	enemy[0] = new Slime();
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -40,6 +40,8 @@ GameMainScene::GameMainScene()
 	Level = 1;
 	SafeZone = false;
 
+	MaplimitX = 7;
+	MaplimitY = 5;
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -132,7 +134,7 @@ AbstractScene* GameMainScene::Update()
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
-		if (enemy[i] != nullptr)
+		if (enemy[i] != nullptr && !MoveStop_flg)
 		{
 			enemy[i]->Update(&player);
 			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
@@ -579,19 +581,22 @@ void GameMainScene::MakeMap()
 			{
 				for (int j = 0; j < MAP_WIDTH; j++)
 				{
-					if (j == MAP_WIDTH - 1 || j == 0)
+					if (j == MAP_WIDTH - 1 || j == 0 || MaplimitX <= j)
 					{
 						MapData[i][j] = 0;
 					}
 					//else MapData[i][j] = 1;
 
-					if (i == MAP_HEIGHT - 1 || i == 0)
+					if (i == MAP_HEIGHT - 1 || i == 0 || MaplimitY <= i)
 					{
 						MapData[i][j] = 0;
 					}
 				}
 			}
 			//------------------------------------------
+
+			int SetY = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1) + BLOCK_SIZE - player.GetHeight() / 2 - 1;
+			player.SetY(SetY);
 
 			//プレイヤーの初期位置を足場のある空間にする
 			MapData[player.GetY() / 160][player.GetX() / 160] = 1;
@@ -601,24 +606,17 @@ void GameMainScene::MakeMap()
 			//空間数チェック
 			CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
-			//出口を設置
-			/*for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
-			{
-				for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
-				{
-					if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
-					{
-						MapData[i][j] = 2;
-						MapExitX = i;
-						MapExitY = j;
-						MakeExit = true;
-					}
-				}
-			}*/
-
-
 			//空間数が一定以下なら再生成
-		} while (Space < 70);
+		} while ((float)Space < (float)(MaplimitX * MaplimitY) * 0.6);
+
+		//孤立した空間を埋める
+		for (int i = 0; i < MAP_HEIGHT; i++)
+		{
+			for (int j = 0; j < MAP_WIDTH; j++)
+			{
+				if (CheckData[i][j] == 0)MapData[i][j] = 0;
+			}
+		}
 
 		MakeExit = MakeExit;
 
@@ -626,8 +624,7 @@ void GameMainScene::MakeMap()
 		{
 			int i = GetRand(MAP_HEIGHT);
 			int j = GetRand(MAP_WIDTH - 3) + 2;
-			if (i != CameraY / 160 && j != CameraX / 160) {
-				if (CheckData[i][j] && MapData[i][j] == 1 && MapData[i + 1][j] == 0)
+				if (MapData[i][j] == 1 && MapData[i + 1][j] == 0)
 				{
 					MapData[i][j] = 2;
 					MapExitX = i;
@@ -635,9 +632,7 @@ void GameMainScene::MakeMap()
 					MakeExit = true;
 					//break;
 				}
-			}
-			//空間数が一定以下なら再生成
-		} while (Space < 70);
+		}
 
 	}
 	else
@@ -746,6 +741,14 @@ void GameMainScene::NextMap() {
 	}
 		//次のマップを生成する処理
 	if (MakeMap_flg == true) {
+
+		//フロアを広くする
+		if (Level % 5 == 0 && !SafeZone) 
+		{
+			if (MaplimitX - 2 == MaplimitY)MaplimitY++;
+			else MaplimitX++;
+		}
+
 		MapExitX = 0;
 		MapExitY = 0;
 		player.Spawn();
@@ -768,33 +771,7 @@ void GameMainScene::NextMap() {
 		}
 
 		if (!SafeZone) {
-			enemy[0] = nullptr;
-			switch (GetRand(2))
-			{
-			case 0:
-				enemy[0] = new Slime();
-				break;
-			case 1:
-				enemy[0] = new Bat();
-				break;
-			case 2:
-				enemy[0] = new Grim_Reaper();
-				break;
-			}
-
-			enemy[1] = nullptr;
-			switch (GetRand(2))
-			{
-			case 0:
-				enemy[1] = new Slime();
-				break;
-			case 1:
-				enemy[1] = new Bat();
-				break;
-			case 2:
-				enemy[1] = new Grim_Reaper();
-				break;
-			}
+			MakeEnemy();
 
 			treasurebox[0] = new TreasureBox();
 		}
@@ -814,6 +791,30 @@ void GameMainScene::NextMap() {
 		MakeMap_flg = false;
 		Pressed_flg = false;
 		count = 0;
+	}
+}
+
+//敵を出現させる
+void GameMainScene::MakeEnemy() 
+{
+	int Spawn = 2 + (Level / 4);	//敵の出現数
+
+	for (int i = 0; i < Spawn; i++)
+	{
+		enemy[i] = nullptr;
+		switch (GetRand(2))
+		{
+		case 0:
+			enemy[i] = new Slime();
+			break;
+		case 1:
+			enemy[i] = new Bat();
+			break;
+		case 2:
+			enemy[i] = new Grim_Reaper();
+			break;
+		}
+
 	}
 }
 
