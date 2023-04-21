@@ -37,7 +37,7 @@ GameMainScene::GameMainScene()
 		item[i] = nullptr;
 	}
 
-	Level = 9;
+	Level = 1;
 	SafeZone = false;
 
 
