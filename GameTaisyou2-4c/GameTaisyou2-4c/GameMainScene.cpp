@@ -9,10 +9,10 @@
 
 #include"TreasureBox.h"
 
-#include "Grim_Reaper.h"
 #include"GameOver.h"
 #include"Slime.h"
 #include"Bat.h"
+#include "Grim_Reaper.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -118,6 +118,7 @@ AbstractScene* GameMainScene::Update()
 
 	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6 && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 	{
+		player.Reset();
 		UpGrade = true;
 	}
 
@@ -134,7 +135,7 @@ AbstractScene* GameMainScene::Update()
 		if (enemy[i] != nullptr)
 		{
 			enemy[i]->Update(&player);
-			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower());
+			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
 		}
 	}
 
@@ -309,7 +310,7 @@ AbstractScene* GameMainScene::Update()
 		Level++;
 	}
 
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A))
+	if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A))|| CheckHitKey(KEY_INPUT_S))
 	{
 		player.AddShard();
 	}

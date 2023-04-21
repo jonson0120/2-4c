@@ -145,7 +145,7 @@ bool UI::UpGradeUI(Player* player)
 			break;
 
 		case 2:
-			if (cost[HP] <= player->GetShard() && player->GetPotionMax() < 5)
+			if (cost[HEAL] <= player->GetShard() && player->GetPotionMax() < 5)
 			{
 				player->StrHeal();
 				player->UseShard(cost[HEAL]);
@@ -166,12 +166,15 @@ bool UI::UpGradeUI(Player* player)
 	return true;
 }
 
+//アップグレード画面
 void UI::UpGradeDraw() const
 {
 	int Dis = 140;
 
+	//カーソル
 	DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * UpGradeNum, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[4], TRUE);
 
+	//強化費用表示
 	for (int i = 0; i < 4; i++)
 	{
 		DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[i], TRUE);
@@ -180,48 +183,99 @@ void UI::UpGradeDraw() const
 			DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 120, 1, 0, UpGradeTxt[i], TRUE);
 			if (i != 3)
 			{
-				if (cost[i] >= 10)
+				//強化費用表示
+				if (i == 2 && 5 <= nowstat[2]) {}
+				//3桁の場合
+				else if (cost[i] >= 100)
 				{
-					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10] , TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 100 % 10], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
+				}
+				//2桁の場合
+				else if (cost[i] >= 10)
+				{
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10], TRUE);
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
 				}
-				else 
+				//1桁の場合
+				else
 				{
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
 				}
 
-				if (nowstat[i] >= 10)
+				//現在ステータスの表示
+				//3桁の場合
+				if (!(i == 2 && 5 <= nowstat[2]))
 				{
-					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
-					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
-				}
-				else
-				{
-					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
-				}
-				DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 20, SCREEN_HEIGHT / 2 - 70, 2, 0, Sign[3], TRUE);
+					if (nowstat[i] >= 100)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 64, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 100 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
+					}
+					//2桁の場合
+					else if (nowstat[i] >= 10)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
+					}
+					//1桁の場合
+					else
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
+					}
 
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 20, SCREEN_HEIGHT / 2 - 70, 2, 0, Sign[3], TRUE);
+				}
+
+				//強化後ステータスの表示
 				switch (i)
 				{
-				case 0:
-					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
-					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) % 10], TRUE);
+				case 0:	//体力
+					//3桁の場合
+					if (nowstat[i] + 5 >= 100)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 100 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) % 10], TRUE);
+					}
+					//2桁の場合
+					else
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) % 10], TRUE);
+					}
 					break;
 
-				case 1:
-					if (nowstat[i] + 1 >= 10)
+				case 1:	//攻撃力
+				//3桁の場合
+					if (nowstat[i] + 1 >= 100)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 100 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
+					}
+					//2桁の場合
+					else if (nowstat[i] + 1 >= 10)
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
 					}
+					//1桁の場合
 					else
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
 					}
 					break;
 
-				case 2:
-					if (nowstat[i] + 1 >= 10)
+				case 2:	//ポーション
+				//最大強化の場合
+					if (5 <= nowstat[i])
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i]) % 10], TRUE);
+					}
+					else if (nowstat[i] + 1 >= 10)
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
@@ -236,8 +290,11 @@ void UI::UpGradeDraw() const
 					break;
 				}
 
-				DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 10, SCREEN_HEIGHT / 2 + 95, 1, 0, Sign[0], TRUE);
-				DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 30, SCREEN_HEIGHT / 2 + 90, 1, 0, ItemImg[1], TRUE);
+				//シャード、記号
+				if (!(i == 2 && 5 <= nowstat[2])) {
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 10, SCREEN_HEIGHT / 2 + 95, 1, 0, Sign[0], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 30, SCREEN_HEIGHT / 2 + 90, 1, 0, ItemImg[1], TRUE);
+				}
 			}
 		}
 	}
@@ -326,7 +383,7 @@ void UI::Draw() const
 	else if (PlayerHP / MaxHP <= 0.41)danger = 22;
 
 	//100の位
-	if (100 < MaxHP)
+	if (100 <= MaxHP)
 	{
 		if (100 <= PlayerHP)DrawRotaGraph(150, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10 + danger], TRUE);
 		DrawRotaGraph(218, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10], TRUE);

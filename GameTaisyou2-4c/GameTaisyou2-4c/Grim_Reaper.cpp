@@ -142,7 +142,7 @@ void Grim_Reaper::Update(Player* player)
 	//ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½ŽžUŒ‚
 	if (enex == player->GetX() && eney == player->GetY())
 	{
-		player->HitEnemy(1);
+		//player->HitEnemy(1);
 	}
 
 	if (HitCool)HitCool--;
