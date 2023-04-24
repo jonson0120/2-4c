@@ -27,9 +27,11 @@ private:
 	bool UpGrade = false;	//アップグレードメニューを開く?
 
 	int time;
-	Player player;
-	Enemy** enemy;
-	Item** item;
+	Player player;				//プレイヤー
+	Enemy** enemy;				//敵
+	LocNum Damage[ENEMY_MAX + 1];	//ダメージ(受けた位置・ダメージ量・表示時間) 0:プレイヤー 1以降:敵
+
+	Item** item;				//アイテム
 	//Enemy2 enemy2;
 	UI ui;
 	TreasureBox** treasurebox;
@@ -72,7 +74,8 @@ public:
 	void SortItem();
 
 	//描画に関するころを実装する
-	virtual void Draw()const override;
+	virtual void Draw()const override;		//通常の描画
+	void DrawDamage(LocNum LocDmg, int num) const;	//ダメージ描画(ダメージ内容・配列番号)
 
 	void MakeMap();
 	int CheckSpace(int y, int x, int* cnt);

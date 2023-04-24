@@ -122,6 +122,7 @@ public:
 	int GetShard() { return stat.Shard; }
 	//-----------------------------------------
 	int UseP() { return UsePotion; }
+	bool GetCool() { return HitCool; }
 
 	//ステータス変化
 	void AddShard() { stat.Shard++; }

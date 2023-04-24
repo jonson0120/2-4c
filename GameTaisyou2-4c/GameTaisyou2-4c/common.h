@@ -47,3 +47,11 @@ struct Stat
 	float PotionPower;//ポーション効果量
 	int Shard;		//シャード所持数
 };
+
+struct LocNum
+{
+	int X;		//X座標
+	int Y;		//Y座標
+	int NumA;	//任意の数値
+	int NumB;	//任意の数値
+};

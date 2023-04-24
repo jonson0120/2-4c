@@ -13,6 +13,7 @@
 #include"Slime.h"
 #include"Bat.h"
 #include "Grim_Reaper.h"
+#include "DeepSlime.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -31,6 +32,11 @@ GameMainScene::GameMainScene()
 		enemy[i] = nullptr;
 	}
 	enemy[0] = new Slime();
+
+	for (int i = 0; i < ENEMY_MAX+1; i++)
+	{
+		Damage[i] = { 0,0,0,0 };
+	}
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -139,7 +145,11 @@ AbstractScene* GameMainScene::Update()
 		if (enemy[i] != nullptr && !MoveStop_flg)
 		{
 			enemy[i]->Update(&player);
-			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
+			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()) && !player.GetCool())
+			{
+				player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
+				Damage[0] = { player.GetX(),player.GetY(),enemy[i]->GetPower(),30 };
+			}
 		}
 	}
 
@@ -208,34 +218,51 @@ AbstractScene* GameMainScene::Update()
 		}
 	}
 
+	int DMG = 0;
 	switch (player.GetEquip())
 	{
 	case weapons::dagger:
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitDagger(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetAtk() * player.GetPower());
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+				DMG = player.GetAtk() * player.GetPower();
+				enemy[i]->HitPlayer(DMG);
+				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+			}
 		}
 		break;
 	case weapons::mace:
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitMace(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetAtk() * player.GetPower());
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+				DMG = player.GetAtk() * player.GetPower();
+				enemy[i]->HitPlayer(DMG);
+				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+			}
 		}
 		break;
 	case weapons::spear:
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitSpear(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetAtk() * player.GetPower());
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+				DMG = player.GetAtk() * player.GetPower();
+				enemy[i]->HitPlayer(DMG);
+				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+			}
 		}
 		break;
 	case weapons::katana:
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)if (player.HitKatana(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()))enemy[i]->HitPlayer(player.GetAtk() * player.GetPower());
+				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+				DMG = player.GetAtk() * player.GetPower();
+				enemy[i]->HitPlayer(DMG);
+				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+			}
 		}
 		break;
 	default:
@@ -283,6 +310,12 @@ AbstractScene* GameMainScene::Update()
 		MoveStop_flg = false;
 	}
 
+	for (int i = 0; i < ENEMY_MAX + 1; i++)
+	{
+		if (--Damage[i].NumB < 0)Damage[i].NumB = 0;
+	}
+
+
 	x= MapExitY * 160 + 80;
 	y= MapExitX * 160 + 131;
 	time++;
@@ -309,9 +342,14 @@ AbstractScene* GameMainScene::Update()
 		player.SetY(MapExitX * 160 + 131);
 	}
 
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_E))
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_E) && !SafeZone)
 	{
 		Level++;
+		if (Level % 5 == 0 && !SafeZone)
+		{
+			if (MaplimitX - 2 == MaplimitY)MaplimitY++;
+			else MaplimitX++;
+		}
 	}
 
 	if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A))|| CheckHitKey(KEY_INPUT_S))
@@ -394,6 +432,11 @@ void GameMainScene::Draw() const
 	}
 	//enemy2.Draw(player.GetX(), player.GetY());
 
+	for (int i = 0; i < ENEMY_MAX + 1; i++)
+	{
+		if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
+	}
+
 	ui.Draw();
 	if (UpGrade)ui.UpGradeDraw();
 
@@ -414,6 +457,52 @@ void GameMainScene::Draw() const
 	//DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
 	//DrawFormatString(500, 200, 0xffffff, "%d", hit);
 	//DrawFormatString(0, 700, 0xff0000, "%d", count);
+}
+
+void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
+{
+	int X = LocDmg.X;
+	int Y = LocDmg.Y;
+	int Dmg = LocDmg.NumA;
+
+	int Dis = 7;
+	float Size = 1.2;
+	if (num != 0)
+	{
+		if (LocDmg.NumA >= 100)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10], true);
+		}
+		else if (LocDmg.NumA >= 10)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - Dis, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + Dis, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10], true);
+		}
+		else
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg], true);
+		}
+	}
+	else
+	{
+		if (LocDmg.NumA >= 100)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10 + 33], true);
+		}
+		else if (LocDmg.NumA >= 10)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - Dis, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + Dis, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10 + 33], true);
+		}
+		else
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg + 33], true);
+		}
+	}
 }
 
 //マップ生成
@@ -812,7 +901,7 @@ void GameMainScene::MakeEnemy()
 	for (int i = 0; i < Spawn; i++)
 	{
 		enemy[i] = nullptr;
-		switch (GetRand(2))
+		switch (GetRand(3))
 		{
 		case 0:
 			enemy[i] = new Slime();
@@ -822,6 +911,9 @@ void GameMainScene::MakeEnemy()
 			break;
 		case 2:
 			enemy[i] = new Grim_Reaper();
+			break;
+		case 3:
+			enemy[i] = new DeepSlime();
 			break;
 		}
 

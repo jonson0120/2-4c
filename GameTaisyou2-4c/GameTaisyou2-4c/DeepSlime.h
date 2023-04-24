@@ -5,35 +5,26 @@
 
 class Player;
 
-class Bat : public Enemy
+class DeepSlime : public Enemy
 {
 private:
 	int image;			//画像
-	int EImages[3];		//画像
-	int Anim;			//アニメーション
+	int EImages[7];		//画像
+	int Anim;			//歩行アニメーション
 
 	int DropItem_Image;	//ドロップアイテム
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
-	int direction;		//敵の向き
+	bool Turnflg;		//敵の向き
 
 	int Power;			//攻撃力
+	Range AtkSpot;		//攻撃位置
 
 	bool E_AttackFlg;
 	bool HighJump;
-	bool LowJump;
 	int Attack;			//攻撃アニメーション
-	int AttackSpeed;
-	double Vector = 0;
-	int Dive;
-
-	bool Turnflg;		//画像反転
-
-	int Player_Damage;
-	int Enemy_Damage;
 
 	int Enemy_Hp;
-	int Player_Hp;
 
 	bool MakeEnemy;
 
@@ -41,34 +32,42 @@ private:
 
 	int AttackCool;	//攻撃クールタイム
 	int HitCool;	//被弾クールタイム
-
+	
 	float speed; //移動速度
-	//float fall;	 //落下速度
+	float fall;	 //落下速度
+	float Atkfall;	 //攻撃落下速度
 	int jump;	 //ジャンプ回数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Bat();
-	virtual void Update(Player* player);
-	virtual void Draw(int x, int y) const;
+	DeepSlime();
+	virtual void Update(Player* player) ;
+	virtual void Draw(int x, int y) const ;
 
-	virtual int E_GetX()const { return enex; }
-	virtual int E_GetY()const { return eney; }
+	//座標取得
+	virtual int E_GetX()const  { return enex; }
+	virtual int E_GetY()const  { return eney; }
 
-	virtual int GetWidth()const { return Width; }
-	virtual int GetHeight()const { return Height; }
+	//幅、高さ取得
+	virtual int GetWidth()const  { return Width; }
+	virtual int GetHeight()const   { return Height; }
 
+	//攻撃力取得
 	virtual int GetPower()const { return Power; }
 
 	//被弾クール取得
 	virtual int GetCool()const { return HitCool; }
 
-	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
-	virtual void makeEnemy();
+	//敵配置
+	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) ;
+	virtual void makeEnemy() ;
 
-	bool CheckHp();
+	bool CheckHp() ;
 
+	//ダメージを受ける
 	void HitPlayer(float damage);
+
+	//敵の攻撃当たり
 	bool EnemyAttack(int x, int y);
 };
