@@ -12,6 +12,7 @@
 
 #define ITEM_MAX 128
 #define ENEMY_MAX 20
+#define TREASURE_MAX 3
 
 enum struct weapons
 {
@@ -43,5 +44,6 @@ struct Stat
 	float Power;	//攻撃倍率
 	int Potion;		//ポーション所持数
 	int PotionMax;	//ポーション最大所持数
+	float PotionPower;//ポーション効果量
 	int Shard;		//シャード所持数
 };

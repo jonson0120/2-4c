@@ -24,6 +24,7 @@ private:
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
 	float Dodgespd;	//回避速度
+	float KnockBack;//ノックバック速度
 	
 	float fall;	//落下速度
 	float Dodgefall;	//回避ジャンプ速度
@@ -91,6 +92,7 @@ public:
 	int GetHeight()const { return Height; }
 
 	//座標セット
+	void SetX(int X) { x = X; }
 	void SetY(int Y) { y = Y; }
 
 	//装備取得・更新
@@ -124,6 +126,29 @@ public:
 	//ステータス変化
 	void AddShard() { stat.Shard++; }
 
+	void StrHP(int add) 
+	{
+		stat.MaxHp += add;
+		stat.Hp += add;
+	}
+
+	void StrAtk() { stat.Atk++; }
+	void StrHeal() 
+	{
+		stat.PotionMax++;
+		stat.Potion++;
+		stat.PotionPower += 0.05;
+	}
+
+	bool UseShard(int amount) { 
+
+		if (amount <= stat.Shard) {
+			stat.Shard -= amount;
+			return true;
+		}
+		else return false;
+	}
+
 	//マップデータ取得
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
@@ -154,9 +179,13 @@ public:
 	void SetNear(int X, int Y, int Dis);
 
 	//敵との当たり判定
-	void HitEnemy(float damage);
+	void HitEnemy(float damage, int EneX);
 
-	//状態リセット(デバッグルーム用)
-	void Reset() { stat.Hp = stat.MaxHp; }
+	//全回復
+	void Reset() 
+	{
+		stat.Hp = stat.MaxHp;
+		stat.Potion = stat.PotionMax;
+	}
 };
 

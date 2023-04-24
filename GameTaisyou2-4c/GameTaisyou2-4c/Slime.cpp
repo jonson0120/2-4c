@@ -177,6 +177,7 @@ void Slime::Update(Player* player)
 			fall = fallinit;
 		}
 	}
+
 	eney += fall;
 
 	//壁にめり込んだ時に補正
@@ -223,6 +224,11 @@ void Slime::makeEnemy()
 			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
 			MakeEnemy = TRUE;
 		}
+	}
+
+	while ((MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][enex / BLOCK_SIZE]))
+	{
+		eney++;
 	}
 }
 

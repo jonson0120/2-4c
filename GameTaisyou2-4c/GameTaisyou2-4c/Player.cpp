@@ -14,6 +14,7 @@ Player::Player() {
 	stat.Power = 0;
 	stat.Potion = 3;
 	stat.PotionMax = stat.Potion;
+	stat.PotionPower = 0.25;
 	stat.Shard = 0;
 
 
@@ -29,6 +30,7 @@ Player::Player() {
 	speedinit = 8;
 	speed = 0;
 	Dodgespd = 0;
+	KnockBack = 0;
 
 	fall = 0;
 	Dodgefall = 0;
@@ -255,7 +257,17 @@ void Player::Update() {
 
 		}
 
-		x += (speed + Dodgespd) * CorSpeed;				//横軸移動
+		x += (speed + Dodgespd) * CorSpeed + KnockBack;				//横軸移動
+		
+		if (0 < KnockBack)
+		{
+			if (--KnockBack <= 0)KnockBack = 0;
+		}
+
+		if (KnockBack < 0)
+		{
+			if (0 <= ++KnockBack)KnockBack = 0;
+		}
 
 		//壁で移動を止める
 		while (!MapData[y / 160][(x + Width / 2) / 160])
@@ -478,7 +490,7 @@ void Player::Update() {
 			if (60 == ++UsePotion)
 			{
 				stat.Potion--;
-				stat.Hp += (stat.MaxHp * 0.2);
+				stat.Hp += (stat.MaxHp * stat.PotionPower);
 			}
 		}
 		else UsePotion = 0;
@@ -671,7 +683,7 @@ void Player::Draw() const {
 
 void Player::Spawn() {
 	x = BLOCK_SIZE + BLOCK_SIZE / 2;
-	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
+	y = BLOCK_SIZE * 9;
 
 	y += BLOCK_SIZE - Height / 2;
 }
@@ -3050,11 +3062,13 @@ void Player::SetNear(int X, int Y, int Dis)
 }
 
 //敵からの攻撃
-void Player::HitEnemy(float damage)
+void Player::HitEnemy(float damage,int EneX)
 {
 	if (!HitCool && !Dodgespd)
 	{
 		stat.Hp -= damage;
+		if (EneX < x)KnockBack = 12;
+		else KnockBack = -12;
 		if (stat.Hp < 0)stat.Hp = 0;
 		HitCool = 30;
 	}

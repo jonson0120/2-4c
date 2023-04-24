@@ -21,18 +21,29 @@ UI::UI()
 	LoadDivGraph("images/Gauge.png", 3, 3, 1, 34, 34, Gauge);
 
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, Number);
-	LoadDivGraph("images/sign.png", 3, 3, 1, 11, 11, Sign);
+	LoadDivGraph("images/sign.png", 4, 4, 1, 11, 11, Sign);
 
 	ItemImg[0] = LoadGraph("images/potion2.png");
 	ItemImg[1] = LoadGraph("images/shard.png");
 
 	LoadDivGraph("images/UiButton.png", 2, 2, 1, 21, 21, ButtonImg);
 
+	LoadDivGraph("images/str.png", 5, 5, 1, 128, 128, UpGradeImg);
+	LoadDivGraph("images/strui.png", 4, 1, 4, 112, 24, UpGradeTxt);
+
 	Damage = 0;
 
 	PlayerHP = 0;
 	MaxHP = 0; 
 	Shard = 0;
+
+	cost[HP] = 5;
+	cost[ATK] = 5;
+	cost[HEAL] = 20;
+
+	nowstat[HP] = 0;
+	nowstat[ATK] = 0;
+	nowstat[HEAL] = 0;
 
 	potionflag = false;
 	
@@ -50,6 +61,10 @@ void UI::Update(Player* player)
 	PotionMax = player->GetPotionMax();
 
 	UseCount = player->UseP();
+
+	nowstat[HP] = stat.MaxHp;
+	nowstat[ATK] = stat.Atk;
+	nowstat[HEAL] = stat.PotionMax;
 
 	switch (player->GetEquip())
 	{
@@ -92,6 +107,198 @@ void UI::Update(Player* player)
 	default:
 		break;
 	}
+}
+
+bool UI::UpGradeUI(Player* player) 
+{
+	int JoyPadX = PAD_INPUT::GetPadThumbLX();
+
+	if (JoyPadX > MARGIN && WaitTime <= 0) {
+		if (3 < ++UpGradeNum)UpGradeNum = 0;
+		WaitTime = 20;
+	}
+	if (JoyPadX < -MARGIN && WaitTime <= 0) {
+		if (--UpGradeNum < 0)UpGradeNum = 3;
+		WaitTime = 20;
+	}
+
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B)) 
+	{
+		switch (UpGradeNum)
+		{
+		case 0:
+			if (cost[HP] <= player->GetShard())
+			{
+				player->StrHP(5);
+				player->UseShard(cost[HP]);
+				cost[HP] += 5;
+			}
+			break;
+
+		case 1:
+			if (cost[ATK] <= player->GetShard())
+			{
+				player->StrAtk();
+				player->UseShard(cost[ATK]);
+				cost[ATK] += 5;
+			}
+			break;
+
+		case 2:
+			if (cost[HEAL] <= player->GetShard() && player->GetPotionMax() < 5)
+			{
+				player->StrHeal();
+				player->UseShard(cost[HEAL]);
+				cost[HEAL] += 20;
+			}
+			break;
+
+		case 3:
+			return false;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (--WaitTime < 0 || (-MARGIN < JoyPadX && JoyPadX < MARGIN))WaitTime = 0;
+	return true;
+}
+
+//アップグレード画面
+void UI::UpGradeDraw() const
+{
+	int Dis = 140;
+
+	//カーソル
+	DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * UpGradeNum, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[4], TRUE);
+
+	//強化費用表示
+	for (int i = 0; i < 4; i++)
+	{
+		DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[i], TRUE);
+		if (i == UpGradeNum)
+		{
+			DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 120, 1, 0, UpGradeTxt[i], TRUE);
+			if (i != 3)
+			{
+				//強化費用表示
+				if (i == 2 && 5 <= nowstat[2]) {}
+				//3桁の場合
+				else if (cost[i] >= 100)
+				{
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 100 % 10], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
+				}
+				//2桁の場合
+				else if (cost[i] >= 10)
+				{
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
+				}
+				//1桁の場合
+				else
+				{
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
+				}
+
+				//現在ステータスの表示
+				//3桁の場合
+				if (!(i == 2 && 5 <= nowstat[2]))
+				{
+					if (nowstat[i] >= 100)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 64, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 100 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
+					}
+					//2桁の場合
+					else if (nowstat[i] >= 10)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
+					}
+					//1桁の場合
+					else
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
+					}
+
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 20, SCREEN_HEIGHT / 2 - 70, 2, 0, Sign[3], TRUE);
+				}
+
+				//強化後ステータスの表示
+				switch (i)
+				{
+				case 0:	//体力
+					//3桁の場合
+					if (nowstat[i] + 5 >= 100)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 100 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) % 10], TRUE);
+					}
+					//2桁の場合
+					else
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) % 10], TRUE);
+					}
+					break;
+
+				case 1:	//攻撃力
+				//3桁の場合
+					if (nowstat[i] + 1 >= 100)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 100 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
+					}
+					//2桁の場合
+					else if (nowstat[i] + 1 >= 10)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
+					}
+					//1桁の場合
+					else
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
+					}
+					break;
+
+				case 2:	//ポーション
+				//最大強化の場合
+					if (5 <= nowstat[i])
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i]) % 10], TRUE);
+					}
+					else if (nowstat[i] + 1 >= 10)
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
+					}
+					else
+					{
+						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
+					}
+					break;
+
+				default:
+					break;
+				}
+
+				//シャード、記号
+				if (!(i == 2 && 5 <= nowstat[2])) {
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 10, SCREEN_HEIGHT / 2 + 95, 1, 0, Sign[0], TRUE);
+					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 30, SCREEN_HEIGHT / 2 + 90, 1, 0, ItemImg[1], TRUE);
+				}
+			}
+		}
+	}
+
 }
 
 void UI::Draw() const
@@ -176,7 +383,7 @@ void UI::Draw() const
 	else if (PlayerHP / MaxHP <= 0.41)danger = 22;
 
 	//100の位
-	if (100 < MaxHP)
+	if (100 <= MaxHP)
 	{
 		if (100 <= PlayerHP)DrawRotaGraph(150, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10 + danger], TRUE);
 		DrawRotaGraph(218, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10], TRUE);
@@ -205,11 +412,11 @@ void UI::Draw() const
 	if (100 <= Shard) DrawRotaGraph(62, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
 
 	//10の位
-	if (100 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
+	if (100 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
 	else if (10 <= Shard)DrawRotaGraph(62, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
 
 	//1の位
-	if (100 <= Shard)(96, 125, 1.5, 0, Number[Shard % 10], TRUE);
+	if (100 <= Shard)DrawRotaGraph(96, 125, 1.5, 0, Number[Shard % 10], TRUE);
 	else if (10 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard % 10], TRUE);
 	else DrawRotaGraph(62, 125, 1.5, 0, Number[Shard % 10], TRUE);
 

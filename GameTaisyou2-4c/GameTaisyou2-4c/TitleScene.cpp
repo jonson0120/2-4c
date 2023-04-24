@@ -10,6 +10,9 @@ Title::Title() {
 	JoyPadY = 0;
 
 	select_image = LoadGraph("images/select.png");
+	Title_font= LoadGraph("images/TITLE.png");
+	Start_font= LoadGraph("images/START.png");
+	Debug_font= LoadGraph("images/null.png");
 }
 
 AbstractScene* Title::Update() {
@@ -42,10 +45,13 @@ AbstractScene* Title::Update() {
 
 void Title::Draw() const{
 	
-	DrawFormatString(540, 100, 0xffffff, "TITLE");
+	/*DrawFormatString(540, 100, 0xffffff, "TITLE");
 	DrawFormatString(540, 360, 0xffffff, "START");
-	DrawFormatString(540, 460, 0xffffff, "Debug");
-	DrawGraph(400, 310 + select * 100, select_image, TRUE);
+	DrawFormatString(540, 460, 0xffffff, "Debug");*/
+	DrawGraph(380, 100, Title_font, TRUE);
+	DrawGraph(440, 360, Start_font, TRUE);
+	DrawGraph(440, 460, Debug_font, TRUE);
+	DrawGraph(400, 360 + select * 100, select_image, TRUE);
 
 	DrawFormatString(0, 500, 0xff0000, "%d", select);
 	DrawFormatString(0, 550, 0xff0000, "%d", interval);

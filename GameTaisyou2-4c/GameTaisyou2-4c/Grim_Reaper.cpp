@@ -142,7 +142,7 @@ void Grim_Reaper::Update(Player* player)
 	//ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½ŽžUŒ‚
 	if (enex == player->GetX() && eney == player->GetY())
 	{
-		player->HitEnemy(1);
+		//player->HitEnemy(1);
 	}
 
 	if (HitCool)HitCool--;
@@ -163,6 +163,10 @@ void Grim_Reaper::makeEnemy()
 			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
 			MakeEnemy = TRUE;
 		}
+	}
+	while ((MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][enex / BLOCK_SIZE]))
+	{
+		eney++;
 	}
 }
 
