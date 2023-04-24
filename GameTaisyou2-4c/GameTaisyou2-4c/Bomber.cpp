@@ -1,4 +1,4 @@
-﻿#include "Bat.h"
+#include "Bomber.h"
 #include "Enemy.h"
 #include "DxLib.h"
 #include "common.h"
@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-Bat::Bat() : Enemy()
+Bomber::Bomber() : Enemy()
 {
 	image = 0;
 
@@ -47,38 +47,38 @@ Bat::Bat() : Enemy()
 	HitCool = 0;
 
 	speed = 0;
-	//fall = 12;
+	fall = 12;
 	jump = 0;
 
-	LoadDivGraph("images/bat3.png", 3, 3, 1, 76, 96, EImages);
+	LoadGraph("images/Bomber.png");
 	Anim = 0;
 	Turnflg = false;
 }
 
-void Bat::Update(Player* player)
+void Bomber::Update(Player* player)
 {
-	static double vector;
-	AttackSpeed = 0;
+	//ジャンプ強度
+	float fallinit = 12;
 
 	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE*2 >= player->GetX() && enex - BLOCK_SIZE*2 <= player->GetX() &&
-		eney + BLOCK_SIZE*2 >= player->GetY() && eney - BLOCK_SIZE*2 <= player->GetY() && !E_AttackFlg && !AttackCool)
+	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
+		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg && !AttackCool)
 	{
 		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
-		Dive = 9;
 
 		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
-
 	}
 	else if (!E_AttackFlg && !AttackCool) {
 		//通常の移動----------
 		if (Turnflg)
 		{
 			enex -= 3;
-			if (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
+			//壁にぶつかると向きを反転させる
+			if (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
+				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 			{
 				Turnflg = !Turnflg;
 			}
@@ -86,7 +86,9 @@ void Bat::Update(Player* player)
 		else
 		{
 			enex += 3;
-			if (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+			//壁にぶつかると向きを反転させる
+			if (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
+				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 			{
 				Turnflg = !Turnflg;
 			}
@@ -98,62 +100,28 @@ void Bat::Update(Player* player)
 	if (E_AttackFlg)
 	{
 		Attack++;
-		AttackSpeed++;
-		
 
 		//ジャンプ直前の待機
-		if (Attack <= 60)
+		if (Attack == 60)
 		{
-			vector = atan2(static_cast<double>(player->GetY()) - eney, static_cast<double>(player->GetX()) - enex);
+			
 		}
 		//ジャンプ
-		else if (Attack < 90)
+		else if (60 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 		{
-			enex += Dive * cos(vector);
-			while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
-				!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
-			{
-				enex--;
-				speed = 0;
-			}
-
-			while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
-				!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
-			{
-				enex++;
-				speed = 0;
-			}
-
-			eney += Dive * sin(vector);
-			while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
-				(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
-			{
-				eney++;
-			}
-
-			while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
-				(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
-			{
-				eney--;
-			}
-
+		
 		}
 		//攻撃終了
-		else {
-			//速度が0になれば攻撃終了
-			if (--Dive <= 0)
-			{
-				E_AttackFlg = false;
-				AttackCool = 60;
-				Dive = 0;
-				Attack = 0;
-			}
-
+		else if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		{
+			//ジャンプして着地すれば攻撃終了
+			E_AttackFlg = false;
+			AttackCool = 60;
+			Attack = 0;
 		}
 	}
 
-
-	//壁に当たった時止める
+	//壁にめり込んだ時に補正
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 	{
@@ -161,21 +129,62 @@ void Bat::Update(Player* player)
 		speed = 0;
 	}
 
+	//壁にめり込んだ時に補正
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
 		enex++;
 		speed = 0;
 	}
-	
 
+	//落下とジャンプ
+
+	if (fall < fallinit)
+	{
+		//落下速度を加算
+		fall += (fallinit * 2) / 45;
+
+		//fallinit＝加速最大値
+		if (fall > fallinit)
+		{
+			fall = fallinit;
+		}
+	}
+
+	eney += fall;
+
+	//壁にめり込んだ時に補正
+	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
+		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
+	{
+		eney++;
+		fall = 0;
+		jump = 0;
+	}
+
+	//壁にめり込んだ時に補正
+	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
+		(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
+	{
+		eney--;
+		jump = 0;
+	}
+
+
+	//プレイヤーに当たった時攻撃
+	//if (enex == player->GetX() && eney == player->GetY())
+	//{
+	//	player->HitEnemy(float damage);
+	//}
+
+	//攻撃待機時間・無敵時間を減らす
 	if (HitCool)HitCool--;
 	if (AttackCool)AttackCool--;
 
 	Anim++;
 }
 
-void Bat::makeEnemy()
+void Bomber::makeEnemy()
 {
 	MakeEnemy = FALSE;
 	while (MakeEnemy == FALSE)
@@ -191,7 +200,7 @@ void Bat::makeEnemy()
 	}
 }
 
-void Bat::Draw(int x, int y) const
+void Bomber::Draw(int x, int y) const
 {
 	if (MakeEnemy == TRUE && HitCool % 4 < 2)
 	{
@@ -225,7 +234,7 @@ void Bat::Draw(int x, int y) const
 	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 }
 
-void Bat::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
+void Bomber::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 {
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
@@ -239,14 +248,14 @@ void Bat::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 }
 
 //体力確認
-bool Bat::CheckHp() {
+bool Bomber::CheckHp() {
 	if (Enemy_Hp <= 0)return true;
 
 	return false;
 }
 
 //プレイヤーからの攻撃
-void Bat::HitPlayer(float damage) {
+void Bomber::HitPlayer(float damage) {
 	if (!HitCool) {
 		Enemy_Hp -= damage;
 		HitCool = 30;
@@ -254,7 +263,7 @@ void Bat::HitPlayer(float damage) {
 }
 
 //プレイヤーへの攻撃
-bool Bat::EnemyAttack(int x, int y)
+bool Bomber::EnemyAttack(int x, int y)
 {
 	if (E_AttackFlg && 60 < Attack)
 	{

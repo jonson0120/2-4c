@@ -13,6 +13,7 @@
 #include"Slime.h"
 #include"Bat.h"
 #include "Grim_Reaper.h"
+#include"Bomber.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -822,6 +823,9 @@ void GameMainScene::MakeEnemy()
 			break;
 		case 2:
 			enemy[i] = new Grim_Reaper();
+			break;
+		case 3:
+			enemy[i] = new Bomber();
 			break;
 		}
 
