@@ -24,7 +24,6 @@ private:
 	bool LowJump;
 	int Attack;			//攻撃アニメーション
 	int AttackSpeed;
-	double Vector = 0;
 	int Dive;
 
 	bool Turnflg;		//画像反転

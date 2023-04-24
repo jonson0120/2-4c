@@ -57,19 +57,22 @@ Bat::Bat() : Enemy()
 
 void Bat::Update(Player* player)
 {
-	
+	static double vector;
 	AttackSpeed = 0;
 
 	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
-		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg && !AttackCool)
+	if (enex + BLOCK_SIZE*2 >= player->GetX() && enex - BLOCK_SIZE*2 <= player->GetX() &&
+		eney + BLOCK_SIZE*2 >= player->GetY() && eney - BLOCK_SIZE*2 <= player->GetY() && !E_AttackFlg && !AttackCool)
 	{
 		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
 		Dive = 6;
+
 		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
+
+		vector = atan2(static_cast<double>(player->GetY()) - eney, static_cast<double>(player->GetX()) - enex);
 	}
 	else if (!E_AttackFlg && !AttackCool) {
 		//通常の移動----------
@@ -97,7 +100,7 @@ void Bat::Update(Player* player)
 	{
 		Attack++;
 		AttackSpeed++;
-		double vector = atan2(static_cast<double>(player->GetY()) - eney, static_cast<double>(player->GetX()) - enex);
+		
 
 		//ジャンプ直前の待機
 		if (Attack <= 60)
