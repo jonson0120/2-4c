@@ -16,6 +16,7 @@ private:
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
 	bool Turnflg;		//敵の向き
+	bool AtkTurnFlg;	//攻撃の向き
 
 	int Power;			//攻撃力
 	Range AtkSpot;		//攻撃位置

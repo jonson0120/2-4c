@@ -36,6 +36,7 @@ DeepSlime::DeepSlime() : Enemy()
 	MakeEnemy = FALSE;
 
 	E_AttackFlg = FALSE;
+	AtkTurnFlg = false;
 
 	//攻撃関連
 	HighJump = false;
@@ -75,6 +76,8 @@ void DeepSlime::Update(Player* player)
 		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
+
+		AtkTurnFlg = Turnflg;
 
 		AttackCool = 80;
 		AtkSpot = { enex,eney };
@@ -116,7 +119,7 @@ void DeepSlime::Update(Player* player)
 			//プレイヤーが一定以上高い位置にいると縦方向ジャンプになる
 			if (BLOCK_SIZE - 30 < eney - player->GetY())
 			{
-				Atkfall = -fallinit * 1.2;
+				Atkfall = -fallinit * 1.4;
 				HighJump = true;
 			}
 			//水平方向ジャンプ
@@ -130,18 +133,18 @@ void DeepSlime::Update(Player* player)
 		//ジャンプ
 		else if (60 < Attack && MapData[AtkSpot.Y / BLOCK_SIZE][AtkSpot.X / BLOCK_SIZE])
 		{
-			int jump = 9;
+			int jump = 11;
 
 			//縦方向ジャンプ
 			if (HighJump)
 			{
-				if (Turnflg)AtkSpot.X -= jump / 3;
+				if (AtkTurnFlg)AtkSpot.X -= jump / 3;
 				else AtkSpot.X += jump / 3;
 			}
 			//横方向ジャンプ
 			else
 			{
-				if (Turnflg)AtkSpot.X -= jump;
+				if (AtkTurnFlg)AtkSpot.X -= jump;
 				else AtkSpot.X += jump;
 			}
 		}
