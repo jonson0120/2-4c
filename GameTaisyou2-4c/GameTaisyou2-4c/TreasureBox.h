@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Player.h"
 #include "PadInput.h"
 #include"common.h"
@@ -7,20 +7,20 @@ class TreasureBox : public Player
 {
 private:
 
-	//•ó” ‰æ‘œ
-	int lidImage;	//ŠW‰æ‘œ
-	int BoxImage;	//” ‰æ‘œ
-	int Button;		//ƒ{ƒ^ƒ“‰æ‘œ
+	//
+	int lidImage;	//
+	int BoxImage;	//
+	int Button;		//
 
-	//•ó” ‚ÌˆÊ’u
-	int lidx, lidy;    //ŠW‚Ìx,yÀ•W
-	int Boxx, Boxy;    //” ‚Ìx,yÀ•W
-	int Width, Height;	//“G‚Ì‚‚³
+	//
+	int lidx, lidy;    //
+	int Boxx, Boxy;    //
+	int Width, Height;	//
 	bool MakeTreasureBox;
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];
 
-	bool CanOpen;		//•ó” ‚ğŠJ‚¯‚é‚©
+	bool CanOpen;		//
 	bool OpenBoxflag;
 
 	float fall;

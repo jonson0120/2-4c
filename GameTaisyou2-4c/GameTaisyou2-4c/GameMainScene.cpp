@@ -14,6 +14,7 @@
 #include"Bat.h"
 #include "Grim_Reaper.h"
 #include "DeepSlime.h"
+#include"Bomber.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -84,8 +85,6 @@ GameMainScene::GameMainScene()
 
 	time = 0;
 
-	number1 = 1;
-	number2 = 0;
 
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, hierarchy_font);
 
@@ -440,8 +439,8 @@ void GameMainScene::Draw() const
 	ui.Draw();
 	if (UpGrade)ui.UpGradeDraw();
 
-	DrawRotaGraph(1200, 60, 6.0, 0, hierarchy_font[number1], TRUE);
-	DrawRotaGraph(1140, 60, 6.0, 0, hierarchy_font[number2], TRUE);
+	DrawRotaGraph(1200, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
+	DrawRotaGraph(1140, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
 
 #ifdef DEBUG
 
@@ -849,11 +848,7 @@ void GameMainScene::NextMap() {
 		MakeMap();
 		player.SetMapData(MapData);
 
-		if (SafeZone == false) {
-			number1++;
-			if (number2 > 9)number1 = 0, number2++;
-		}
-
+		
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i] = nullptr;

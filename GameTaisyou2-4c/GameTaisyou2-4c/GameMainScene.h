@@ -58,8 +58,6 @@ private:
 	int count;
 
 	int hierarchy_font[44]; //階層用フォント画像変数
-
-	int number1,number2; //何階層か表示するための変数
 public:
 	GameMainScene();
 	//デストラクト

@@ -7,16 +7,16 @@
 TreasureBox::TreasureBox()
 {
 
-	//宝箱画像
-	lidImage = LoadGraph("images/Treasure2.png", TRUE);     //蓋画像
-	BoxImage = LoadGraph("images/Treasure3.png", TRUE);     //箱画像
+	//
+	lidImage = LoadGraph("images/Treasure2.png", TRUE);     //
+	BoxImage = LoadGraph("images/Treasure3.png", TRUE);     //
 	Button = LoadGraph("images/ItemIcon.png", TRUE);
 
-	//蓋のx,y座標
+	//
 	lidx = 0;
 	lidy = 0;
 
-	//箱のx,y座標
+	//
 	Boxx = 0;
 	Boxy = 0;
 
@@ -89,7 +89,7 @@ void TreasureBox::Update(Player* player)
 		Boxy--;
 
 	}
-	//プレイヤー認識範囲
+	//
 	if (lidx + BLOCK_SIZE * 0.4 >= player->GetX() && lidx - BLOCK_SIZE * 0.4 <= player->GetX() &&
 		lidy + BLOCK_SIZE >= player->GetY() && lidy - BLOCK_SIZE <= player->GetY() && !OpenBoxflag)
 	{
@@ -101,7 +101,7 @@ void TreasureBox::Update(Player* player)
 		else CanOpen = false;
 	}
 
-	{//宝箱
+	{//
 		if (OpenBoxflag == false)
 		{
 			lidflag = 0;
