@@ -103,11 +103,11 @@ AbstractScene* HowToMap::Update()
 		if (player.GetX() / BLOCK_SIZE != 39)PhaseCount = 60;
 		Phase++;
 	}
-	else if (Phase == 6 && Getted) 
+	else if (Phase == 6 && Getted)
 	{
 		Phase++;
 	}
-	else if (Phase <= 9 && player.GetX() / BLOCK_SIZE == 46 && 120 < player.GetX() % BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+	else if (7 <= Phase && Phase <= 9 && player.GetX() / BLOCK_SIZE == 46 && 120 < player.GetX() % BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_B))
 	{
 		if (PhaseCount == 0)
 		{
