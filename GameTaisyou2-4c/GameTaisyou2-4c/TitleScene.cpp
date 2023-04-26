@@ -9,7 +9,7 @@ Title::Title() {
 	select = 0;
 	JoyPadY = 0;
 
-	Tutorial_flg = true;
+	Tutorial_flg = false;
 
 	select_image = LoadGraph("images/select.png");
 	mini_select_image = LoadGraph("images/select.png");
