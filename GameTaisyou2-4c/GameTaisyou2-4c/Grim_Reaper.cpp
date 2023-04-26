@@ -131,9 +131,9 @@ void Grim_Reaper::Update(Player* player)
 		Attack++;
 
 		//UŒ‚I—¹
-		if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		if (60 < Attack)
 		{
-			//ƒWƒƒƒ“ƒv‚µ‚Ä’…’n‚·‚ê‚ÎUŒ‚I—¹
+			//Š™‚ğU‚è‚©‚Ô‚ê‚ÎUŒ‚I—¹
 			E_AttackFlg = false;
 			Attack = 0;
 		}
@@ -191,7 +191,7 @@ void Grim_Reaper::Draw(int x, int y) const
 
 	if (E_AttackFlg == true)
 	{
-		DrawSickle();
+		DrawSickle(x,y);
 	}
 	
 	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
@@ -228,25 +228,29 @@ void Grim_Reaper::HitPlayer(float damage) {
 }
 
 //ƒvƒŒƒCƒ„[‚Ö‚ÌUŒ‚
-void Grim_Reaper::DrawSickle()const
+void Grim_Reaper::DrawSickle(int x, int y)const
 {
 	double stX = 0, stY = 0;	//U‚è‚©‚Ô‚é‘O‚ÌÀ•W
 	double finX = 0, finY = 0;	//U‚è‚©‚Ô‚Á‚½Œã‚ÌÀ•W
 	double Dis = 0;				//‘Ì‚Ì’†S‚©‚ç‚Ì‹——£
 	double stAng, finAng = 0;	//U‚è‚©‚Ô‚éŠp“x
 
-	if (E_AttackFlg && 60 < Attack)
+	if (E_AttackFlg)
 	{
 		stAng = 90;
-		finAng = 130;
-		stX = SCREEN_WIDTH / 2;
-		stY = SCREEN_HEIGHT / 2;
+		finAng = 150;
+		stX = enex / 2;
+		stY = eney / 2;
 		Dis = Width * 1.5;
 
-		finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
-		finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		stAng++;
+		if (stAng != 150)
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 60));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 60));
+			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * finAng, SickleImg, true, false);
+		}
 	}
-	DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * finAng, SickleImg, true, false);
 }
 
 bool Grim_Reaper::EnemyAttack(int x, int y)

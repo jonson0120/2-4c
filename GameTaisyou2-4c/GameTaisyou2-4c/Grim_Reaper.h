@@ -44,7 +44,7 @@ public:
 	Grim_Reaper();
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
-	void DrawSickle()const;
+	void DrawSickle(int x, int y)const;
 
 	virtual int E_GetX()const { return enex; }
 	virtual int E_GetY()const { return eney; }
