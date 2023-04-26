@@ -50,7 +50,7 @@ Bomber::Bomber() : Enemy()
 	fall = 12;
 	jump = 0;
 
-	LoadGraph("images/Bomber.png");
+	LoadDivGraph("images/Bomber.png",1,1,1,48,48,EImages);
 	Anim = 0;
 	Turnflg = false;
 }

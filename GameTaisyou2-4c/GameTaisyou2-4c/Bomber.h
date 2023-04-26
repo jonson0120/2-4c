@@ -9,7 +9,7 @@ class Bomber : public Enemy
 {
 private:
 	int image;			//画像
-	int EImages[3];		//画像
+	int EImages[1];		//画像
 	int Anim;			//アニメーション
 
 	int DropItem_Image;	//ドロップアイテム

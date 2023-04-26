@@ -813,7 +813,7 @@ void GameMainScene::MakeEnemy()
 	for (int i = 0; i < Spawn; i++)
 	{
 		enemy[i] = nullptr;
-		switch (GetRand(2))
+		switch (GetRand(3))
 		{
 		case 0:
 			enemy[i] = new Slime();
