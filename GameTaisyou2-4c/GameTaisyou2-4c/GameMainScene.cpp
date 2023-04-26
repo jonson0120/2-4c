@@ -13,6 +13,7 @@
 #include"Slime.h"
 #include"Bat.h"
 #include "Grim_Reaper.h"
+#include"Bomber.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -806,7 +807,7 @@ void GameMainScene::MakeEnemy()
 	for (int i = 0; i < Spawn; i++)
 	{
 		enemy[i] = nullptr;
-		switch (GetRand(2))
+		switch (GetRand(3))
 		{
 		case 0:
 			enemy[i] = new Slime();
@@ -816,6 +817,9 @@ void GameMainScene::MakeEnemy()
 			break;
 		case 2:
 			enemy[i] = new Grim_Reaper();
+			break;
+		case 3:
+			enemy[i] = new Bomber();
 			break;
 		}
 

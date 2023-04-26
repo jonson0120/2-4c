@@ -1,15 +1,15 @@
-﻿#pragma once
+#pragma once
 #include "DxLib.h"
 #include "common.h"
 #include "Enemy.h"
 
 class Player;
 
-class Bat : public Enemy
+class Bomber : public Enemy
 {
 private:
 	int image;			//画像
-	int EImages[3];		//画像
+	int EImages[1];		//画像
 	int Anim;			//アニメーション
 
 	int DropItem_Image;	//ドロップアイテム
@@ -42,13 +42,13 @@ private:
 	int HitCool;	//被弾クールタイム
 
 	float speed; //移動速度
-	//float fall;	 //落下速度
+	float fall;	 //落下速度
 	int jump;	 //ジャンプ回数
 
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Bat();
+	Bomber();
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
 
