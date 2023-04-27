@@ -21,6 +21,7 @@ UI::UI()
 	LoadDivGraph("images/Gauge.png", 3, 3, 1, 34, 34, Gauge);
 
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, Number);
+	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 	LoadDivGraph("images/sign.png", 4, 4, 1, 11, 11, Sign);
 
 	ItemImg[0] = LoadGraph("images/potion2.png");
@@ -114,17 +115,17 @@ bool UI::UpGradeUI(Player* player)
 	int JoyPadX = PAD_INPUT::GetPadThumbLX();
 
 	if (JoyPadX > MARGIN && WaitTime <= 0) {
-		if (3 < ++UpGradeNum)UpGradeNum = 0;
+		if (3 < ++MenuNum)MenuNum = 0;
 		WaitTime = 20;
 	}
 	if (JoyPadX < -MARGIN && WaitTime <= 0) {
-		if (--UpGradeNum < 0)UpGradeNum = 3;
+		if (--MenuNum < 0)MenuNum = 3;
 		WaitTime = 20;
 	}
 
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B)) 
 	{
-		switch (UpGradeNum)
+		switch (MenuNum)
 		{
 		case 0:
 			if (cost[HP] <= player->GetShard())
@@ -154,6 +155,7 @@ bool UI::UpGradeUI(Player* player)
 			break;
 
 		case 3:
+			MenuNum = 0;
 			return false;
 			break;
 
@@ -172,13 +174,13 @@ void UI::UpGradeDraw() const
 	int Dis = 140;
 
 	//カーソル
-	DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * UpGradeNum, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[4], TRUE);
+	DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * MenuNum, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[4], TRUE);
 
 	//強化費用表示
 	for (int i = 0; i < 4; i++)
 	{
 		DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[i], TRUE);
-		if (i == UpGradeNum)
+		if (i == MenuNum)
 		{
 			DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 120, 1, 0, UpGradeTxt[i], TRUE);
 			if (i != 3)
@@ -301,6 +303,63 @@ void UI::UpGradeDraw() const
 
 }
 
+Pause UI::PauseUI()
+{
+	int JoyPadY = PAD_INPUT::GetPadThumbLY();
+	static bool GoTitle = false;
+
+	if (JoyPadY > MARGIN && WaitTime <= 0) {
+		if (1 < ++MenuNum)MenuNum = 0;
+		WaitTime = 20;
+	}
+	if (JoyPadY < -MARGIN && WaitTime <= 0) {
+		if (--MenuNum < 0)MenuNum = 1;
+		WaitTime = 20;
+	}
+
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+	{
+		switch (MenuNum)
+		{
+		case 0:
+			if (!GoTitle)return Pause::RETURN;
+			else GoTitle = false;
+			break;
+
+		case 1:
+			if (!GoTitle) {
+				MenuNum = 0;
+				GoTitle = true;
+			}
+			else {
+				GoTitle = false;
+				return Pause::TITLE;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (--WaitTime < 0 || (-MARGIN < JoyPadY && JoyPadY < MARGIN))WaitTime = 0;
+	return Pause::NONE;
+}
+
+void UI::PauseDraw() const
+{
+	int Dis = 100;
+
+	//カーソル
+	DrawExtendGraph(SCREEN_WIDTH / 2 - Dis * 2, SCREEN_HEIGHT / 2 - Dis + (Dis * 2 * MenuNum) ,
+					SCREEN_WIDTH / 2 + Dis * 2, SCREEN_HEIGHT / 2 + (Dis * 2 * MenuNum), UpGradeImg[4], true);
+	
+
+	for (int i = 0; i < 2; i++)
+	{
+	}
+
+}
 void UI::Draw() const
 {
 

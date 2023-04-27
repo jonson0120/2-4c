@@ -97,9 +97,10 @@ void TreasureBox::Update(Player* player)
 		{
 			OpenBoxflag = true;
 		}
+
 		if (!OpenBoxflag)CanOpen = true;
-		else CanOpen = false;
 	}
+	else CanOpen = false;
 
 	{//
 		if (OpenBoxflag == false)

@@ -30,6 +30,13 @@ enum struct Inp_UD
 	DOWN	//2
 };
 
+enum struct Pause
+{
+	NONE,
+	RETURN,
+	TITLE
+};
+
 struct Range
 {
 	int X;

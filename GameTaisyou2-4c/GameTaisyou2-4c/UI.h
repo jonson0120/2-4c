@@ -40,6 +40,7 @@ private:
 	int ItemImg[2];
 
 	int Number[44];
+	int Chara[28];
 	int Sign[4];
 
 	int PotionCount;
@@ -47,7 +48,8 @@ private:
 
 	int UseCount = 0;
 
-	int UpGradeNum = 0;	//強化メニュー：選択項目
+	int MenuNum = 0;	//メニュー：選択項目
+
 	int UpGradeImg[5];	//強化メニュー：画像
 	int UpGradeTxt[4];	//強化メニュー：文字
 	int WaitTime = 0;		//入力待ち時間
@@ -63,7 +65,10 @@ public:
 	//強化メニュー
 	bool UpGradeUI(Player* player);
 
+	Pause PauseUI();
+
 	void Draw()const;
 	void UpGradeDraw()const;
+	void PauseDraw()const;
 };
 
