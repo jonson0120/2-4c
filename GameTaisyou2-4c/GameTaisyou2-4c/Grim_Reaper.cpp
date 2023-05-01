@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-Grim_Reaper::Grim_Reaper() : Enemy()
+Grim_Reaper::Grim_Reaper(int level) : Enemy()
 {
 	image = 0;
 
@@ -29,7 +29,14 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 	Enemy_Hp = 10;
 	Player_Hp = 10;
 
-	Power = 1;
+	Power = 999;
+
+	//ƒŒƒxƒ‹‚É‚æ‚é‹­‰»
+	int Addhp = level / 5;
+	int addAtk = 0;
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 

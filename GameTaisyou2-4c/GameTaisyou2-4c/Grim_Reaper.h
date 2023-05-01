@@ -41,7 +41,7 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Grim_Reaper();
+	Grim_Reaper(int level);
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
 

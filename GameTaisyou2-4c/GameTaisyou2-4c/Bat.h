@@ -48,7 +48,7 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Bat();
+	Bat(int level);
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
 

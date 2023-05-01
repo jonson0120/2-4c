@@ -12,6 +12,7 @@
 #include"Slime.h"
 #include "Grim_Reaper.h"
 #include"Bat.h"
+#include "DeepSlime.h"
 #include "Weapon.h"
 
 TestMap::TestMap()
@@ -72,7 +73,7 @@ TestMap::TestMap()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
-	LoadDivGraph("images/Art.png", 7, 7, 1, 64, 64, Art);
+	LoadDivGraph("images/Art.png", 8, 8, 1, 64, 64, Art);
 	LoadDivGraph("images/Info.png", 3, 3, 1, 128,128, info);
 
 	Exit_flg = false;
@@ -236,7 +237,7 @@ AbstractScene* TestMap::Update()
 			{
 				if (enemy[i] == nullptr) 
 				{
-					enemy[i] = new Slime();
+					enemy[i] = new Slime(0);
 					enemy[i]->SetMapData(MapData);
 					break;
 				}
@@ -249,7 +250,7 @@ AbstractScene* TestMap::Update()
 			{
 				if (enemy[i] == nullptr)
 				{
-					enemy[i] = new Bat();
+					enemy[i] = new Bat(0);
 					enemy[i]->SetMapData(MapData);
 					break;
 				}
@@ -262,7 +263,20 @@ AbstractScene* TestMap::Update()
 			{
 				if (enemy[i] == nullptr)
 				{
-					enemy[i] = new Grim_Reaper();
+					enemy[i] = new Grim_Reaper(0);
+					enemy[i]->SetMapData(MapData);
+					break;
+				}
+			}
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 4 && player.GetX() / BLOCK_SIZE == 3)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] == nullptr)
+				{
+					enemy[i] = new DeepSlime(0);
 					enemy[i]->SetMapData(MapData);
 					break;
 				}
@@ -334,6 +348,7 @@ void TestMap::Draw() const
 	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[4], true);
 	DrawRotaGraph(BLOCK_SIZE * 1.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[6], true);
 	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 4.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[5], true);
+	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 4.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[7], true);
 
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 
@@ -526,9 +541,7 @@ void TestMap::NextMap() {
 		player.SetMapData(MapData);
 
 		enemy[0] = nullptr;
-		enemy[0] = new Slime();
 		enemy[1] = nullptr;
-		enemy[1] = new Slime();
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);

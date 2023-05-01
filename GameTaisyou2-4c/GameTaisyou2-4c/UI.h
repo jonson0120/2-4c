@@ -50,12 +50,14 @@ private:
 
 	int MenuNum = 0;	//メニュー：選択項目
 
-	int UpGradeImg[5];	//強化メニュー：画像
+	int UpGradeImg[6];	//強化メニュー：画像
 	int UpGradeTxt[4];	//強化メニュー：文字
+
 	int WaitTime = 0;		//入力待ち時間
 
 	int cost[3];		//強化：必要コスト
 	int nowstat[3];		//強化：現在の値
+	bool Title = false;		//ポーズ：最終確認
 
 public:
 	

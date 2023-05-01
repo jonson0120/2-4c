@@ -29,7 +29,7 @@ UI::UI()
 
 	LoadDivGraph("images/UiButton.png", 2, 2, 1, 21, 21, ButtonImg);
 
-	LoadDivGraph("images/str.png", 5, 5, 1, 128, 128, UpGradeImg);
+	LoadDivGraph("images/str.png", 6, 6, 1, 128, 128, UpGradeImg);
 	LoadDivGraph("images/strui.png", 4, 1, 4, 112, 24, UpGradeTxt);
 
 	Damage = 0;
@@ -308,6 +308,8 @@ Pause UI::PauseUI()
 	int JoyPadY = PAD_INPUT::GetPadThumbLY();
 	static bool GoTitle = false;
 
+	Title = GoTitle;
+
 	if (JoyPadY > MARGIN && WaitTime <= 0) {
 		if (1 < ++MenuNum)MenuNum = 0;
 		WaitTime = 20;
@@ -352,14 +354,56 @@ void UI::PauseDraw() const
 
 	//ƒJ[ƒ\ƒ‹
 	DrawExtendGraph(SCREEN_WIDTH / 2 - Dis * 2, SCREEN_HEIGHT / 2 - Dis + (Dis * 2 * MenuNum) ,
-					SCREEN_WIDTH / 2 + Dis * 2, SCREEN_HEIGHT / 2 + (Dis * 2 * MenuNum), UpGradeImg[4], true);
+					SCREEN_WIDTH / 2 + Dis * 2, SCREEN_HEIGHT / 2 + (Dis * 2 * MenuNum), UpGradeImg[5], true);
 	
-
-	for (int i = 0; i < 2; i++)
+	if (!Title) 
 	{
+		//PAUSE
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 120, 150, 5, 0, Chara[15], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 60, 150, 5, 0, Chara[0], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2, 150, 5, 0, Chara[20], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 60, 150, 5, 0, Chara[18], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 120, 150, 5, 0, Chara[4], true);
+
+		//RETURN
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - Dis / 2 , 5, 0, Chara[17], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 90, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[4], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 30, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[19], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 30, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[20], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 90, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[17], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[13], true);
+
+		//TITLE
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[19], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 60, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[8], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[19], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[11], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 120, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[4], true);
+	}
+	else 
+	{
+		//REALLY?
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 180, 150, 5, 0, Chara[17], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 120, 150, 5, 0, Chara[4], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 60, 150, 5, 0, Chara[0], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2, 150, 5, 0, Chara[11], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 60, 150, 5, 0, Chara[11], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 120, 150, 5, 0, Chara[24], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 180, 150, 5, 0, Chara[27], true);
+
+		//NO
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 30, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[13], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 30, SCREEN_HEIGHT / 2 - Dis / 2, 5, 0, Chara[14], true);
+
+		//YES
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 60, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[24], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[4], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 + (Dis * 1.5), 5, 0, Chara[18], true);
+
 	}
 
 }
+
 void UI::Draw() const
 {
 
@@ -425,7 +469,7 @@ void UI::Draw() const
 		break;
 	}
 
-	DrawRotaGraph(10, 55, 1, 0, ButtonImg[1], TRUE);
+	DrawRotaGraph(15, 50, 1.5, 0, ButtonImg[1], TRUE);
 
 	//HPÔ
 	DrawBox(135, 10, 535, 50, GetColor(255, 0, 0), TRUE);

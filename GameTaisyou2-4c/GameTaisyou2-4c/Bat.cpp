@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-Bat::Bat() : Enemy()
+Bat::Bat(int level) : Enemy()
 {
 	image = 0;
 
@@ -30,6 +30,13 @@ Bat::Bat() : Enemy()
 	Player_Hp = 10;
 
 	Power = 1;
+
+	//レベルによる強化
+	int Addhp = level / 5;
+	int addAtk = level / 8;
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 

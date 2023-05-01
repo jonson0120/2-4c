@@ -33,7 +33,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
+	enemy[0] = new Slime(Level);
 
 	for (int i = 0; i < ENEMY_MAX+1; i++)
 	{
@@ -927,16 +927,16 @@ void GameMainScene::MakeEnemy()
 		switch (GetRand(3))
 		{
 		case 0:
-			enemy[i] = new Slime();
+			enemy[i] = new Slime(Level);
 			break;
 		case 1:
-			enemy[i] = new Bat();
+			enemy[i] = new Bat(Level);
 			break;
 		case 2:
-			enemy[i] = new Grim_Reaper();
+			enemy[i] = new Grim_Reaper(Level);
 			break;
 		case 3:
-			enemy[i] = new DeepSlime();
+			enemy[i] = new DeepSlime(Level);
 			break;
 		}
 

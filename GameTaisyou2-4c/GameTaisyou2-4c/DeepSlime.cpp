@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-DeepSlime::DeepSlime() : Enemy()
+DeepSlime::DeepSlime(int level) : Enemy()
 {
 	image = 0;
 
@@ -32,6 +32,13 @@ DeepSlime::DeepSlime() : Enemy()
 
 	//敵攻撃力
 	Power = 1;
+
+	//レベルによる強化
+	int Addhp = level / 3;
+	int addAtk = level / 6;
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 

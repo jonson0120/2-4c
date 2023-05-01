@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-Slime::Slime() : Enemy()
+Slime::Slime(int level) : Enemy()
 {
 	image = 0;
 
@@ -32,6 +32,13 @@ Slime::Slime() : Enemy()
 
 	//敵攻撃力
 	Power = 1;
+
+	//レベルによる強化
+	int Addhp = level / 2;
+	int addAtk = level / 6;
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 
