@@ -211,7 +211,7 @@ AbstractScene* GameMainScene::Update()
 					{
 						if (item[i] == nullptr)
 						{
-							item[i] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() });
+							item[i] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() }, Level);
 							item[i]->SetMapData(MapData);
 							break;
 						}

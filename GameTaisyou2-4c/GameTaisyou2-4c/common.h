@@ -37,6 +37,24 @@ enum struct Pause
 	TITLE
 };
 
+enum Enchant
+{
+	ATTACK,		//攻撃強化
+	DEFENSE,	//被ダメ軽減
+	GREED,		//シャードドロップ増加
+	BARRIER,		//階層移動時バリア効果
+	VAMP,		//攻撃時回復
+	REPAIR,		//自動回復
+	DODGE,		//確率回避
+	NONE		//スキルなし
+};
+
+struct Passive 
+{
+	Enchant Kinds;
+	int Effect;
+};
+
 struct Range
 {
 	int X;

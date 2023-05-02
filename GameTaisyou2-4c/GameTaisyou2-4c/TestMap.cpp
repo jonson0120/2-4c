@@ -29,10 +29,10 @@ TestMap::TestMap()
 	{
 		item[i] = nullptr;
 	}
-	item[0] = new Weapon(weapons::dagger, { 240,1600 });
-	item[1] = new Weapon(weapons::mace, { 320,1600 });
-	item[2] = new Weapon(weapons::spear, { 400, 1600 });
-	item[3] = new Weapon(weapons::katana, { 480,1600 });
+	item[0] = new Weapon(weapons::dagger, { 240,1600 }, 0);
+	item[1] = new Weapon(weapons::mace, { 320,1600 }, 0);
+	item[2] = new Weapon(weapons::spear, { 400, 1600 }, 0);
+	item[3] = new Weapon(weapons::katana, { 480,1600 }, 0);
 
 	MapExitX = 0;
 	MapExitY = 0;
