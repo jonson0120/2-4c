@@ -73,7 +73,7 @@ void Weapon::SetPassive(int Level)
 		if (GetRand(99) <= chance - 1)
 		{
 			Enchant win = static_cast<Enchant>(GetRand(potential) + 1);
-			while (getted[win])
+			while (getted[win - 1])
 			{
 				win = static_cast<Enchant>(GetRand(potential) + 1);
 			}
@@ -107,7 +107,7 @@ void Weapon::SetPassive(int Level)
 			}
 
 			passive[i + 1] = { win,effect };
-			getted[win] = true;
+			getted[win - 1] = true;
 		}
 		else passive[i + 1] = { NONE,0 };
 	}
@@ -145,8 +145,19 @@ void Weapon::Update(Player* player)
 	if (CanGet && !player->GetAttack() && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 	{
 		weapons old = player->GetEquip();
-			player->ChangeEquip(Kind);
+		Passive oldp[4];
+
+		for (int i = 0; i < 4; i++)
+		{
+			oldp[i] = player->GetPassive(i);
+		}
+		player->ChangeEquip(Kind, passive);
 			Kind = old;
+			for (int i = 0; i < 4; i++)
+			{
+				passive[i] = oldp[i];
+			}
+
 			SetItem();
 			Getted = true;
 	}

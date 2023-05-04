@@ -88,6 +88,7 @@ GameMainScene::GameMainScene()
 
 
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, hierarchy_font);
+	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 
 	count = 0;
 
@@ -149,8 +150,26 @@ AbstractScene* GameMainScene::Update()
 				enemy[i]->Update(&player);
 				if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()) && !player.GetCool())
 				{
-					player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
-					Damage[0] = { player.GetX(),player.GetY(),enemy[i]->GetPower(),30 };
+					//ダメージの種類を取る　0：普通に受けた　1：回避した　2：バリアで防いだ
+					int damage = player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
+
+					switch (damage)
+					{
+					case 0:	//普通に受けた
+						Damage[0] = { player.GetX(),player.GetY(),enemy[i]->GetPower(),30 };
+						break;
+
+					case 1:	//回避した
+						Damage[0] = { player.GetX(),player.GetY(),-1,30 };
+						break;
+
+					case 2:	//バリアで防いだ
+						Damage[0] = { player.GetX(),player.GetY(),-2,30 };
+						break;
+
+					default:
+						break;
+					}
 				}
 			}
 		}
@@ -207,12 +226,12 @@ AbstractScene* GameMainScene::Update()
 						break;
 					}
 
-					for (int i = 0; i < ITEM_MAX; i++)
+					for (int j = 0; j < ITEM_MAX; j++)
 					{
-						if (item[i] == nullptr)
+						if (item[j] == nullptr)
 						{
-							item[i] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() }, Level);
-							item[i]->SetMapData(MapData);
+							item[j] = new Weapon(drop, { treasurebox[i]->lid_GetX(), treasurebox[i]->lid_GetY() }, Level);
+							item[j]->SetMapData(MapData);
 							break;
 						}
 					}
@@ -228,7 +247,7 @@ AbstractScene* GameMainScene::Update()
 			{
 				if (enemy[i] != nullptr)if (player.HitDagger(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-					DMG = player.GetAtk() * player.GetPower();
+					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
 				}
@@ -239,7 +258,7 @@ AbstractScene* GameMainScene::Update()
 			{
 				if (enemy[i] != nullptr)if (player.HitMace(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-					DMG = player.GetAtk() * player.GetPower();
+					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
 				}
@@ -250,7 +269,7 @@ AbstractScene* GameMainScene::Update()
 			{
 				if (enemy[i] != nullptr)if (player.HitSpear(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-					DMG = player.GetAtk() * player.GetPower();
+					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
 				}
@@ -261,7 +280,7 @@ AbstractScene* GameMainScene::Update()
 			{
 				if (enemy[i] != nullptr)if (player.HitKatana(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
 					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-					DMG = player.GetAtk() * player.GetPower();
+					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
 				}
@@ -277,14 +296,14 @@ AbstractScene* GameMainScene::Update()
 			{
 				if (enemy[i]->CheckHp())
 				{
-					int Dlop = 0;
-					for (int j = 0; j < ITEM_MAX - 1 && Dlop < 2; j++)
+					int Drop = 0;
+					for (int j = 0; j < ITEM_MAX - 1 && Drop < 2; j++)
 					{
 						if (item[j] == nullptr)
 						{
 							item[j] = new Shard({ enemy[i]->E_GetX(),enemy[i]->E_GetY() });
 							item[j]->SetMapData(MapData);
-							Dlop++;
+							Drop++;
 						}
 					}
 					enemy[i] = nullptr;
@@ -414,7 +433,7 @@ void GameMainScene::SortItem()
 
 void GameMainScene::Draw() const
 {
-
+	//マップ描画
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -425,23 +444,28 @@ void GameMainScene::Draw() const
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 
+	//宝箱描画
 	for (int i = 0; i < TREASURE_MAX; i++)
 	{
 		if (treasurebox[i] != nullptr)treasurebox[i]->Draw(player.GetX(), player.GetY());
 	}
 
-
+	//アイテム描画
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		if (item[i] != nullptr)item[i]->Draw({ player.GetX() ,player.GetY() });
 	}
 
+	//プレイヤー描画
 	player.Draw();
+
+	//敵描画
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 
+	//出口アイコン描画
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
 
 		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
@@ -456,10 +480,15 @@ void GameMainScene::Draw() const
 	{
 		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100 , 1, 0, DoorIcon[3], true);
 	}
-	//enemy2.Draw(player.GetX(), player.GetY());
 
+	//ダメージ描画
 	for (int i = 0; i < ENEMY_MAX + 1; i++)
 	{
+		if (i == 0) 
+		{
+			if (Damage[i].NumB < 0)DrawDamage(Damage[i], i);
+		}
+
 		if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
 	}
 
@@ -472,18 +501,8 @@ void GameMainScene::Draw() const
 
 #ifdef DEBUG
 
-	DrawFormatString(0, 500, 0xff0000, "%d", Level);
-	DrawFormatString(0, 510, 0xff0000, "%d", SafeZone);
 
 #endif // DEBUG
-	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
-	//DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
-	//DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
-	//DrawFormatString(0, 650, 0xff0000, "%d", x);
-	//DrawFormatString(50, 650, 0xff0000, "%d", y);
-	//DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
-	//DrawFormatString(500, 200, 0xffffff, "%d", hit);
-	//DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
 void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
@@ -514,7 +533,23 @@ void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
 	}
 	else
 	{
-		if (LocDmg.NumA >= 100)
+		if (Dmg == -1)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[3], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[14], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[3], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[6], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[4], true);
+		}
+		else if (Dmg == -2)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[6], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[20], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[0], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[17], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[3], true);
+		}
+		else if (LocDmg.NumA >= 100)
 		{
 			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10 + 33], true);
 			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10 + 33], true);
@@ -857,6 +892,7 @@ void GameMainScene::NextMap() {
 				Exit_flg = false;
 				Anim_flg = false;
 				AnimTimer = 0, Bright = 255;
+				player.SetBarrier();
 			}
 		}
 	}

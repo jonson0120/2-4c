@@ -39,9 +39,12 @@ private:
 
 	int ItemImg[2];
 
-	int Number[44];
-	int Chara[28];
-	int Sign[4];
+	int Number[44];		//数字
+	int Chara[28];		//文字
+	int Sign[4];		//符号
+
+	Passive passive[4];	//表示するパッシブ
+	int passiveimg[7];	//パッシブ画像
 
 	int PotionCount;
 	int PotionMax;

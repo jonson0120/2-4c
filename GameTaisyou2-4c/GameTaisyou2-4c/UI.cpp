@@ -24,6 +24,8 @@ UI::UI()
 	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 	LoadDivGraph("images/sign.png", 4, 4, 1, 11, 11, Sign);
 
+	LoadDivGraph("images/passive.png", 7, 1, 7, 83, 17, passiveimg);
+
 	ItemImg[0] = LoadGraph("images/potion2.png");
 	ItemImg[1] = LoadGraph("images/shard.png");
 
@@ -66,6 +68,11 @@ void UI::Update(Player* player)
 	nowstat[HP] = stat.MaxHp;
 	nowstat[ATK] = stat.Atk;
 	nowstat[HEAL] = stat.PotionMax;
+
+	for (int i = 0; i < 4; i++)
+	{
+		passive[i] = player->GetPassive(i);
+	}
 
 	switch (player->GetEquip())
 	{
@@ -417,7 +424,7 @@ void UI::Draw() const
 		DrawCircle(165 + (i * 55), 75, 5, GetColor(255, 0, 0), TRUE);
 	}
 
-	//ポーション画像の表示
+	//ポーション画像の表示---------------
 
 	for (int i = 0; i < PotionCount; i++)
 	{
@@ -427,8 +434,9 @@ void UI::Draw() const
 	DrawRotaGraph(140, 100, 1.2, 0, Gauge[0], true);
 	DrawCircleGauge(140, 100, 100 * (UseCount / 60.f), Gauge[2], 0, 1.1, false, false);
 	DrawRotaGraph(140, 100, 0.9, 0, ButtonImg[0], TRUE);
+	//-----------------------------------
 
-	//武器
+	//武器-------------------------------------------------
 	DrawCircle(75, 50, 50, GetColor(35, 59, 108), TRUE);
 	switch (Weapon)
 	{
@@ -471,6 +479,17 @@ void UI::Draw() const
 
 	DrawRotaGraph(15, 50, 1.5, 0, ButtonImg[1], TRUE);
 
+	//パッシブ
+	for (int i = 0; i < 4; i++)
+	{
+		if (passive[i].Kinds != NONE)
+		{
+			DrawRotaGraph2(15, 125 + (27 * i), 0, 9, 1.5, 0, passiveimg[passive[i].Kinds], TRUE);
+			DrawRotaGraph(180, 125 + (27 * i), 1.5, 0, Number[passive[i].Effect], true);
+		}
+	}
+	//-----------------------------------------------------
+
 	//HP赤
 	DrawBox(135, 10, 535, 50, GetColor(255, 0, 0), TRUE);
 
@@ -506,22 +525,22 @@ void UI::Draw() const
 
 	//シャード所持数
 	//シャード
-	DrawRotaGraph(25, 125, 1, 0, ItemImg[1], TRUE);
+	DrawRotaGraph(225, 125, 1, 0, ItemImg[1], TRUE);
 
 	//×印
-	DrawRotaGraph(45, 130, 1, 0, Sign[0], TRUE);
+	DrawRotaGraph(245, 130, 1, 0, Sign[0], TRUE);
 
 	//100の位
-	if (100 <= Shard) DrawRotaGraph(62, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
+	if (100 <= Shard) DrawRotaGraph(262, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
 
 	//10の位
-	if (100 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
-	else if (10 <= Shard)DrawRotaGraph(62, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
+	if (100 <= Shard)DrawRotaGraph(279, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
+	else if (10 <= Shard)DrawRotaGraph(262, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
 
 	//1の位
-	if (100 <= Shard)DrawRotaGraph(96, 125, 1.5, 0, Number[Shard % 10], TRUE);
-	else if (10 <= Shard)DrawRotaGraph(79, 125, 1.5, 0, Number[Shard % 10], TRUE);
-	else DrawRotaGraph(62, 125, 1.5, 0, Number[Shard % 10], TRUE);
+	if (100 <= Shard)DrawRotaGraph(296, 125, 1.5, 0, Number[Shard % 10], TRUE);
+	else if (10 <= Shard)DrawRotaGraph(279, 125, 1.5, 0, Number[Shard % 10], TRUE);
+	else DrawRotaGraph(262, 125, 1.5, 0, Number[Shard % 10], TRUE);
 
 }
 

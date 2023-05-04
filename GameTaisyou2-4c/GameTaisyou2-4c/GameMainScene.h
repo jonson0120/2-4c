@@ -59,6 +59,8 @@ private:
 	int count;
 
 	int hierarchy_font[44]; //階層用フォント画像変数
+	int Chara[28];		//文字
+
 public:
 	GameMainScene();
 	//デストラクト
