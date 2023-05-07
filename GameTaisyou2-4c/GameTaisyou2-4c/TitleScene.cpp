@@ -9,7 +9,7 @@ Title::Title() {
 	select = 0;
 	JoyPadY = 0;
 
-	Tutorial_flg = true;
+	Tutorial_flg = false;
 
 	select_image = LoadGraph("images/select.png");
 	mini_select_image = LoadGraph("images/select.png");
@@ -42,7 +42,7 @@ AbstractScene* Title::Update() {
 
 	if (Tutorial_flg == false) {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
-			PlaySoundMem(click_sound, DX_PLAYTYPE_NORMAL);
+			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
 			if (TITLE_MENU::START == Menu_Number) Tutorial_flg = true;
 			if (TITLE_MENU::Debug == Menu_Number)return new TestMap();
 			interval = 0;
@@ -50,7 +50,7 @@ AbstractScene* Title::Update() {
 	}
 	if (Tutorial_flg == true) {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
-			PlaySoundMem(click_sound, DX_PLAYTYPE_NORMAL);
+			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
 			if (TITLE_MENU::START == Menu_Number) return new GameMainScene(); //ゲームがスタートする
 			if (TITLE_MENU::Debug == Menu_Number)return new HowToMap(); //チュートリアルがスタートする
 			interval = 0;
