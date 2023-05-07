@@ -16,6 +16,13 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH_T];	//マップデータ
 	int ImgData[MAP_HEIGHT][MAP_WIDTH_T];	//マップ背景データ
 	int MapImg[8];			//マップ画像
+	int Block;				//ブロック
+	int HowToImg[11];		//操作説明画像
+
+	int Phase = 0;				//進行度
+	int Anim = 0;				//説明アニメーション
+	int PhaseCount = 0;			//フェーズ進行時アニメーション
+
 	int MapExitX; //マップの出口のX座標
 	int MapExitY; //マップの出口のY座標
 
@@ -37,7 +44,10 @@ private:
 	bool Exit_flg; //出口についてるかを判定する
 	int AnimTimer; //アニメーション用のタイマー
 	bool Anim_flg; //アニメーション用のフラグ
+
 	bool GoMain_flg; //メインに移動するか判断する
+	bool GoTitle_flg; //メインに移動するか判断する
+
 	bool MoveStop_flg; //プレイヤーの行動制御フラグ
 	bool Pressed_flg; //出口に着いた時にボタン長押し入力を受け入れるか判定する
 

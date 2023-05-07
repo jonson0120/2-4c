@@ -4,6 +4,7 @@
 #include"TestMap.h"
 
 Title::Title() {
+	SetDrawBright(255, 255, 255);
 	Menu_Number = TITLE_MENU::START;
 	interval = 0;
 	select = 0;

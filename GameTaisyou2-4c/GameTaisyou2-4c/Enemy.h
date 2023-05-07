@@ -18,6 +18,8 @@ public:
 	virtual int E_GetX()const = 0;
 	virtual int E_GetY()const = 0;
 
+	virtual int GetCool()const = 0;
+
 	virtual int GetWidth()const = 0;
 	virtual int GetHeight()const = 0;
 

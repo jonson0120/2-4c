@@ -54,6 +54,9 @@ public:
 	//攻撃力取得
 	virtual int GetPower()const { return Power; }
 
+	//被弾クール取得
+	virtual int GetCool()const { return HitCool; }
+
 	//敵配置
 	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) ;
 	virtual void makeEnemy() ;

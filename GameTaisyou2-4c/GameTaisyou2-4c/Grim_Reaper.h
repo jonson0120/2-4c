@@ -16,6 +16,7 @@ private:
 	int direction;		//“G‚ÌŒü‚«
 
 	int Power;			//UŒ‚—Í
+	
 
 	bool E_AttackFlg;
 	int Attack;			//UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“
@@ -51,6 +52,9 @@ public:
 	virtual int GetHeight()const { return Height; }
 
 	virtual int GetPower()const { return Power; }
+
+	//”í’eƒN[ƒ‹æ“¾
+	virtual int GetCool()const { return HitCool; }
 
 	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 	virtual void makeEnemy();

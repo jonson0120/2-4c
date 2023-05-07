@@ -108,6 +108,8 @@ public:
 	int GetMaxLife() { return stat.MaxHp; }
 	int GetAtk() { return stat.Atk; }
 	int GetShard() { return stat.Shard; }
+
+	int GetWall() { return wall; }
 	//-----------------------------------------
 
 	//ステータス変化
