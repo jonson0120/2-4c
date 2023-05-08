@@ -241,7 +241,7 @@ void Grim_Reaper::DrawSickle(int x, int y)const
 		finAng = 0;
 		stX = enex;
 		stY = eney;
-		Dis = Width;
+		Dis = Width * 1.2;
 
 		finAng = (Attack - 120) * 2;
 
@@ -249,13 +249,13 @@ void Grim_Reaper::DrawSickle(int x, int y)const
 		{
 			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90)) - x + (SCREEN_WIDTH / 2);
 			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90)) - y + (SCREEN_HEIGHT / 2);
-			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * finAng, SickleImg, true, true);
+			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * finAng + 0.5, SickleImg, true, true);
 		}
 		else
 		{
 			finX = stX + Dis * cos((3.14 / 180) * (-finAng - 90)) - x + (SCREEN_WIDTH / 2);
 			finY = stY + Dis * sin((3.14 / 180) * (-finAng - 90)) - y + (SCREEN_HEIGHT / 2);
-			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * -finAng, SickleImg, true, false);
+			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * -finAng - 0.5, SickleImg, true, false);
 		}
 	}
 }
@@ -264,12 +264,30 @@ bool Grim_Reaper::EnemyAttack(int x, int y)
 {
 	if (E_AttackFlg && 120 < Attack)
 	{
+		double finX = 0, finY = 0;
+		double stAng = 90;
+		double finAng = 0;
+		double stX = enex;
+		double stY = eney;
+		double Dis = Width;
 
+		finAng = (Attack - 120) * 2;
 
-		float DisX = pow(enex - x, 2);
-		float DisY = pow(eney - y, 2);
-		int Dis = (int)sqrt((int)(DisX + DisY));
-		if (Dis < Width)return true;
+		if (Turnflg)
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (-finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (-finAng - 90));
+		}
+
+		float DisX = pow(finX - x, 2);
+		float DisY = pow(finY - y, 2);
+		Dis = (int)sqrt((int)(DisX + DisY));
+		if (Dis < 20)return true;
 		else return false;
 	}
 	else return false;
