@@ -54,6 +54,7 @@ private:
 	int Defense;	//軽減ダメージ
 	int drop;		//シャード増加数
 	int barrier;	//バリア回数
+	int vamp;		//攻撃回復
 	int repair;		//自動回復
 	int dodge;		//回避率
 	//----------------------
@@ -132,7 +133,13 @@ public:
 
 	int GetShard() { return stat.Shard; }
 
+
+	//パッシブステータス
 	Passive GetPassive(int index) { return passive[EquipNum][index]; }
+
+	int GetDef() { return Defense; }
+	int GetDrop() { return drop; }
+	int GetVamp() { return vamp; }
 	//-----------------------------------------
 	int UseP() { return UsePotion; }
 	bool GetCool() { return HitCool; }
@@ -212,6 +219,12 @@ public:
 	{
 		stat.Hp = stat.MaxHp;
 		stat.Potion = stat.PotionMax;
+	}
+
+	//攻撃回復
+	void Vamp() { 
+		stat.Hp += vamp; 
+		if (stat.MaxHp < stat.Hp)stat.Hp = stat.MaxHp;
 	}
 };
 

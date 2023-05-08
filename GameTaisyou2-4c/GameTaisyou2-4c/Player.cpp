@@ -105,6 +105,7 @@ void Player::SetPassive(int num)
 	Defense = 0;
 	drop = 0;
 	barrier = 0;
+	vamp = 0;
 	repair = 0;
 	dodge = 0;
 
@@ -126,6 +127,10 @@ void Player::SetPassive(int num)
 
 		case BARRIER:
 			barrier = passive[num][i].Effect;
+			break;
+
+		case VAMP:
+			vamp = passive[num][i].Effect;
 			break;
 
 		case REPAIR:
@@ -3102,7 +3107,10 @@ int Player::HitEnemy(float damage,int EneX)
 
 	if (!HitCool && !Dodgespd)
 	{
-		stat.Hp -= damage;
+		int DMG = damage - Defense;
+		if (DMG < 1)DMG = 1;
+
+		stat.Hp -= DMG;
 		if (EneX < x)KnockBack = 12;
 		else KnockBack = -12;
 		if (stat.Hp < 0)stat.Hp = 0;

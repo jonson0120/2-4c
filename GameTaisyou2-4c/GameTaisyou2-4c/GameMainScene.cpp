@@ -153,10 +153,14 @@ AbstractScene* GameMainScene::Update()
 					//ダメージの種類を取る　0：普通に受けた　1：回避した　2：バリアで防いだ
 					int damage = player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
 
+					//ダメージ量
+					int DMG = enemy[i]->GetPower() - player.GetDef();
+					if (DMG < 1)DMG = 1;
+
 					switch (damage)
 					{
 					case 0:	//普通に受けた
-						Damage[0] = { player.GetX(),player.GetY(),enemy[i]->GetPower(),30 };
+						Damage[0] = { player.GetX(),player.GetY(),DMG,30 };
 						break;
 
 					case 1:	//回避した
@@ -240,6 +244,7 @@ AbstractScene* GameMainScene::Update()
 		}
 
 		int DMG = 0;
+		bool Hit = false;
 		switch (player.GetEquip())
 		{
 		case weapons::dagger:
@@ -250,6 +255,7 @@ AbstractScene* GameMainScene::Update()
 					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
 				}
 			}
 			break;
@@ -261,6 +267,7 @@ AbstractScene* GameMainScene::Update()
 					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
 				}
 			}
 			break;
@@ -272,6 +279,7 @@ AbstractScene* GameMainScene::Update()
 					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
 				}
 			}
 			break;
@@ -283,12 +291,15 @@ AbstractScene* GameMainScene::Update()
 					DMG = player.GetDmg() * player.GetPower();
 					enemy[i]->HitPlayer(DMG);
 					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
 				}
 			}
 			break;
 		default:
 			break;
 		}
+
+		if (Hit)player.Vamp();
 
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
@@ -297,7 +308,7 @@ AbstractScene* GameMainScene::Update()
 				if (enemy[i]->CheckHp())
 				{
 					int Drop = 0;
-					for (int j = 0; j < ITEM_MAX - 1 && Drop < 2; j++)
+					for (int j = 0; j < ITEM_MAX - 1 && Drop < 2 + player.GetDrop(); j++)
 					{
 						if (item[j] == nullptr)
 						{
