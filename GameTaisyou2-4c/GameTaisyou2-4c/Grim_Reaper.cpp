@@ -284,7 +284,7 @@ bool Grim_Reaper::EnemyAttack(int x, int y)
 		double stY = eney;
 		double Dis = Width * 1.5;
 
-		finAng = (Attack - 120) * 2;
+		finAng = (Attack - 120) * 2 + 20;
 
 		if (Turnflg)
 		{
