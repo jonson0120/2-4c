@@ -214,10 +214,6 @@ void HowToMap::Draw() const
 	player.Draw();
 
 	//操作説明
-
-
-	DrawFormatString(0, 0, 0xffffff, "%d", player.GetX() / BLOCK_SIZE);
-	DrawFormatString(20, 0, 0xffffff, "%d", player.GetY() / BLOCK_SIZE);
 }
 
 //マップ生成
