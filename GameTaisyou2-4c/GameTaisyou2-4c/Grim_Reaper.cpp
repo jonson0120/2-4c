@@ -32,7 +32,7 @@ Grim_Reaper::Grim_Reaper(int level) : Enemy()
 	Power = 999;
 
 	//ƒŒƒxƒ‹‚É‚æ‚é‹­‰»
-	int Addhp = level / 5;
+	int Addhp = level / 5 + (level / 10 * 6);
 	int addAtk = 0;
 
 	Enemy_Hp += Addhp;
@@ -53,6 +53,7 @@ Grim_Reaper::Grim_Reaper(int level) : Enemy()
 	LoadDivGraph("images/enemysicklemen.png", 2, 2, 1, 90, 100, EImages);
 	Anim = 0;
 	Turnflg = false;
+	if (GetRand(1))Turnflg = !Turnflg;
 }
 
 void Grim_Reaper::Update(Player* player)
@@ -175,6 +176,7 @@ void Grim_Reaper::makeEnemy()
 	{
 		eney++;
 	}
+	enex += GetRand(80) - 40;
 }
 
 void Grim_Reaper::Draw(int x, int y) const

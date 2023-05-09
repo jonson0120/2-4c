@@ -34,8 +34,8 @@ Slime::Slime(int level) : Enemy()
 	Power = 1;
 
 	//レベルによる強化
-	int Addhp = level / 2;
-	int addAtk = level / 6;
+	int Addhp = level / 3 + (level / 10 * 10);
+	int addAtk = level / 4 + (level / 10);
 
 	Enemy_Hp += Addhp;
 	Power += addAtk;
@@ -63,6 +63,7 @@ Slime::Slime(int level) : Enemy()
 	LoadDivGraph("images/Slime.png", 5, 5, 1, 64, 64, EImages);
 	Anim = 0;
 	Turnflg = false;
+	if (GetRand(1))Turnflg = !Turnflg;
 }
 
 void Slime::Update(Player* player)
@@ -237,6 +238,8 @@ void Slime::makeEnemy()
 	{
 		eney++;
 	}
+
+	enex += GetRand(80) - 40;
 }
 
 void Slime::Draw(int x,int y) const
