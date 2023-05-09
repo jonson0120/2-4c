@@ -234,9 +234,20 @@ AbstractScene* GameMainScene::Update()
 					{
 						if (item[j] == nullptr)
 						{
-							item[j] = new Weapon(drop, { treasurebox[i]->lid_GetX(), treasurebox[i]->lid_GetY() }, Level);
+							item[j] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() }, Level);
 							item[j]->SetMapData(MapData);
 							break;
+						}
+					}
+
+					int Drop = 0;
+					for (int j = 0; j < ITEM_MAX - 1 && Drop < 3 + (Level / 5) + player.GetDrop(); j++)
+					{
+						if (item[j] == nullptr)
+						{
+							item[j] = new Shard({ treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() });
+							item[j]->SetMapData(MapData);
+							Drop++;
 						}
 					}
 				}
@@ -703,7 +714,7 @@ void GameMainScene::MakeMap()
 	int x = player.GetX();
 
 	//マップデータ作成
-	if (!SafeZone)
+	if (!SafeZone && Level != 50)
 	{
 		do {
 
@@ -802,19 +813,19 @@ void GameMainScene::MakeMap()
 		}
 
 	}
-	else
+	else if (SafeZone)
 	{
-	player.SetY(BLOCK_SIZE * 9.5);
+		player.SetY(BLOCK_SIZE * 9.5);
 
-	Space = 0;
-	for (int i = 0; i < MAP_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAP_WIDTH; j++)
+		Space = 0;
+		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
-			CheckData[i][j] = 0;
-			MapData[i][j] = 0;
+			for (int j = 0; j < MAP_WIDTH; j++)
+			{
+				CheckData[i][j] = 0;
+				MapData[i][j] = 0;
+			}
 		}
-	}
 
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
@@ -838,6 +849,43 @@ void GameMainScene::MakeMap()
 		MapExitY = MAP_WIDTH - 3;
 
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
+	}
+	else 
+	{
+	player.SetY(BLOCK_SIZE * 9.5);
+
+	Space = 0;
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			CheckData[i][j] = 0;
+			MapData[i][j] = 0;
+		}
+	}
+
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			if (MAP_WIDTH - 1 <= j || j == 0)
+			{
+				MapData[i][j] = 0;
+			}
+			else MapData[i][j] = 1;
+
+			if (MAP_HEIGHT - 1 <= i || i <= 4)
+			{
+				MapData[i][j] = 0;
+			}
+		}
+	}
+
+	MapData[MAP_HEIGHT - 2][MAP_WIDTH - 2] = 2;
+	MapExitX = MAP_HEIGHT - 2;
+	MapExitY = MAP_WIDTH - 2;
+
+	CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 	}
 
 	//孤立した空間を埋める
@@ -939,9 +987,8 @@ void GameMainScene::NextMap() {
 			treasurebox[i] = nullptr;
 		}
 
-		if (!SafeZone) {
+		if (!SafeZone && Level != 50) {
 			MakeEnemy();
-
 			treasurebox[0] = new TreasureBox();
 		}
 		for (int i = 0; i < ENEMY_MAX; i++)
@@ -971,20 +1018,21 @@ void GameMainScene::MakeEnemy()
 	for (int i = 0; i < Spawn; i++)
 	{
 		enemy[i] = nullptr;
-		switch (GetRand(3))
+		if (GetRand(99) < 10 - 1) enemy[i] = new Grim_Reaper(Level);
+		else
 		{
-		case 0:
-			enemy[i] = new Slime(Level);
-			break;
-		case 1:
-			enemy[i] = new Bat(Level);
-			break;
-		case 2:
-			enemy[i] = new Grim_Reaper(Level);
-			break;
-		case 3:
-			enemy[i] = new DeepSlime(Level);
-			break;
+			switch (GetRand(2))
+			{
+			case 0:
+				enemy[i] = new Slime(Level);
+				break;
+			case 1:
+				enemy[i] = new Bat(Level);
+				break;
+			case 2:
+				enemy[i] = new DeepSlime(Level);
+				break;
+			}
 		}
 
 	}
