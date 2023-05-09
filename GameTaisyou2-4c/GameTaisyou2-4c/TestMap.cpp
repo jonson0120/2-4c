@@ -4,11 +4,16 @@
 #include"TitleScene.h"
 #include"AbstractScene.h"
 #include"UI.h"
+
 #include<math.h>
 #include<stdlib.h>
+
 #include"GameOver.h"
 #include"Slime.h"
 #include "Grim_Reaper.h"
+#include"Bat.h"
+#include "DeepSlime.h"
+#include "Weapon.h"
 
 TestMap::TestMap()
 {
@@ -24,10 +29,10 @@ TestMap::TestMap()
 	{
 		item[i] = nullptr;
 	}
-	item[0] = new Item(1, weapons::dagger, { 240,1600 });
-	item[1] = new Item(1, weapons::mace, { 320,1600 });
-	item[2] = new Item(1, weapons::spear, { 400, 1600 });
-	item[3] = new Item(1, weapons::katana, { 480,1600 });
+	item[0] = new Weapon(weapons::dagger, { 240,1600 }, 0);
+	item[1] = new Weapon(weapons::mace, { 320,1600 }, 0);
+	item[2] = new Weapon(weapons::spear, { 400, 1600 }, 0);
+	item[3] = new Weapon(weapons::katana, { 480,1600 }, 0);
 
 	MapExitX = 0;
 	MapExitY = 0;
@@ -68,7 +73,7 @@ TestMap::TestMap()
 	Bright_minus = 10;
 	AnimTimer = 0;
 
-	LoadDivGraph("images/Art.png", 6, 6, 1, 64, 64, Art);
+	LoadDivGraph("images/Art.png", 8, 8, 1, 64, 64, Art);
 	LoadDivGraph("images/Info.png", 3, 3, 1, 128,128, info);
 
 	Exit_flg = false;
@@ -98,7 +103,7 @@ AbstractScene* TestMap::Update()
 		if (enemy[i] != nullptr)
 		{
 			enemy[i]->Update(&player);
-			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower());
+			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()))player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
 		}
 	}
 
@@ -106,14 +111,22 @@ AbstractScene* TestMap::Update()
 	{
 		if (item[i] != nullptr)
 		{
-			bool Second;
-			if (player.Secondary() == weapons::NONE)Second = true;
-			else Second = false;
-
 			item[i]->Update(&player);
-			if (Second && item[i]->GetGet())item[i] = nullptr;
 
-			if (item[i] == nullptr || item[i]->GetGet())break;
+			if (item[i]->GetType() == Equip)
+			{
+				bool Second;
+				if (player.Secondary() == weapons::NONE)Second = true;
+				else Second = false;
+
+				if (Second && item[i]->GetGet())item[i] = nullptr;
+
+				if (item[i] == nullptr || item[i]->GetGet())break;
+			}
+
+			if (item[i]->GetType() == ItemType::Sh)
+			{
+			}
 		}
 	}
 	//enemy2.Update(&player);
@@ -224,7 +237,20 @@ AbstractScene* TestMap::Update()
 			{
 				if (enemy[i] == nullptr) 
 				{
-					enemy[i] = new Slime();
+					enemy[i] = new Slime(0);
+					enemy[i]->SetMapData(MapData);
+					break;
+				}
+			}
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 6 && player.GetX() / BLOCK_SIZE == 1)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] == nullptr)
+				{
+					enemy[i] = new Bat(0);
 					enemy[i]->SetMapData(MapData);
 					break;
 				}
@@ -237,7 +263,20 @@ AbstractScene* TestMap::Update()
 			{
 				if (enemy[i] == nullptr)
 				{
-					enemy[i] = new Grim_Reaper();
+					enemy[i] = new Grim_Reaper(0);
+					enemy[i]->SetMapData(MapData);
+					break;
+				}
+			}
+		}
+
+		if (player.GetY() / BLOCK_SIZE == 4 && player.GetX() / BLOCK_SIZE == 3)
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] == nullptr)
+				{
+					enemy[i] = new DeepSlime(0);
 					enemy[i]->SetMapData(MapData);
 					break;
 				}
@@ -307,7 +346,9 @@ void TestMap::Draw() const
 	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 8.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[2], true);
 	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[3], true);
 	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[4], true);
+	DrawRotaGraph(BLOCK_SIZE * 1.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 6.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[6], true);
 	DrawRotaGraph(BLOCK_SIZE * 2.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 4.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[5], true);
+	DrawRotaGraph(BLOCK_SIZE * 3.5 - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * 4.5 - player.GetY() + SCREEN_HEIGHT / 2, 1, 0, Art[7], true);
 
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 
@@ -500,9 +541,7 @@ void TestMap::NextMap() {
 		player.SetMapData(MapData);
 
 		enemy[0] = nullptr;
-		enemy[0] = new Slime();
 		enemy[1] = nullptr;
-		enemy[1] = new Slime();
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);

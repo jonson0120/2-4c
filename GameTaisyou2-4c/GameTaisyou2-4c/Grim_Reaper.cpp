@@ -9,7 +9,7 @@
 #define MAX_SPEED 2
 #define MIN_SPEED -2
 
-Grim_Reaper::Grim_Reaper() : Enemy()
+Grim_Reaper::Grim_Reaper(int level) : Enemy()
 {
 	image = 0;
 
@@ -28,7 +28,14 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 	Enemy_Hp = 10;
 	Player_Hp = 10;
 
-	Power = 1;
+	Power = 999;
+
+	//レベルによる強化
+	int Addhp = level / 5;
+	int addAtk = 0;
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 
@@ -142,7 +149,7 @@ void Grim_Reaper::Update(Player* player)
 	//プレイヤーに当たった時攻撃
 	if (enex == player->GetX() && eney == player->GetY())
 	{
-		player->HitEnemy(1);
+		//player->HitEnemy(1);
 	}
 
 	if (HitCool)HitCool--;
@@ -163,6 +170,10 @@ void Grim_Reaper::makeEnemy()
 			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
 			MakeEnemy = TRUE;
 		}
+	}
+	while ((MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][enex / BLOCK_SIZE]))
+	{
+		eney++;
 	}
 }
 

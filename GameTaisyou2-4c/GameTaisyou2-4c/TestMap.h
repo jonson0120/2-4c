@@ -18,7 +18,7 @@ private:
 	int MapExitX; //マップの出口のX座標
 	int MapExitY; //マップの出口のY座標
 
-	int Art[6];		//敵アイコンなど
+	int Art[8];		//敵アイコンなど
 	int info[3];	//案内板
 	int MapType;	//マップ地形タイプ 0:平坦 1:段差 2:階段
 

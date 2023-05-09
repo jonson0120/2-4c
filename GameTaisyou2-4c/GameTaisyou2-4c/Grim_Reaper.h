@@ -17,6 +17,7 @@ private:
 	int direction;		//敵の向き
 
 	int Power;			//攻撃力
+	
 
 	bool E_AttackFlg;
 	int Attack;			//攻撃アニメーション
@@ -41,7 +42,7 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Grim_Reaper();
+	Grim_Reaper(int level);
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
 	void DrawSickle(int x, int y)const;
@@ -53,6 +54,9 @@ public:
 	virtual int GetHeight()const { return Height; }
 
 	virtual int GetPower()const { return Power; }
+
+	//被弾クール取得
+	virtual int GetCool()const { return HitCool; }
 
 	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 	virtual void makeEnemy();

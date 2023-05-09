@@ -15,8 +15,16 @@ private:
 	int JoyPadY;
 
 	int background_image;
-
 	int select_image;
+	int mini_select_image;
+	int Tutorial_font;
+	int Title_font;
+	int Start_font;
+	int Debug_font;
+
+	bool Tutorial_flg;
+
+	int click_sound;
 public:
 	Title();
 

@@ -10,8 +10,13 @@ Player::Player() {
 
 	stat.Hp = 10;
 	stat.MaxHp = stat.Hp;
+	stat.Atk = 1;
 	stat.Power = 0;
-	PotionCount = 3;
+	stat.Potion = 3;
+	stat.PotionMax = stat.Potion;
+	stat.PotionPower = 0.25;
+	stat.Shard = 0;
+
 
 	Width = 32;
 	Height = 56;
@@ -25,6 +30,7 @@ Player::Player() {
 	speedinit = 8;
 	speed = 0;
 	Dodgespd = 0;
+	KnockBack = 0;
 
 	fall = 0;
 	Dodgefall = 0;
@@ -35,6 +41,20 @@ Player::Player() {
 	Attack = 0;
 	Equip[0] = weapons::dagger;
 	Equip[1] = weapons::NONE;
+
+	for (int i = 0; i < 4; i++)
+	{
+		passive[0][i].Kinds = NONE;
+		passive[0][i].Effect = 0;
+
+		passive[1][i].Kinds = NONE;
+		passive[1][i].Effect = 0;
+	}
+	passive[0][0].Kinds = ATTACK;
+	passive[0][0].Effect = 1;
+
+	EquipNum = 0;
+	SetPassive(EquipNum);
 
 	Yinput = Inp_UD::NONE;
 	Combo = 0;
@@ -76,6 +96,76 @@ Player::Player() {
 	}
 
 	//--------------------
+}
+
+//パッシブ適用
+void Player::SetPassive(int num) 
+{
+	TotalAtk = stat.Atk;
+	Defense = 0;
+	drop = 0;
+	barrier = 0;
+	vamp = 0;
+	repair = 0;
+	dodge = 0;
+
+	for (int i = 0; i < 4; i++)
+	{
+		switch (passive[num][i].Kinds)
+		{
+		case ATTACK:
+			TotalAtk += passive[num][i].Effect;
+			break;
+
+		case DEFENSE:
+			Defense = passive[num][i].Effect;
+			break;
+
+		case GREED:
+			drop = passive[num][i].Effect;
+			break;
+
+		case BARRIER:
+			barrier = passive[num][i].Effect;
+			break;
+
+		case VAMP:
+			vamp = passive[num][i].Effect;
+			break;
+
+		case REPAIR:
+			repair = passive[num][i].Effect;
+			break;
+
+		case DODGE:
+			dodge = passive[num][i].Effect;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+//武器変更
+void Player::ChangeEquip(weapons get, Passive passive[4]) {
+	if (Equip[1] == weapons::NONE)
+	{
+		Equip[1] = get;
+		for (int i = 0; i < 4; i++)
+		{
+			this->passive[1][i] = passive[i];
+		}
+	}
+	else
+	{
+		Equip[EquipNum] = get;
+		for (int i = 0; i < 4; i++)
+		{
+			this->passive[EquipNum][i] = passive[i];
+		}
+		SetPassive(EquipNum);
+	}
 }
 
 void Player::Update() {
@@ -251,7 +341,17 @@ void Player::Update() {
 
 		}
 
-		x += (speed + Dodgespd) * CorSpeed;				//横軸移動
+		x += (speed + Dodgespd) * CorSpeed + KnockBack;				//横軸移動
+		
+		if (0 < KnockBack)
+		{
+			if (--KnockBack <= 0)KnockBack = 0;
+		}
+
+		if (KnockBack < 0)
+		{
+			if (0 <= ++KnockBack)KnockBack = 0;
+		}
 
 		//壁で移動を止める
 		while (!MapData[y / 160][(x + Width / 2) / 160])
@@ -290,6 +390,7 @@ void Player::Update() {
 			Attack = 0;
 			Combo = 0;
 			stat.Power = 0;
+			SetPassive(EquipNum);
 		}
 
 		//落下とジャンプ
@@ -469,11 +570,22 @@ void Player::Update() {
 		//回復
 
 		//Xボタンを押すと回復
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_X) && 0 < PotionCount)
+		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_X) && 0 < stat.Potion)
 		{
-			PotionCount--;
+			if (60 == ++UsePotion)
+			{
+				stat.Potion--;
+				stat.Hp += (stat.MaxHp * stat.PotionPower);
+			}
+		}
+		else UsePotion = 0;
 
-			stat.Hp += (stat.MaxHp  * 0.2);
+		//自動回復
+		static int repairtime = 0;
+		if (120 <= ++repairtime)
+		{
+			stat.Hp += repair;
+			repairtime = 0;
 		}
 
 		//HP制限
@@ -488,72 +600,7 @@ void Player::Update() {
 }
 
 void Player::Draw() const {
-	
-	//DrawBoxAA(SCREEN_WIDTH / 2 - (Width / 2), SCREEN_HEIGHT / 2 - (Height / 2),
-	//	SCREEN_WIDTH / 2 + (Width / 2), SCREEN_HEIGHT / 2 + (Height / 2), 0xff0000, TRUE);
-
-
-	//DrawFormatString(0, 30, 0xffffff, "%d", GetX());
-	//DrawFormatString(0, 45, 0xffffff, "%d", GetY());
-
-	//DrawFormatString(0, 360, 0xffffff, "%d", wall);
-
-
-	//DrawString(0, 110, "LBで武器切り替え(暫定)", 0xff0000);
-	//switch (Equip[0])
-	//{
-	//case weapons::dagger:	//短剣
-	//	DrawString(0, 130, "装備１：短剣", 0xffffff);
-	//	break;
-
-	//case weapons::mace:		//メイス
-	//	DrawString(0, 130, "装備１：メイス", 0xffffff);
-	//	break;
-
-	//case weapons::spear:	//槍
-	//	DrawString(0, 130, "装備１：槍", 0xffffff);
-	//	break;
-
-	//case weapons::katana:	//刀
-	//	DrawString(0, 130, "装備１：刀", 0xffffff);
-	//	break;
-
-	//default:
-	//	break;
-	//}
-
-	//switch (Equip[1])
-	//{
-	//case weapons::dagger:	//短剣
-	//	DrawString(0, 150, "装備２：短剣", 0xffffff);
-	//	break;
-
-	//case weapons::mace:		//メイス
-	//	DrawString(0, 150, "装備２：メイス", 0xffffff);
-	//	break;
-
-	//case weapons::spear:	//槍
-	//	DrawString(0, 150, "装備２：槍", 0xffffff);
-	//	break;
-
-	//case weapons::katana:	//刀
-	//	DrawString(0, 150, "装備２：刀", 0xffffff);
-	//	break;
-
-	//default:
-	//	break;
-	//}
-
-	//for (int i = 0; i < MAP_HEIGHT; i++)
-	//{
-	//	for (int j = 0; j < MAP_WIDTH; j++)
-	//	{
-	//		if (GetY() / 160 == i && GetX() / 160 == j) DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xff0000, "9");
-	//		else DrawFormatString(50 + 15 * j, 170 + 15 * i, 0xffffff, "%d", MapData[i][j]);
-	//	}
-	//}
-	
-
+		
 	//攻撃描画：プレイヤー後方
 	if (Attack) 
 	{
@@ -656,15 +703,11 @@ void Player::Draw() const {
 			}
 		}
 	}
-
-	//DrawCircle(a, b, 3.0f, 0xff0000, true);
-	//DrawCircle(c, d, 3.0f, 0x00ff00, true);
-	//DrawCircle(e, f, 3.0f, 0x00ff00, true);
 }
 
 void Player::Spawn() {
 	x = BLOCK_SIZE + BLOCK_SIZE / 2;
-	y = BLOCK_SIZE * (GetRand(MAP_HEIGHT - 3) + 1);
+	y = BLOCK_SIZE * 9;
 
 	y += BLOCK_SIZE - Height / 2;
 }
@@ -3043,13 +3086,37 @@ void Player::SetNear(int X, int Y, int Dis)
 	NearEneDis = Dis;
 }
 
-//敵からの攻撃
-void Player::HitEnemy(float damage)
+//敵からの攻撃(返り値　0：ダメージを受けた　1：回避した　2：バリアで防いだ)
+int Player::HitEnemy(float damage,int EneX)
 {
+	if (GetRand(99) < dodge * 20) 
+	{
+		HitCool = 30;
+
+		return 1;
+	}
+
+	if (nowbarrier) 
+	{
+		nowbarrier--;
+		if (EneX < x)KnockBack = 12;
+		else KnockBack = -12;
+		HitCool = 30;
+
+		return 2;
+	}
+
 	if (!HitCool && !Dodgespd)
 	{
-		stat.Hp -= damage;
+		int DMG = damage - Defense;
+		if (DMG < 1)DMG = 1;
+
+		stat.Hp -= DMG;
+		if (EneX < x)KnockBack = 12;
+		else KnockBack = -12;
 		if (stat.Hp < 0)stat.Hp = 0;
 		HitCool = 30;
+		return 0;
 	}
+	return 0;
 }
