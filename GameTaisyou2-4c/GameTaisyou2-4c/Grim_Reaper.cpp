@@ -269,7 +269,7 @@ bool Grim_Reaper::EnemyAttack(int x, int y)
 		double finAng = 0;
 		double stX = enex;
 		double stY = eney;
-		double Dis = Width;
+		double Dis = Width * 1.5;
 
 		finAng = (Attack - 120) * 2;
 
