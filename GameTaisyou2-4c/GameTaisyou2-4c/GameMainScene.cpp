@@ -111,6 +111,7 @@ GameMainScene::GameMainScene()
 
 	SetDrawBright(Bright, Bright, Bright);
 
+	Restarea = LoadGraph("images/Restarea.png");
 }
 
 AbstractScene* GameMainScene::Update() 
@@ -129,7 +130,7 @@ AbstractScene* GameMainScene::Update()
 			player.Update();
 		}
 
-		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6 && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
+		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE <= 8 && 4 <= player.GetX() / BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 		{
 			player.Reset();
 			UpGrade = true;
@@ -450,9 +451,18 @@ void GameMainScene::Draw() const
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
+
 		}
+		
+
 	}
 	
+	if (Level % 10 == 0 && SafeZone)
+	{
+		//DrawGraph(160 * 5 - player.GetX(), 160 * 8 - player.GetY(), Restarea, TRUE);
+		DrawExtendGraph(160 * 5 - player.GetX(), 160 * 8 + 40 - player.GetY(), 160 * 15  - player.GetX(), 160 * 12 + 40 - player.GetY(), Restarea, TRUE);
+	}
+
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 
 	//宝箱描画
@@ -487,9 +497,22 @@ void GameMainScene::Draw() const
 		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
-	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6) 
+	//セーフゾーン
+	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE  <= 7 && 6 <= player.GetX() / BLOCK_SIZE)
 	{
-		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100 , 1, 0, DoorIcon[3], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 - 100, 1, 0, DoorIcon[3], true);
+		//DrawRotaGraph2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100, 18, 16, 1, 0, DoorIcon[2], true);
+
+	}
+
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg &&Level % 10 == 0 && SafeZone) {
+
+		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
+		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
+
+		DrawRotaGraph(DoorX, DoorY, 1.2, 0, DoorIcon[0], true);
+		DrawCircleGauge(DoorX, DoorY, 100 * (count / 60.f), DoorIcon[1], 0, 1.2, false, false);
+		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
 	//ダメージ描画
@@ -804,7 +827,7 @@ void GameMainScene::MakeMap()
 	}
 	else
 	{
-	player.SetY(BLOCK_SIZE * 9.5);
+	player.SetY(BLOCK_SIZE * 9.5 + BLOCK_SIZE / 2 - player.GetHeight() / 2);
 
 	Space = 0;
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -833,9 +856,9 @@ void GameMainScene::MakeMap()
 			}
 		}
 
-		MapData[MAP_HEIGHT - 2][MAP_WIDTH - 3] = 2;
+		//MapData[MAP_HEIGHT - 2][MAP_WIDTH - 3] = 2;
 		MapExitX = MAP_HEIGHT - 2;
-		MapExitY = MAP_WIDTH - 3;
+		MapExitY = MAP_WIDTH - 5;
 
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 	}
@@ -1007,6 +1030,8 @@ void GameMainScene::ExitCheck() {
 			else if (--count < 0)count = 0;
 		}
 	}
+
+
 }
 
 void GameMainScene::SearchEnemy() 
