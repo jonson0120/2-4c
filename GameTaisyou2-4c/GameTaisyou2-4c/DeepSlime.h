@@ -42,7 +42,7 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	DeepSlime();
+	DeepSlime(int level);
 	virtual void Update(Player* player) ;
 	virtual void Draw(int x, int y) const ;
 

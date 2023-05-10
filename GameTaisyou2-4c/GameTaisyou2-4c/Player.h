@@ -47,6 +47,18 @@ private:
 
 	enum weapons Equip[2];		//持っている武器
 	int EquipNum;				//装備している武器
+	Passive passive[2][4];		//装備パッシブ効果
+
+	//パッシブ関連ステータス
+	int TotalAtk;	//総合攻撃力
+	int Defense;	//軽減ダメージ
+	int drop;		//シャード増加数
+	int barrier;	//バリア回数
+	int vamp;		//攻撃回復
+	int repair;		//自動回復
+	int dodge;		//回避率
+	//----------------------
+	int nowbarrier;	//実効バリア回数
 
 	Range range[4];	//攻撃範囲
 	Inp_UD Yinput;	//上下入力
@@ -104,9 +116,8 @@ public:
 
 	weapons Secondary()const { return Equip[1]; }
 
-	void ChangeEquip(weapons get) { if(Equip[1]==weapons::NONE) Equip[1] = get;
-									else Equip[EquipNum] = get;
-	}
+	//武器変更
+	void ChangeEquip(weapons get, Passive passive[4]);
 
 	//ステータス取得---------------------------
 	Stat GetStat() { return stat; }
@@ -115,25 +126,45 @@ public:
 	int GetMaxLife() { return stat.MaxHp; }
 
 	int GetAtk() { return stat.Atk; }
+	int GetDmg() { return TotalAtk; }
 
 	int GetPotion() { return stat.Potion; }
 	int GetPotionMax() { return stat.PotionMax; }
 
 	int GetShard() { return stat.Shard; }
+
+
+	//パッシブステータス
+	Passive GetPassive(int index) { return passive[EquipNum][index]; }
+
+	int GetDef() { return Defense; }
+	int GetDrop() { return drop; }
+	int GetVamp() { return vamp; }
 	//-----------------------------------------
 	int UseP() { return UsePotion; }
 	bool GetCool() { return HitCool; }
 
 	//ステータス変化
+	//パッシブ適用 (引数：変更する武器配列)
+	void SetPassive(int num);
+
+	//パッシブ：バリア
+	void SetBarrier() { nowbarrier = barrier; }
+
+	//シャード取得
 	void AddShard() { stat.Shard++; }
 
+	//体力強化
 	void StrHP(int add) 
 	{
 		stat.MaxHp += add;
 		stat.Hp += add;
 	}
 
+	//攻撃強化
 	void StrAtk() { stat.Atk++; }
+
+	//回復力強化
 	void StrHeal() 
 	{
 		stat.PotionMax++;
@@ -141,6 +172,7 @@ public:
 		stat.PotionPower += 0.05;
 	}
 
+	//シャード使用
 	bool UseShard(int amount) { 
 
 		if (amount <= stat.Shard) {
@@ -179,14 +211,20 @@ public:
 	bool WaitSearch() { return Search; }
 	void SetNear(int X, int Y, int Dis);
 
-	//敵との当たり判定
-	void HitEnemy(float damage, int EneX);
+	//敵との当たり判定(返り値　0：ダメージを受けた　1：回避した　2：バリアで防いだ)
+	int HitEnemy(float damage, int EneX);
 
 	//全回復
 	void Reset() 
 	{
 		stat.Hp = stat.MaxHp;
 		stat.Potion = stat.PotionMax;
+	}
+
+	//攻撃回復
+	void Vamp() { 
+		stat.Hp += vamp; 
+		if (stat.MaxHp < stat.Hp)stat.Hp = stat.MaxHp;
 	}
 };
 

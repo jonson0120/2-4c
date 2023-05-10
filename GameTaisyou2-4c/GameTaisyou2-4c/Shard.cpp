@@ -24,7 +24,7 @@ Shard::Shard(Range position)
 void Shard::Update(Player* player)
 {
 	//プレイヤーがアイテムを取れる位置にいるか判定
-	int CanGetDistance = 15;	//プレイヤーがアイテムを取れる境界
+	int CanGetDistance = 30;	//プレイヤーがアイテムを取れる境界
 
 	int dis = GetDis({ player->GetX(),player->GetY() });	//プレイヤー間の距離
 

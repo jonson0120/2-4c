@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-Bat::Bat() : Enemy()
+Bat::Bat(int level) : Enemy()
 {
 	image = 0;
 
@@ -26,10 +26,18 @@ Bat::Bat() : Enemy()
 
 	Enemy_Damage = 1;
 	Player_Damage = 1;
-	Enemy_Hp = 5;
+	Enemy_Hp = 6;
 	Player_Hp = 10;
 
-	Power = 1;
+	Power = 1; 
+	AttackVec = 0;
+
+	//レベルによる強化
+	int Addhp = level / 4 + (level / 10 * 6);
+	int addAtk = level / 7 + (level / 10);
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 
@@ -53,11 +61,11 @@ Bat::Bat() : Enemy()
 	LoadDivGraph("images/bat3.png", 3, 3, 1, 76, 96, EImages);
 	Anim = 0;
 	Turnflg = false;
+	if (GetRand(1))Turnflg = !Turnflg;
 }
 
 void Bat::Update(Player* player)
 {
-	static double vector;
 	AttackSpeed = 0;
 
 	//プレイヤー認識範囲
@@ -104,12 +112,12 @@ void Bat::Update(Player* player)
 		//ジャンプ直前の待機
 		if (Attack <= 60)
 		{
-			vector = atan2(static_cast<double>(player->GetY()) - eney, static_cast<double>(player->GetX()) - enex);
+			AttackVec = atan2(static_cast<float>(player->GetY()) - eney, static_cast<float>(player->GetX()) - enex);
 		}
 		//ジャンプ
 		else if (Attack < 90)
 		{
-			enex += Dive * cos(vector);
+			enex += Dive * cos(AttackVec);
 			while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
 				!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 			{
@@ -124,7 +132,7 @@ void Bat::Update(Player* player)
 				speed = 0;
 			}
 
-			eney += Dive * sin(vector);
+			eney += Dive * sin(AttackVec);
 			while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
 				(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
 			{
@@ -189,6 +197,8 @@ void Bat::makeEnemy()
 			MakeEnemy = TRUE;
 		}
 	}
+
+	enex += GetRand(80) - 40;
 }
 
 void Bat::Draw(int x, int y) const

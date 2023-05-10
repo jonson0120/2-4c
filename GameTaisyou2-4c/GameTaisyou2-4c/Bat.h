@@ -24,6 +24,7 @@ private:
 	bool LowJump;
 	int Attack;			//攻撃アニメーション
 	int AttackSpeed;
+	float AttackVec;		//攻撃角度
 	int Dive;
 
 	bool Turnflg;		//画像反転
@@ -48,7 +49,7 @@ private:
 	int MapData[MAP_HEIGHT][MAP_WIDTH];	//マップデータ
 
 public:
-	Bat();
+	Bat(int level);
 	virtual void Update(Player* player);
 	virtual void Draw(int x, int y) const;
 

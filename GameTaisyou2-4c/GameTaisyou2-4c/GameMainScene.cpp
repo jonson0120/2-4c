@@ -1,4 +1,5 @@
 ﻿#include"DxLib.h"
+#include"TitleScene.h"
 #include"GameMainScene.h"
 #include"KeyManager.h"
 #include"AbstractScene.h"
@@ -32,7 +33,7 @@ GameMainScene::GameMainScene()
 	{
 		enemy[i] = nullptr;
 	}
-	enemy[0] = new Slime();
+	enemy[0] = new Slime(Level);
 
 	for (int i = 0; i < ENEMY_MAX+1; i++)
 	{
@@ -87,6 +88,7 @@ GameMainScene::GameMainScene()
 
 
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, hierarchy_font);
+	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 
 	count = 0;
 
@@ -113,250 +115,305 @@ GameMainScene::GameMainScene()
 
 AbstractScene* GameMainScene::Update() 
 {
-	if (player.GetLife() <= 0)
+	if (!Pause)
 	{
-		return new GameOver();
-	}
-	
-
-	if ((!MoveStop_flg || Bright == 0) && !UpGrade)
-	{
-		if (player.WaitSearch())SearchEnemy();
-		player.Update();
-	}
-
-	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6 && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
-	{
-		player.Reset();
-		UpGrade = true;
-	}
-
-	if (UpGrade) 
-	{
-		if (!ui.UpGradeUI(&player))UpGrade = false;
-	}
-
-	ui.Update(&player);
-
-
-	for (int i = 0; i < ENEMY_MAX; i++)
-	{
-		if (enemy[i] != nullptr && !MoveStop_flg)
+		if (player.GetLife() <= 0)
 		{
-			enemy[i]->Update(&player);
-			if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()) && !player.GetCool())
-			{
-				player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
-				Damage[0] = { player.GetX(),player.GetY(),enemy[i]->GetPower(),30 };
-			}
+			return new GameOver();
 		}
-	}
 
-	for (int i = 0; i < ITEM_MAX; i++)
-	{
-		if (item[i] != nullptr)
+
+		if ((!MoveStop_flg || Bright == 0) && !UpGrade)
 		{
-			if (item[i]->GetType() == Equip)
-			{
-				bool Second;
-				if (player.Secondary() == weapons::NONE)Second = true;
-				else Second = false;
-
-				item[i]->Update(&player);
-
-				if (Second && item[i]->GetGet())item[i] = nullptr;
-
-				if (item[i] == nullptr || item[i]->GetGet())break;
-			}
-
-			if (item[i]->GetType() == ItemType::Sh)
-			{
-				item[i]->Update(&player);
-				if (item[i]->GetGet())item[i] = nullptr;
-			}
+			if (player.WaitSearch())SearchEnemy();
+			player.Update();
 		}
-	}
-	//enemy2.Update(&player);
-	CameraX = player.GetX();
-	CameraY = player.GetY();
 
-	for (int i = 0; i < TREASURE_MAX; i++)
-	{
-		if (treasurebox[i] != nullptr)
+		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6 && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 		{
-			treasurebox[i]->Update(&player);
-			if (treasurebox[i]->DropItem())
-			{
-				weapons drop;
-				switch (GetRand(2))
-				{
-				case 0:
-					drop = weapons::mace;
-					break;
-				case 1:
-					drop = weapons::spear;
-					break;
-				case 2:
-					drop = weapons::katana;
-					break;
-				default:
-					drop = weapons::mace;
-					break;
-				}
+			player.Reset();
+			UpGrade = true;
+		}
 
-				for (int i = 0; i < ITEM_MAX; i++)
+		if (UpGrade)
+		{
+			if (!ui.UpGradeUI(&player))UpGrade = false;
+		}
+
+		ui.Update(&player);
+
+
+		for (int i = 0; i < ENEMY_MAX; i++)
+		{
+			if (enemy[i] != nullptr && !MoveStop_flg)
+			{
+				enemy[i]->Update(&player);
+				if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()) && !player.GetCool())
 				{
-					if (item[i] == nullptr)
+					//ダメージの種類を取る　0：普通に受けた　1：回避した　2：バリアで防いだ
+					int damage = player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
+
+					//ダメージ量
+					int DMG = enemy[i]->GetPower() - player.GetDef();
+					if (DMG < 1)DMG = 1;
+
+					switch (damage)
 					{
-						item[i] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() });
-						item[i]->SetMapData(MapData);
+					case 0:	//普通に受けた
+						Damage[0] = { player.GetX(),player.GetY(),DMG,30 };
+						break;
+
+					case 1:	//回避した
+						Damage[0] = { player.GetX(),player.GetY(),-1,30 };
+						break;
+
+					case 2:	//バリアで防いだ
+						Damage[0] = { player.GetX(),player.GetY(),-2,30 };
+						break;
+
+					default:
 						break;
 					}
 				}
 			}
 		}
-	}
 
-	int DMG = 0;
-	switch (player.GetEquip())
-	{
-	case weapons::dagger:
-		for (int i = 0; i < ENEMY_MAX; i++)
+		for (int i = 0; i < ITEM_MAX; i++)
 		{
-			if (enemy[i] != nullptr)if (player.HitDagger(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-				DMG = player.GetAtk() * player.GetPower();
-				enemy[i]->HitPlayer(DMG);
-				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
-			}
-		}
-		break;
-	case weapons::mace:
-		for (int i = 0; i < ENEMY_MAX; i++)
-		{
-			if (enemy[i] != nullptr)if (player.HitMace(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-				DMG = player.GetAtk() * player.GetPower();
-				enemy[i]->HitPlayer(DMG);
-				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
-			}
-		}
-		break;
-	case weapons::spear:
-		for (int i = 0; i < ENEMY_MAX; i++)
-		{
-			if (enemy[i] != nullptr)if (player.HitSpear(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-				DMG = player.GetAtk() * player.GetPower();
-				enemy[i]->HitPlayer(DMG);
-				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
-			}
-		}
-		break;
-	case weapons::katana:
-		for (int i = 0; i < ENEMY_MAX; i++)
-		{
-			if (enemy[i] != nullptr)if (player.HitKatana(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
-				enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
-				DMG = player.GetAtk() * player.GetPower();
-				enemy[i]->HitPlayer(DMG);
-				Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	for (int i = 0; i < ENEMY_MAX; i++)
-	{
-		if (enemy[i] != nullptr) 
-		{
-			if (enemy[i]->CheckHp())
+			if (item[i] != nullptr)
 			{
-				int Dlop = 0;
-				for (int j = 0; j < ITEM_MAX - 1 && Dlop < 2; j++)
+				if (item[i]->GetType() == Equip)
 				{
-					if (item[j] == nullptr)
+					bool Second;
+					if (player.Secondary() == weapons::NONE)Second = true;
+					else Second = false;
+
+					item[i]->Update(&player);
+
+					if (Second && item[i]->GetGet())item[i] = nullptr;
+
+					if (item[i] == nullptr || item[i]->GetGet())break;
+				}
+
+				if (item[i]->GetType() == ItemType::Sh)
+				{
+					item[i]->Update(&player);
+					if (item[i]->GetGet())item[i] = nullptr;
+				}
+			}
+		}
+		//enemy2.Update(&player);
+		CameraX = player.GetX();
+		CameraY = player.GetY();
+
+		for (int i = 0; i < TREASURE_MAX; i++)
+		{
+			if (treasurebox[i] != nullptr)
+			{
+				treasurebox[i]->Update(&player);
+				if (treasurebox[i]->DropItem())
+				{
+					weapons drop;
+					switch (GetRand(2))
 					{
-						item[j] = new Shard({ enemy[i]->E_GetX(),enemy[i]->E_GetY() });
-						item[j]->SetMapData(MapData);
-						Dlop++;
+					case 0:
+						drop = weapons::mace;
+						break;
+					case 1:
+						drop = weapons::spear;
+						break;
+					case 2:
+						drop = weapons::katana;
+						break;
+					default:
+						drop = weapons::mace;
+						break;
+					}
+
+					for (int j = 0; j < ITEM_MAX; j++)
+					{
+						if (item[j] == nullptr)
+						{
+							item[j] = new Weapon(drop, { treasurebox[i]->lid_GetX(), treasurebox[i]->lid_GetY() }, Level);
+							item[j]->SetMapData(MapData);
+							break;
+						}
 					}
 				}
-				enemy[i] = nullptr;
-				break;
 			}
 		}
-	}
 
-	for (int i = 0; i < ENEMY_MAX; i++)
-	{
-		if (enemy[i] != nullptr)break;
-		if (i == ENEMY_MAX - 1)MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
-	}
-	/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
+		int DMG = 0;
+		bool Hit = false;
+		switch (player.GetEquip())
+		{
+		case weapons::dagger:
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] != nullptr)if (player.HitDagger(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+					DMG = player.GetDmg() * player.GetPower();
+					enemy[i]->HitPlayer(DMG);
+					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
+				}
+			}
+			break;
+		case weapons::mace:
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] != nullptr)if (player.HitMace(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+					DMG = player.GetDmg() * player.GetPower();
+					enemy[i]->HitPlayer(DMG);
+					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
+				}
+			}
+			break;
+		case weapons::spear:
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] != nullptr)if (player.HitSpear(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+					DMG = player.GetDmg() * player.GetPower();
+					enemy[i]->HitPlayer(DMG);
+					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
+				}
+			}
+			break;
+		case weapons::katana:
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] != nullptr)if (player.HitKatana(enemy[i]->E_GetX(), enemy[i]->E_GetY(),
+					enemy[i]->GetWidth(), enemy[i]->GetHeight()) && !enemy[i]->GetCool()) {
+					DMG = player.GetDmg() * player.GetPower();
+					enemy[i]->HitPlayer(DMG);
+					Damage[i + 1] = { enemy[i]->E_GetX(),enemy[i]->E_GetY(),DMG,30 };
+					Hit = true;
+				}
+			}
+			break;
+		default:
+			break;
+		}
 
+		if (Hit)player.Vamp();
 
-	ExitCheck();
-	if (Exit_flg == true)
-	{
-		MoveStop_flg = true;
-		NextMap();
-	}
-	else
-	{
-		MoveStop_flg = false;
-	}
-
-	for (int i = 0; i < ENEMY_MAX + 1; i++)
-	{
-		if (--Damage[i].NumB < 0)Damage[i].NumB = 0;
-	}
-
-
-	x= MapExitY * 160 + 80;
-	y= MapExitX * 160 + 131;
-	time++;
-
-	SortEnemy();
-	SortItem();
-
-#ifdef DEBUG
-
-	if (CheckHitKey(KEY_INPUT_Q))
-	{
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)
 			{
-				enemy[i] = nullptr;
+				if (enemy[i]->CheckHp())
+				{
+					int Drop = 0;
+					for (int j = 0; j < ITEM_MAX - 1 && Drop < 2 + player.GetDrop(); j++)
+					{
+						if (item[j] == nullptr)
+						{
+							item[j] = new Shard({ enemy[i]->E_GetX(),enemy[i]->E_GetY() });
+							item[j]->SetMapData(MapData);
+							Drop++;
+						}
+					}
+					enemy[i] = nullptr;
+					break;
+				}
 			}
 		}
-	}
 
-	if (CheckHitKey(KEY_INPUT_W))
-	{
-		player.SetX(MapExitY * 160 + 80);
-		player.SetY(MapExitX * 160 + 131);
-	}
-
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_E) && !SafeZone)
-	{
-		Level++;
-		if (Level % 5 == 0 && !SafeZone)
+		for (int i = 0; i < ENEMY_MAX; i++)
 		{
-			if (MaplimitX - 2 == MaplimitY)MaplimitY++;
-			else MaplimitX++;
+			if (enemy[i] != nullptr)break;
+			if (i == ENEMY_MAX - 1)MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
+		}
+		/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
+
+
+		ExitCheck();
+		if (Exit_flg == true)
+		{
+			MoveStop_flg = true;
+			NextMap();
+		}
+		else
+		{
+			MoveStop_flg = false;
+		}
+
+		for (int i = 0; i < ENEMY_MAX + 1; i++)
+		{
+			if (--Damage[i].NumB < 0)Damage[i].NumB = 0;
+		}
+
+
+		x = MapExitY * 160 + 80;
+		y = MapExitX * 160 + 131;
+		time++;
+
+		SortEnemy();
+		SortItem();
+
+#ifdef DEBUG
+
+		if (CheckHitKey(KEY_INPUT_Q))
+		{
+			for (int i = 0; i < ENEMY_MAX; i++)
+			{
+				if (enemy[i] != nullptr)
+				{
+					enemy[i] = nullptr;
+				}
+			}
+		}
+
+		if (CheckHitKey(KEY_INPUT_W))
+		{
+			player.SetX(MapExitY * 160 + 80);
+			player.SetY(MapExitX * 160 + 131);
+		}
+
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_E) && !SafeZone)
+		{
+			Level++;
+			if (Level % 5 == 0 && !SafeZone)
+			{
+				if (MaplimitX - 2 == MaplimitY)MaplimitY++;
+				else MaplimitX++;
+			}
+		}
+
+		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
+		{
+			player.AddShard();
+		}
+
+#endif // DEBUG
+
+	}
+	else
+	{
+		switch (ui.PauseUI())
+		{
+		case Pause::RETURN:
+			Pause = false;
+			break;
+
+		case Pause::TITLE:
+			return new Title();
+			break;
+
+		default:
+			break;
 		}
 	}
 
-	if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A))|| CheckHitKey(KEY_INPUT_S))
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_START))
 	{
-		player.AddShard();
+		if (!Pause)Pause = true;
+		else Pause = false;
 	}
-
-#endif // DEBUG
 
 	return this;
 }
@@ -387,7 +444,7 @@ void GameMainScene::SortItem()
 
 void GameMainScene::Draw() const
 {
-
+	//マップ描画
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -398,23 +455,28 @@ void GameMainScene::Draw() const
 	
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 
+	//宝箱描画
 	for (int i = 0; i < TREASURE_MAX; i++)
 	{
 		if (treasurebox[i] != nullptr)treasurebox[i]->Draw(player.GetX(), player.GetY());
 	}
 
-
+	//アイテム描画
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		if (item[i] != nullptr)item[i]->Draw({ player.GetX() ,player.GetY() });
 	}
 
+	//プレイヤー描画
 	player.Draw();
+
+	//敵描画
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());
 	}
 
+	//出口アイコン描画
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
 
 		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
@@ -429,33 +491,29 @@ void GameMainScene::Draw() const
 	{
 		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100 , 1, 0, DoorIcon[3], true);
 	}
-	//enemy2.Draw(player.GetX(), player.GetY());
 
+	//ダメージ描画
 	for (int i = 0; i < ENEMY_MAX + 1; i++)
 	{
+		if (i == 0) 
+		{
+			if (Damage[i].NumB < 0)DrawDamage(Damage[i], i);
+		}
+
 		if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
 	}
 
 	ui.Draw();
 	if (UpGrade)ui.UpGradeDraw();
+	if (Pause)ui.PauseDraw();
 
 	DrawRotaGraph(1200, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
 	DrawRotaGraph(1140, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
 
 #ifdef DEBUG
 
-	DrawFormatString(0, 500, 0xff0000, "%d", Level);
-	DrawFormatString(0, 510, 0xff0000, "%d", SafeZone);
 
 #endif // DEBUG
-	//DrawFormatString(0, 550, 0xff0000, "%d", Bright);
-	//DrawFormatString(0, 600, 0xff0000, "%d",CameraX);
-	//DrawFormatString(50, 600, 0xff0000, "%d", CameraY);
-	//DrawFormatString(0, 650, 0xff0000, "%d", x);
-	//DrawFormatString(50, 650, 0xff0000, "%d", y);
-	//DrawCircle(160 * (4 + MapExitY) + 80 - player.GetX(), 360 + 160 * MapExitX + 120 - player.GetY(), 4, 0xff0000, TRUE);
-	//DrawFormatString(500, 200, 0xffffff, "%d", hit);
-	//DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
 void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
@@ -470,9 +528,9 @@ void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
 	{
 		if (LocDmg.NumA >= 100)
 		{
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - Dis * 2, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10], true);
 			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10], true);
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + Dis * 2, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10], true);
 		}
 		else if (LocDmg.NumA >= 10)
 		{
@@ -486,11 +544,27 @@ void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
 	}
 	else
 	{
-		if (LocDmg.NumA >= 100)
+		if (Dmg == -1)
 		{
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[3], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[14], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[3], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[6], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[4], true);
+		}
+		else if (Dmg == -2)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[6], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[20], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[0], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 15, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[17], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + 30, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, Chara[3], true);
+		}
+		else if (LocDmg.NumA >= 100)
+		{
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - Dis * 2, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10 + 33], true);
 			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10 + 33], true);
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + Dis * 2 , Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10 + 33], true);
 		}
 		else if (LocDmg.NumA >= 10)
 		{
@@ -829,6 +903,7 @@ void GameMainScene::NextMap() {
 				Exit_flg = false;
 				Anim_flg = false;
 				AnimTimer = 0, Bright = 255;
+				player.SetBarrier();
 			}
 		}
 	}
@@ -899,16 +974,16 @@ void GameMainScene::MakeEnemy()
 		switch (GetRand(3))
 		{
 		case 0:
-			enemy[i] = new Slime();
+			enemy[i] = new Slime(Level);
 			break;
 		case 1:
-			enemy[i] = new Bat();
+			enemy[i] = new Bat(Level);
 			break;
 		case 2:
-			enemy[i] = new Grim_Reaper();
+			enemy[i] = new Grim_Reaper(Level);
 			break;
 		case 3:
-			enemy[i] = new DeepSlime();
+			enemy[i] = new DeepSlime(Level);
 			break;
 		}
 

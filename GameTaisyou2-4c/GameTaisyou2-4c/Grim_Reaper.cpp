@@ -4,17 +4,16 @@
 #include "common.h"
 #include "Player.h"
 #include "GameMainScene.h"
-
 #include <math.h>
 
-#define MAX_SPEED 3
-#define MIN_SPEED -3
+#define MAX_SPEED 2
+#define MIN_SPEED -2
 
-Grim_Reaper::Grim_Reaper() : Enemy()
+Grim_Reaper::Grim_Reaper(int level) : Enemy()
 {
 	image = 0;
 
-	DropItem_Image = LoadGraph("shard.png", TRUE);
+	DropItem_Image = LoadGraph("images/shard.png", TRUE);
 
 	enex = 0;
 	eney = 0;
@@ -29,7 +28,14 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 	Enemy_Hp = 10;
 	Player_Hp = 10;
 
-	Power = 1;
+	Power = 999;
+
+	//レベルによる強化
+	int Addhp = level / 5 + (level / 10 * 6);
+	int addAtk = 0;
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 
@@ -43,9 +49,11 @@ Grim_Reaper::Grim_Reaper() : Enemy()
 	speed = 0;
 	fall = 12;
 
+	SickleImg = LoadGraph("images/sickle.png", TRUE);
 	LoadDivGraph("images/enemysicklemen.png", 2, 2, 1, 90, 100, EImages);
 	Anim = 0;
 	Turnflg = false;
+	if (GetRand(1))Turnflg = !Turnflg;
 }
 
 void Grim_Reaper::Update(Player* player)
@@ -131,9 +139,9 @@ void Grim_Reaper::Update(Player* player)
 		Attack++;
 
 		//攻撃終了
-		if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		if (180 < Attack)
 		{
-			//ジャンプして着地すれば攻撃終了
+			//鎌を振りかぶれば攻撃終了
 			E_AttackFlg = false;
 			Attack = 0;
 		}
@@ -168,6 +176,7 @@ void Grim_Reaper::makeEnemy()
 	{
 		eney++;
 	}
+	enex += GetRand(80) - 40;
 }
 
 void Grim_Reaper::Draw(int x, int y) const
@@ -193,8 +202,12 @@ void Grim_Reaper::Draw(int x, int y) const
 			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
 	}
 
+	if (E_AttackFlg == true && Attack >= 120)
+	{
+		DrawSickle(x,y);
+	}
+	
 	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
-
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 }
@@ -228,16 +241,66 @@ void Grim_Reaper::HitPlayer(float damage) {
 }
 
 //プレイヤーへの攻撃
+void Grim_Reaper::DrawSickle(int x, int y)const
+{
+	double stX = 0, stY = 0;	//振りかぶる前の座標
+	double finX = 0, finY = 0;	//振りかぶった後の座標
+	double Dis = 0;				//体の中心からの距離
+	double stAng, finAng = 0;	//振りかぶる角度
+
+	if (E_AttackFlg)
+	{
+		stAng = 90;
+		finAng = 0;
+		stX = enex;
+		stY = eney;
+		Dis = Width * 1.2;
+
+		finAng = (Attack - 120) * 2;
+
+		if (Turnflg)
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90)) - x + (SCREEN_WIDTH / 2);
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90)) - y + (SCREEN_HEIGHT / 2);
+			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * finAng + 0.5, SickleImg, true, true);
+		}
+		else
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (-finAng - 90)) - x + (SCREEN_WIDTH / 2);
+			finY = stY + Dis * sin((3.14 / 180) * (-finAng - 90)) - y + (SCREEN_HEIGHT / 2);
+			DrawRotaGraph(finX, finY, 1.0, (3.14 / 180) * -finAng - 0.5, SickleImg, true, false);
+		}
+	}
+}
+
 bool Grim_Reaper::EnemyAttack(int x, int y)
 {
-	if (E_AttackFlg && 60 < Attack)
+	if (E_AttackFlg && 120 < Attack)
 	{
-		float DisX = pow(enex - x, 2);
-		float DisY = pow(eney - y, 2);
+		double finX = 0, finY = 0;
+		double stAng = 90;
+		double finAng = 0;
+		double stX = enex;
+		double stY = eney;
+		double Dis = Width * 1.5;
 
-		int Dis = (int)sqrt((int)(DisX + DisY));
+		finAng = (Attack - 120) * 2 + 20;
 
-		if (Dis < Width)return true;
+		if (Turnflg)
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (finAng - 90));
+		}
+		else
+		{
+			finX = stX + Dis * cos((3.14 / 180) * (-finAng - 90));
+			finY = stY + Dis * sin((3.14 / 180) * (-finAng - 90));
+		}
+
+		float DisX = pow(finX - x, 2);
+		float DisY = pow(finY - y, 2);
+		Dis = (int)sqrt((int)(DisX + DisY));
+		if (Dis < 20)return true;
 		else return false;
 	}
 	else return false;

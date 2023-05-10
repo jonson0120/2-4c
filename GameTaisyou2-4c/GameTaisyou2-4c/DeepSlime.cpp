@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-DeepSlime::DeepSlime() : Enemy()
+DeepSlime::DeepSlime(int level) : Enemy()
 {
 	image = 0;
 
@@ -32,6 +32,13 @@ DeepSlime::DeepSlime() : Enemy()
 
 	//敵攻撃力
 	Power = 1;
+
+	//レベルによる強化
+	int Addhp = level / 3 + (level / 10 * 8);
+	int addAtk = level / 6 + (level / 10);
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 
@@ -59,6 +66,7 @@ DeepSlime::DeepSlime() : Enemy()
 	LoadDivGraph("images/Deepslime.png", 7, 7, 1, 64, 64, EImages);
 	Anim = 0;
 	Turnflg = false;
+	if (GetRand(1))Turnflg = !Turnflg;
 }
 
 void DeepSlime::Update(Player* player)
@@ -252,6 +260,7 @@ void DeepSlime::makeEnemy()
 	{
 		eney++;
 	}
+	enex += GetRand(80) - 40;
 }
 
 void DeepSlime::Draw(int x,int y) const

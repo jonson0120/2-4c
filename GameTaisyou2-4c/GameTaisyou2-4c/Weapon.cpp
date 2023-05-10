@@ -6,7 +6,7 @@
 #include "Dxlib.h"
 #include <math.h>
 
-Weapon::Weapon(weapons Weapon ,Range position)
+Weapon::Weapon(weapons Weapon, Range position, int Level)
 {
 	this->Kind = Weapon;
 
@@ -14,12 +14,116 @@ Weapon::Weapon(weapons Weapon ,Range position)
 	Getted = false;
 
 	SetItem();
+	SetPassive(Level);
+
+	LoadDivGraph("images/passive.png", 7, 1, 7, 83, 17, passiveimg);
+	passiveimg[7] = LoadGraph("images/passivewin.png");
+
+	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, numimg);
 
 	fall = -3;
 
 	pos = position;
 	pos.Y -= Height;
 
+}
+
+void Weapon::SetPassive(int Level) 
+{
+	int potential = Level / 4;		//出現する可能性のあるスキル数
+	if (5 < potential)potential = 5;
+
+	bool getted[6] = { false,false,false,false,false,false };
+
+	passive[0] = { ATTACK,GetRand(1 + Level / 10) + 1 };
+
+	int chance;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (i == 0) 
+		{
+			if (Level < 10)chance = 25;
+			else if (Level < 20)chance = 50;
+			else if (Level < 30)chance = 65;
+			else if (Level < 40)chance = 80;
+			else chance = 100;
+		}
+		if (i == 1)
+		{
+			if (Level < 10)chance = 15;
+			else if (Level < 20)chance = 30;
+			else if (Level < 30)chance = 50;
+			else if (Level < 40)chance = 65;
+			else chance = 75;
+
+			if (potential == 0)chance = 0;
+		}
+		if (i == 2)
+		{
+			if (Level < 10)chance = 5;
+			else if (Level < 20)chance = 20;
+			else if (Level < 30)chance = 40;
+			else if (Level < 40)chance = 50;
+			else chance = 40;
+
+			if (potential <= 1)chance = 0;
+		}
+
+		if (GetRand(99) <= chance - 1)
+		{
+			Enchant win = static_cast<Enchant>(GetRand(potential) + 1);
+			while (getted[win - 1])
+			{
+				win = static_cast<Enchant>(GetRand(potential) + 1);
+			}
+			int effect = 0;
+			switch (win)
+			{
+			case ATTACK:
+				break;
+			case DEFENSE:
+				effect = GetRand(1 + Level / 10) + 1;
+				break;
+			case GREED:
+				effect = GetRand(1) + 1;
+				break;
+			case BARRIER:
+				effect = GetRand(1 + Level / 10) + 1;
+				break;
+			case VAMP:
+				effect = GetRand(2) + 1;
+				break;
+			case REPAIR:
+				effect = GetRand(1 + Level / 10) + 1;
+				break;
+			case DODGE:
+				effect = GetRand(1) + 1;
+				break;
+			case NONE:
+				break;
+			default:
+				break;
+			}
+
+			passive[i + 1] = { win,effect };
+			getted[win - 1] = true;
+		}
+		else passive[i + 1] = { NONE,0 };
+	}
+
+	for (int i = 1; i < 3; i++)
+	{
+		for (int j = 1; j + i < 4; j++)
+		{
+			if (passive[i + j].Kinds < passive[i].Kinds) 
+			{
+				Passive val = passive[i];
+				passive[i] = passive[i + j];
+				passive[i + j] = val;
+			}
+		}
+	}
 }
 
 void Weapon::Update(Player* player)
@@ -41,8 +145,19 @@ void Weapon::Update(Player* player)
 	if (CanGet && !player->GetAttack() && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 	{
 		weapons old = player->GetEquip();
-			player->ChangeEquip(Kind);
+		Passive oldp[4];
+
+		for (int i = 0; i < 4; i++)
+		{
+			oldp[i] = player->GetPassive(i);
+		}
+		player->ChangeEquip(Kind, passive);
 			Kind = old;
+			for (int i = 0; i < 4; i++)
+			{
+				passive[i] = oldp[i];
+			}
+
 			SetItem();
 			Getted = true;
 	}
@@ -82,7 +197,21 @@ void Weapon::Draw(Range Player)const
 {
 	DrawRotaGraph(pos.X - Player.X + (SCREEN_WIDTH / 2), pos.Y - Player.Y + (SCREEN_HEIGHT / 2), size, 0, image, TRUE);
 
-	if (CanGet) DrawRotaGraph(pos.X - Player.X + (SCREEN_WIDTH / 2), pos.Y - Player.Y + (SCREEN_HEIGHT / 2) - Height, 1, 0, icon, TRUE);
+	if (CanGet)
+	{
+		int x = pos.X - Player.X + (SCREEN_WIDTH / 2);
+		int y = pos.Y - Player.Y + (SCREEN_HEIGHT / 2) - Height;
+		DrawRotaGraph(x, y, 1, 0, icon, TRUE);
+		DrawRotaGraph(x, y - 50, 1, 0, passiveimg[7], TRUE);
+		for (int i = 0; i < 4; i++)
+		{
+			if (passive[i].Kinds != NONE) 
+			{
+				DrawRotaGraph2(x - 55, y - 77 + (18 * i), 0, 9, 1, 0, passiveimg[passive[i].Kinds], true);
+				DrawRotaGraph(x + 40, y - 77 + (18 * i), 1, 0, numimg[passive[i].Effect], true);
+			}
+		}
+	}
 }
 
 void Weapon::SetItem()

@@ -25,6 +25,7 @@ private:
 	int Level;		//階層
 	bool SafeZone;	//今いるのは安全地帯?
 	bool UpGrade = false;	//アップグレードメニューを開く?
+	bool Pause = false;		//ポーズメニューを開く？
 
 	int time;
 	Player player;				//プレイヤー
@@ -58,6 +59,8 @@ private:
 	int count;
 
 	int hierarchy_font[44]; //階層用フォント画像変数
+	int Chara[28];		//文字
+
 public:
 	GameMainScene();
 	//デストラクト

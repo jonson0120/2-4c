@@ -10,7 +10,7 @@
 #define MAX_SPEED 3
 #define MIN_SPEED -3
 
-Slime::Slime() : Enemy()
+Slime::Slime(int level) : Enemy()
 {
 	image = 0;
 
@@ -32,6 +32,13 @@ Slime::Slime() : Enemy()
 
 	//敵攻撃力
 	Power = 1;
+
+	//レベルによる強化
+	int Addhp = level / 3 + (level / 10 * 10);
+	int addAtk = level / 4 + (level / 10);
+
+	Enemy_Hp += Addhp;
+	Power += addAtk;
 
 	MakeEnemy = FALSE;
 
@@ -56,6 +63,7 @@ Slime::Slime() : Enemy()
 	LoadDivGraph("images/Slime.png", 5, 5, 1, 64, 64, EImages);
 	Anim = 0;
 	Turnflg = false;
+	if (GetRand(1))Turnflg = !Turnflg;
 }
 
 void Slime::Update(Player* player)
@@ -230,6 +238,8 @@ void Slime::makeEnemy()
 	{
 		eney++;
 	}
+
+	enex += GetRand(80) - 40;
 }
 
 void Slime::Draw(int x,int y) const
