@@ -1090,6 +1090,7 @@ void Player::DrawMace()const
 		}
 	}
 	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
+	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
 }
 
 //攻撃描画：槍

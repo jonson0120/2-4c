@@ -551,9 +551,9 @@ void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
 	{
 		if (LocDmg.NumA >= 100)
 		{
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - Dis * 2, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10], true);
 			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10], true);
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + Dis * 2, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10], true);
 		}
 		else if (LocDmg.NumA >= 10)
 		{
@@ -585,9 +585,9 @@ void GameMainScene::DrawDamage(LocNum LocDmg,int num) const
 		}
 		else if (LocDmg.NumA >= 100)
 		{
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) - Dis * 2, Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 100 % 10 + 33], true);
 			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg / 10 % 10 + 33], true);
-			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + (11 * Size + Dis), Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10 + 33], true);
+			DrawRotaGraph(X - player.GetX() + (SCREEN_WIDTH / 2) + Dis * 2 , Y - player.GetY() + (SCREEN_HEIGHT / 2) - 50 + LocDmg.NumB, Size, 0, hierarchy_font[Dmg % 10 + 33], true);
 		}
 		else if (LocDmg.NumA >= 10)
 		{
