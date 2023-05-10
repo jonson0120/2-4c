@@ -61,6 +61,13 @@ private:
 	int hierarchy_font[44]; //階層用フォント画像変数
 	int Chara[28];		//文字
 
+
+	int DoorSE;
+	int NextMapSE;
+	int AttackSE;
+	int TreasureSE;
+	int DamageSE;
+
 public:
 	GameMainScene();
 	//デストラクト

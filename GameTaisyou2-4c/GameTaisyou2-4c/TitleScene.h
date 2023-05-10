@@ -22,6 +22,8 @@ private:
 	int Start_font;
 	int Debug_font;
 
+	int CursorSE;
+
 	bool Tutorial_flg;
 
 	int click_sound;
@@ -30,9 +32,9 @@ public:
 
 	~Title() {};
 
-	//•`‰æˆÈŠO‚ÌXV‚ğÀ‘•‚·‚é
+	//ï¿½`ï¿½ï¿½ÈŠOï¿½ÌXï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	virtual AbstractScene* Update()override;
 
-	//•`‰æ‚ÉŠÖ‚·‚é‚±‚ë‚ğÀ‘•‚·‚é
+	//ï¿½`ï¿½ï¿½ÉŠÖ‚ï¿½ï¿½é‚±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	virtual void Draw()const override;
 };

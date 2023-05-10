@@ -20,6 +20,7 @@ Title::Title() {
 	Debug_font= LoadGraph("images/null.png");
 
 	click_sound = LoadSoundMem("sound/click.mp3");
+	CursorSE = LoadSoundMem("sound/Cursor.mp3");
 }
 
 AbstractScene* Title::Update() {
@@ -27,10 +28,12 @@ AbstractScene* Title::Update() {
 	JoyPadY = PAD_INPUT::GetPadThumbLY();
 
 	if (JoyPadY > MARGIN && interval >= 30) {
+		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		select--;
 		interval = 0;
 	}
 	if (JoyPadY < -MARGIN && interval >= 30) {
+		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		select++;
 		interval = 0;
 	}

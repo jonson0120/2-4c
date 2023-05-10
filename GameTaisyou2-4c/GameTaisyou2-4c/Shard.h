@@ -4,18 +4,20 @@ class Shard :
     public Item
 {
 private:
-	bool CanGet;		//E‚¦‚é”ÍˆÍ‚É‚¢‚é‚©
-	bool Getted;		//E‚í‚ê‚½‚©
+	bool CanGet;		//ï¿½Eï¿½ï¿½ï¿½ï¿½ÍˆÍ‚É‚ï¿½ï¿½é‚©
+	bool Getted;		//ï¿½Eï¿½ï¿½ê‚½ï¿½ï¿½
 
-	int image;		//ƒAƒCƒeƒ€‰æ‘œ
-	float size;		//‰æ‘œƒTƒCƒY”ä
+	int image;		//ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½æ‘œ
+	float size;		//ï¿½æ‘œï¿½Tï¿½Cï¿½Yï¿½ï¿½
 
-	float fall;		//—‰º‘¬“x
-	float Slide;	//‰¡ˆÚ“®‘¬“x
+	float fall;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x
+	float Slide;	//ï¿½ï¿½ï¿½Ú“ï¿½ï¿½ï¿½ï¿½x
 
-	Range pos;		//ƒAƒCƒeƒ€À•W
-	int Height, Width;	//ƒAƒCƒeƒ€ƒTƒCƒY
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//ƒ}ƒbƒvƒf[ƒ^
+	int ShardSE;
+
+	Range pos;		//ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½W
+	int Height, Width;	//ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½Tï¿½Cï¿½Y
+	int MapData[MAP_HEIGHT][MAP_WIDTH];	//ï¿½}ï¿½bï¿½vï¿½fï¿½[ï¿½^
 
 public:
 	Shard(Range position);
