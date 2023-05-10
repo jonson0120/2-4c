@@ -1,6 +1,7 @@
 ﻿#include"DxLib.h"
 #include"TitleScene.h"
 #include"GameMainScene.h"
+#include"GameEnd.h"
 #include"KeyManager.h"
 #include"AbstractScene.h"
 #include"UI.h"
@@ -335,6 +336,10 @@ AbstractScene* GameMainScene::Update()
 		if (Exit_flg == true)
 		{
 			MoveStop_flg = true;
+			if (51 == Level)
+			{
+				return new GameEnd();
+			}
 			NextMap();
 		}
 		else

@@ -1,13 +1,13 @@
 #pragma once
 #include "AbstractScene.h"
-class GameOver :public AbstractScene
+class GameEnd :public AbstractScene
 {
 private:
-	int GameOverImage;
+	int GameEndImage;
 
 public:
-	~GameOver() {};
-	GameOver();
+	~GameEnd() {};
+	GameEnd();
 
 	//�`��ȊO�̍X�V���������
 	virtual AbstractScene* Update() override;
@@ -15,4 +15,3 @@ public:
 	//�`��Ɋւ��邱�Ƃ��������
 	virtual void Draw() const override;
 };
-

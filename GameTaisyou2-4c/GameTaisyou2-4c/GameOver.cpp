@@ -22,7 +22,7 @@ void GameOver::Draw()const
 {
 	DrawGraph(0, 0, GameOverImage, FALSE);
 	SetFontSize(30);
-	DrawString(430, 300 , "Bƒ{ƒ^ƒ“‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢", GetColor(255, 0, 0));
+	DrawString(430, 300 , "Bãƒœã‚¿ãƒ³ã§ã‚¿ã‚¤ãƒˆãƒ«ã«æˆ»ã‚‹", GetColor(255, 0, 0));
 	/*DrawString(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,"GameOver",GetColor(255,0,0));*/
 	
 }
