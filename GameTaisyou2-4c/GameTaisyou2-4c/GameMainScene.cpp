@@ -147,7 +147,7 @@ AbstractScene* GameMainScene::Update()
 			player.Update();
 		}
 
-		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE <= 8 && 4 <= player.GetX() / BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
+		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE <= 8 && 6 <= player.GetX() / BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 		{
 			player.Reset();
 			UpGrade = true;
