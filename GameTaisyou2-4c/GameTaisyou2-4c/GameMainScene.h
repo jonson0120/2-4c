@@ -36,7 +36,7 @@ private:
 	//Enemy2 enemy2;
 	UI ui;
 	TreasureBox** treasurebox;
-
+	int Restarea;
 	int CameraX;
 	int CameraY;
 
