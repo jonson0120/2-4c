@@ -19,7 +19,7 @@ Shard::Shard(Range position)
 	pos = position;
 	pos.Y -= Height;
 
-	ShardSE = LoadSoundMem("sound/Shard.mp3");
+	
 }
 
 void Shard::Update(Player* player)
@@ -31,7 +31,6 @@ void Shard::Update(Player* player)
 
 	if (dis <= CanGetDistance)
 	{
-		PlaySoundMem(ShardSE, DX_PLAYTYPE_BACK);
 		player->AddShard();
 		Getted = true;
 	}

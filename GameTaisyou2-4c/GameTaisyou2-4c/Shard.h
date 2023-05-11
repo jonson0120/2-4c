@@ -13,7 +13,6 @@ private:
 	float fall;		//�������x
 	float Slide;	//���ړ����x
 
-	int ShardSE;
 
 	Range pos;		//�A�C�e�����W
 	int Height, Width;	//�A�C�e���T�C�Y

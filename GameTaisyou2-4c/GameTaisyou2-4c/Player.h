@@ -15,6 +15,7 @@ private:
 	int Attack1SE;
 	int KatanaSE;
 	int WeaponSE;
+	int ShardSE;
 
 	int Walk;	//歩行アニメーション管理
 
@@ -158,7 +159,7 @@ public:
 	void SetBarrier() { nowbarrier = barrier; }
 
 	//シャード取得
-	void AddShard() { stat.Shard++; }
+	void AddShard() {PlaySoundMem(ShardSE, DX_PLAYTYPE_BACK); stat.Shard++; }
 
 	//体力強化
 	void StrHP(int add) 

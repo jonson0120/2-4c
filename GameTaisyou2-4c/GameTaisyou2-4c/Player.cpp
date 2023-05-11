@@ -78,6 +78,7 @@ Player::Player() {
 	KatanaSE = LoadSoundMem("sound/Katana3.mp3");
 
 	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
+	ShardSE = LoadSoundMem("sound/Shard.mp3");
 	
 	ChangeVolumeSoundMem(255 * 70 / 100, JumpSE);
 
