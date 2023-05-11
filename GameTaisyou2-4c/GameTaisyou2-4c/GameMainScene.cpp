@@ -952,13 +952,10 @@ void GameMainScene::NextMap() {
 		}
 
 		if (SafeZone == true) {
-			StopSoundMem(stage_bgm);
-			PlaySoundMem(safezone_bgm, DX_PLAYTYPE_LOOP);  //休憩所の時のBGMはここで流す
+
 		}
 		if (Level % 10 == 1) {
-			ChangeVolumeSoundMem(100, stage_bgm);
-			PlaySoundMem(stage_bgm, DX_PLAYTYPE_LOOP);  //ここでBGMを流す
-			StopSoundMem(safezone_bgm);
+			
 		}
 
 		MapExitX = 0;
