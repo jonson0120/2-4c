@@ -104,6 +104,8 @@ GameMainScene::GameMainScene()
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 	DoorIcon[3] = LoadGraph("images/ItemIcon.png");
 
+	Restarea = LoadGraph("images/Restarea.png");
+
 	DoorSE = LoadSoundMem("sound/Door.mp3");
 	NextMapSE = LoadSoundMem("sound/NextMap.mp3");
 	AttackSE = LoadSoundMem("sound/Attack.mp3");
@@ -350,7 +352,7 @@ AbstractScene* GameMainScene::Update()
 			if (enemy[i] != nullptr)break;
 			if (i == ENEMY_MAX - 1)
 			{
-				PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
+				if(!SafeZone)PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
 				MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
 			}
 		}
