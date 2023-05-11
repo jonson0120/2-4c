@@ -24,8 +24,8 @@ private:
 	int Damage;
 
 
-	int Weapon;	//Œ»İ‘•”õ‚µ‚Ä‚¢‚é•Ší
-	int Second;	//Œ»İ‘•”õ‚µ‚Ä‚¢‚È‚¢•Ší
+	int Weapon;	//ï¿½ï¿½ï¿½İ‘ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é•ï¿½ï¿½
+	int Second;	//ï¿½ï¿½ï¿½İ‘ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	int DaggerImage;
 	int MaceImage;
@@ -39,35 +39,38 @@ private:
 
 	int ItemImg[2];
 
-	int Number[44];		//”š
-	int Chara[28];		//•¶š
-	int Sign[4];		//•„†
+	int Number[44];		//ï¿½ï¿½ï¿½ï¿½
+	int Chara[28];		//ï¿½ï¿½ï¿½ï¿½
+	int Sign[4];		//ï¿½ï¿½ï¿½ï¿½
 
-	Passive passive[4];	//•\¦‚·‚éƒpƒbƒVƒu
-	int passiveimg[7];	//ƒpƒbƒVƒu‰æ‘œ
+	Passive passive[4];	//ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½bï¿½Vï¿½u
+	int passiveimg[7];	//ï¿½pï¿½bï¿½Vï¿½uï¿½æ‘œ
 
 	int PotionCount;
 	int PotionMax;
 
 	int UseCount = 0;
 
-	int MenuNum = 0;	//ƒƒjƒ…[F‘I‘ğ€–Ú
+	int MenuNum = 0;	//ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[ï¿½Fï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½
 
-	int UpGradeImg[6];	//‹­‰»ƒƒjƒ…[F‰æ‘œ
-	int UpGradeTxt[4];	//‹­‰»ƒƒjƒ…[F•¶š
+	int UpGradeImg[6];	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[ï¿½Fï¿½æ‘œ
+	int UpGradeTxt[4];	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[ï¿½Fï¿½ï¿½ï¿½ï¿½
 
-	int WaitTime = 0;		//“ü—Í‘Ò‚¿ŠÔ
+	int WaitTime = 0;		//ï¿½ï¿½ï¿½Í‘Ò‚ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	int cost[3];		//‹­‰»F•K—vƒRƒXƒg
-	int nowstat[3];		//‹­‰»FŒ»İ‚Ì’l
-	bool Title = false;		//ƒ|[ƒYFÅIŠm”F
+	int cost[3];		//ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½Kï¿½vï¿½Rï¿½Xï¿½g
+	int nowstat[3];		//ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½İ‚Ì’l
+	bool Title = false;		//ï¿½|ï¿½[ï¿½Yï¿½Fï¿½ÅIï¿½mï¿½F
+
+	int StrengthenSE;
+	int CursorSE;
 
 public:
 	
 	UI();
 	void Update(Player* player);
 
-	//‹­‰»ƒƒjƒ…[
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[
 	bool UpGradeUI(Player* player);
 
 	Pause PauseUI();

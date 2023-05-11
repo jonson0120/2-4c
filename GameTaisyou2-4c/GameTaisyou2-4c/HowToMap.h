@@ -56,6 +56,10 @@ private:
 	int x, y;
 
 	int count;
+
+	int TutorialBGM;
+	int WeaponSE;
+	
 public:
 	HowToMap();
 	//デストラクト
