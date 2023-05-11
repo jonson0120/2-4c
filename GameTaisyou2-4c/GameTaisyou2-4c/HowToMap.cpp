@@ -55,7 +55,7 @@ HowToMap::HowToMap()
 	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 
-	TutorialBGM = LoadSoundMem("sound/Tutorial.mp3");
+	TutorialBGM = LoadSoundMem("sound/Tutorial2.mp3");
 	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
 
 	Exit_flg = false;
@@ -65,7 +65,9 @@ HowToMap::HowToMap()
 	MoveStop_flg = true;
 	Pressed_flg = false;
 
+	ChangeVolumeSoundMem(255 * 70 / 100, TutorialBGM);
 	PlaySoundMem(TutorialBGM, DX_PLAYTYPE_LOOP);
+	
 }
 
 AbstractScene* HowToMap::Update()

@@ -21,6 +21,9 @@ Title::Title() {
 
 	click_sound = LoadSoundMem("sound/click.mp3");
 	CursorSE = LoadSoundMem("sound/Cursor.mp3");
+
+	TitleBGM = LoadSoundMem("sound/TitleBGM.mp3");
+	PlaySoundMem(TitleBGM, DX_PLAYTYPE_LOOP);
 }
 
 AbstractScene* Title::Update() {
@@ -47,6 +50,7 @@ AbstractScene* Title::Update() {
 	if (Tutorial_flg == false) {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
 			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
+			StopSoundMem(TitleBGM);
 			if (TITLE_MENU::START == Menu_Number) Tutorial_flg = true;
 			if (TITLE_MENU::Debug == Menu_Number)return new TestMap();
 			interval = 0;
@@ -55,6 +59,7 @@ AbstractScene* Title::Update() {
 	if (Tutorial_flg == true) {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
 			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
+			StopSoundMem(TitleBGM);
 			if (TITLE_MENU::START == Menu_Number) return new GameMainScene(); //�Q�[�����X�^�[�g����
 			if (TITLE_MENU::Debug == Menu_Number)return new HowToMap(); //�`���[�g���A�����X�^�[�g����
 			interval = 0;

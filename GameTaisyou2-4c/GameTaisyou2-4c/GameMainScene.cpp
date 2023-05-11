@@ -427,6 +427,7 @@ AbstractScene* GameMainScene::Update()
 			break;
 
 		case Pause::TITLE:
+			StopSoundMem(DungeonBGM);
 			return new Title();
 			break;
 

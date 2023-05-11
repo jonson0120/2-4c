@@ -23,6 +23,7 @@ private:
 	int Debug_font;
 
 	int CursorSE;
+	int TitleBGM;
 
 	bool Tutorial_flg;
 
