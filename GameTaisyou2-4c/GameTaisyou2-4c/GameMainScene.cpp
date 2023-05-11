@@ -110,6 +110,8 @@ GameMainScene::GameMainScene()
 	TreasureSE = LoadSoundMem("sound/Treasure.mp3");
 	DamageSE = LoadSoundMem("sound/Damage.mp3");
 
+	DungeonBGM = LoadSoundMem("sound/Dungeon.mp3");
+
 
 	Exit_flg = true;
 	Anim_flg = true;
@@ -119,6 +121,8 @@ GameMainScene::GameMainScene()
 
 	SetDrawBright(Bright, Bright, Bright);
 
+	PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
+	ChangeVolumeSoundMem(255 * 50 / 100, DungeonBGM);
 }
 
 AbstractScene* GameMainScene::Update() 

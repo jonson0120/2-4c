@@ -13,7 +13,8 @@ private:
 	int HealSE;
 	int JumpSE;
 	int Attack1SE;
-	
+	int KatanaSE;
+	int WeaponSE;
 
 	int Walk;	//歩行アニメーション管理
 

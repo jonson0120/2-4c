@@ -75,6 +75,9 @@ Player::Player() {
 	HealSE = LoadSoundMem("sound/Heal.mp3");
 	JumpSE = LoadSoundMem("sound/Jump.mp3");
 	Attack1SE = LoadSoundMem("sound/Attack1.mp3");
+	KatanaSE = LoadSoundMem("sound/Katana3.mp3");
+
+	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
 	
 	ChangeVolumeSoundMem(255 * 70 / 100, JumpSE);
 
@@ -172,6 +175,7 @@ void Player::ChangeEquip(weapons get, Passive passive[4]) {
 		}
 		SetPassive(EquipNum);
 	}
+	PlaySoundMem(WeaponSE, DX_PLAYTYPE_BACK);
 }
 
 void Player::Update() {
@@ -517,6 +521,7 @@ void Player::Update() {
 				}
 				else if (Combo == 2 && 12 < Attack && !wall)
 				{
+					PlaySoundMem(KatanaSE, DX_PLAYTYPE_BACK);
 					Attack = 1;
 					Combo++;
 				}
@@ -1684,6 +1689,8 @@ void Player::MaceAtk()
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && stat.Power == 0)Attack++;	//ボタン長押し中に力をためる
 	else if (PAD_INPUT::OnRelease(XINPUT_BUTTON_B) && stat.Power == 0)		//離すとためた力に応じて強化
 	{
+		PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+
 		if (Attack < 20 || wall != 0)
 		{
 			stat.Power = 2;

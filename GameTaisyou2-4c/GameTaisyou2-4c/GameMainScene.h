@@ -68,6 +68,8 @@ private:
 	int TreasureSE;
 	int DamageSE;
 
+	int DungeonBGM;
+
 public:
 	GameMainScene();
 	//デストラクト
