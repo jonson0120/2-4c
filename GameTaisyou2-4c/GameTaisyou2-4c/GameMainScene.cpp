@@ -118,8 +118,8 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 
-	if (SafeZone == false)PlaySoundMem(stage_bgm, DX_PLAYTYPE_LOOP);  //ここでBGMを流す
-	if (SafeZone == true)StopSoundMem(stage_bgm),PlaySoundMem(safezone_bgm, DX_PLAYTYPE_LOOP);  //休憩所の時のBGMはここで流す
+	//if (SafeZone == false)PlaySoundMem(stage_bgm, DX_PLAYTYPE_LOOP);  //ここでBGMを流す
+	//if (SafeZone == true)StopSoundMem(stage_bgm),PlaySoundMem(safezone_bgm, DX_PLAYTYPE_LOOP);  //休憩所の時のBGMはここで流す
 
 	if (!Pause)
 	{
