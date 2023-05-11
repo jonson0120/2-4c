@@ -16,6 +16,7 @@
 #include "Grim_Reaper.h"
 #include "DeepSlime.h"
 #include"Bomber.h"
+#include"Boss.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -991,6 +992,10 @@ void GameMainScene::NextMap() {
 			MakeEnemy();
 			treasurebox[0] = new TreasureBox();
 		}
+		else if (!SafeZone&&Level == 50) {
+			enemy[0] = new Boss(Level);
+		}
+
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
