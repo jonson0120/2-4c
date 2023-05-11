@@ -69,6 +69,11 @@ private:
 	Range katana_slash[8];		//刀・斬撃位置
 	int katana_angle[8];		//刀・斬撃角度
 
+	int JumpSE;
+	int Attack1SE;
+	
+
+
 	//-------------------------------------
 
 public:

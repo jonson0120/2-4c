@@ -1,4 +1,4 @@
-#include "Shard.h"
+ï»¿#include "Shard.h"
 #include "Player.h"
 #include "common.h"
 #include "Dxlib.h"
@@ -19,22 +19,24 @@ Shard::Shard(Range position)
 	pos = position;
 	pos.Y -= Height;
 
+	ShardSE = LoadSoundMem("sound/Shard.mp3");
 }
 
 void Shard::Update(Player* player)
 {
-	//ƒvƒŒƒCƒ„[‚ªƒAƒCƒeƒ€‚ðŽæ‚ê‚éˆÊ’u‚É‚¢‚é‚©”»’è
-	int CanGetDistance = 30;	//ƒvƒŒƒCƒ„[‚ªƒAƒCƒeƒ€‚ðŽæ‚ê‚é‹«ŠE
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½É‚ï¿½ï¿½é‚©ï¿½ï¿½ï¿½ï¿½
 
-	int dis = GetDis({ player->GetX(),player->GetY() });	//ƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£
+	int CanGetDistance = 30;	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‹«ï¿½E
+	int dis = GetDis({ player->GetX(),player->GetY() });	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ô‚Ì‹ï¿½ï¿½ï¿½
 
 	if (dis <= CanGetDistance)
 	{
+		PlaySoundMem(ShardSE, DX_PLAYTYPE_BACK);
 		player->AddShard();
 		Getted = true;
 	}
 
-	//‰¡•ûŒü‚ÌˆÚ“®
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌˆÚ“ï¿½
 	pos.X += Slide;
 	while (!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
 		!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE])
@@ -48,9 +50,9 @@ void Shard::Update(Player* player)
 		pos.X--;
 	}
 
-	//—Ž‰º‚ÆƒWƒƒƒ“ƒv
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ÆƒWï¿½ï¿½ï¿½ï¿½ï¿½v
 	// 
-	//ƒWƒƒƒ“ƒv‹­“x
+	//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½x
 	float fallinit = 12;
 
 	if (fall < fallinit)
@@ -63,10 +65,10 @@ void Shard::Update(Player* player)
 	}
 	pos.Y += fall;
 
-	//ˆÊ’u’²®
+	//ï¿½Ê’uï¿½ï¿½ï¿½ï¿½
 
-	while (!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
-		!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
+	if (MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
+		MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
 	{
 		Slide = 0;
 	}

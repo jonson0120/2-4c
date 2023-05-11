@@ -10,6 +10,12 @@ private:
 	int image_U[7];	//画像：下半身
 	int ArmImg;
 
+	int HealSE;
+	int JumpSE;
+	int Attack1SE;
+	int KatanaSE;
+	int WeaponSE;
+
 	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス

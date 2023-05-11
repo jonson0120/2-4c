@@ -58,6 +58,11 @@ HowToPlayer::HowToPlayer() {
 
 	LoadDivGraph("images/slash.png", 4, 4, 1, 8, 80, WeaponEffect);
 
+	JumpSE = LoadSoundMem("sound/Jump.mp3");
+	Attack1SE = LoadSoundMem("sound/Attack1.mp3");
+
+	ChangeVolumeSoundMem(255 * 70 / 100, JumpSE);
+
 	JoypadX = 0;
 	JoypadY = 0;
 	TriggerL = 0;
@@ -305,6 +310,7 @@ void HowToPlayer::Update() {
 			//Aボタン・ジャンプ
 			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 			{
+				PlaySoundMem(JumpSE, DX_PLAYTYPE_BACK);
 				fall = -fallinit;	//落下速度をマイナスにする
 				jump++;				//ジャンプ回数を増やす
 			}
@@ -358,11 +364,13 @@ void HowToPlayer::Update() {
 			{
 				if (Combo == 0)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					Attack++;
 					Combo++;
 				}
 				else if (Combo == 1 && 10 < Attack && Yinput != Inp_UD::UP)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					Attack = 1;
 					Combo++;
 				}

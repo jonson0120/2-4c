@@ -378,22 +378,22 @@ void TestMap::Draw() const
 	//DrawFormatString(0, 700, 0xff0000, "%d", count);
 }
 
-//ƒ}ƒbƒv¶¬
+//ï¿½}ï¿½bï¿½vï¿½ï¿½ï¿½ï¿½
 void TestMap::MakeMap()
 {
-	//•ÇE‹óŠÔƒpƒ^[ƒ“
+	//ï¿½ÇEï¿½ï¿½Ôƒpï¿½^ï¿½[ï¿½ï¿½
 
-	//oŒû¶¬ƒ`ƒFƒbƒN
+	//ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 	bool MakeExit = false;
 
-	int Space = 0;				//‹óŠÔ‚Ì”
+	int Space = 0;				//ï¿½ï¿½Ô‚Ìï¿½
 
 	int x = player.GetX();
 
-	//ƒ}ƒbƒvƒf[ƒ^ì¬
+	//ï¿½}ï¿½bï¿½vï¿½fï¿½[ï¿½^ï¿½ì¬
 	do {
 
-		//ƒ`ƒFƒbƒN‚Ég—p‚·‚éƒf[ƒ^ƒŠƒZƒbƒg-------
+		//ï¿½`ï¿½Fï¿½bï¿½Nï¿½Égï¿½pï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½Zï¿½bï¿½g-------
 		Space = 0;
 		MakeExit = false;
 		for (int i = 0; i < MAP_HEIGHT; i++)
@@ -407,7 +407,7 @@ void TestMap::MakeMap()
 		//-------------------------------------------
 
 
-		//ƒ}ƒbƒv’[‚Ì•ÇE“Vˆä-----------------------
+		//ï¿½}ï¿½bï¿½vï¿½[ï¿½Ì•ÇEï¿½Vï¿½ï¿½-----------------------
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
 			for (int j = 0; j < MAP_WIDTH; j++)
@@ -444,12 +444,12 @@ void TestMap::MakeMap()
 		}
 		//------------------------------------------
 
-		//ƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’u‚ğ‘«ê‚Ì‚ ‚é‹óŠÔ‚É‚·‚é
+		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìï¿½ï¿½ï¿½ï¿½Ê’uï¿½ğ‘«ï¿½Ì‚ï¿½ï¿½ï¿½ï¿½Ô‚É‚ï¿½ï¿½ï¿½
 
-		//‹óŠÔ”ƒ`ƒFƒbƒN
+		//ï¿½ï¿½Ôï¿½ï¿½`ï¿½Fï¿½bï¿½N
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 
-		//oŒû‚ğİ’u
+		//ï¿½oï¿½ï¿½ï¿½ï¿½İ’u
 		/*for (int j = MAP_WIDTH - 1; 0 < j && !MakeExit; j--)
 		{
 			for (int i = MAP_HEIGHT - 1; 0 < i && !MakeExit; i--)
@@ -465,13 +465,13 @@ void TestMap::MakeMap()
 		}*/
 
 
-		//‹óŠÔ”‚ªˆê’èˆÈ‰º‚È‚çÄ¶¬
+		//ï¿½ï¿½Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‰ï¿½ï¿½È‚ï¿½Äï¿½ï¿½ï¿½
 	} while (Space < 70);
 
 	MakeExit = MakeExit;
 
 
-	//ŒÇ—§‚µ‚½‹óŠÔ‚ğ–„‚ß‚é
+	//ï¿½Ç—ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ğ–„‚ß‚ï¿½
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
@@ -484,7 +484,7 @@ void TestMap::MakeMap()
 int TestMap::CheckSpace(int y, int x, int* cnt)
 {
 
-	//‘ÎÛƒuƒƒbƒN‚ªŠO˜g‚È‚çˆ—‚ğ”²‚¯‚é
+	//ï¿½ÎÛƒuï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½Oï¿½gï¿½È‚çˆï¿½ï¿½ï¿½ğ”²‚ï¿½ï¿½ï¿½
 	if (x == 0 || x == MAP_WIDTH - 1 || y == MAP_HEIGHT - 1 || y == 0)return 0;
 
 	CheckData[y][x] = 1;
@@ -510,9 +510,9 @@ void TestMap::NextMap() {
 	MoveStop_flg = false;
 
 	if (0 <= Bright && Anim_flg == false) {
-		// ƒtƒF[ƒhƒAƒEƒgˆ—
+		// ï¿½tï¿½Fï¿½[ï¿½hï¿½Aï¿½Eï¿½gï¿½ï¿½ï¿½ï¿½
 		if (AnimTimer % 5 == 0) {
-			// •`‰æ‹P“x‚ğƒZƒbƒg
+			// ï¿½`ï¿½ï¿½Pï¿½xï¿½ï¿½Zï¿½bï¿½g
 			SetDrawBright(Bright, Bright, Bright);
 			Bright -= Bright_minus;
 		}
@@ -520,7 +520,7 @@ void TestMap::NextMap() {
 	}
 	else {
 		if (AnimTimer % 5 == 0) {
-			// •`‰æ‹P“x‚ğƒZƒbƒg
+			// ï¿½`ï¿½ï¿½Pï¿½xï¿½ï¿½Zï¿½bï¿½g
 			SetDrawBright(Bright, Bright, Bright);
 			Bright += Bright_minus;
 			Anim_flg = true;
@@ -532,7 +532,7 @@ void TestMap::NextMap() {
 			}
 		}
 	}
-	//Ÿ‚Ìƒ}ƒbƒv‚ğ¶¬‚·‚éˆ—
+	//ï¿½ï¿½ï¿½Ìƒ}ï¿½bï¿½vï¿½ğ¶ï¿½ï¿½ï¿½ï¿½éˆï¿½ï¿½
 	if (MakeMap_flg == true) {
 		MapExitX = 0;
 		MapExitY = 0;
@@ -561,7 +561,7 @@ void TestMap::NextMap() {
 void TestMap::ExitCheck() {
 	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131) {
 		if (Pressed_flg == true) {
-			//Yƒ{ƒ^ƒ“’·‰Ÿ‚µ‚Åˆ—‚É“ü‚é
+			//Yï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åï¿½ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½
 			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 				count++;
 				if (count >= 90) {
@@ -579,11 +579,11 @@ void TestMap::ExitCheck() {
 
 void TestMap::SearchEnemy()
 {
-	//‹ß‚­‚Ì“G‚Ìƒiƒ“ƒo[‚Æ‹——£
+	//ï¿½ß‚ï¿½ï¿½Ì“Gï¿½Ìƒiï¿½ï¿½ï¿½oï¿½[ï¿½Æ‹ï¿½ï¿½ï¿½
 	int NearEnemy = -1;
 	int NearDistance = -1;
 
-	//ƒvƒŒƒCƒ„[‚Æ“G‚ÌÀ•W
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Æ“Gï¿½Ìï¿½ï¿½W
 	int PlayerX = player.GetX();
 	int PlayerY = player.GetY();
 	int EnemyX = 0, EnemyY = 0;

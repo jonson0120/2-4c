@@ -55,16 +55,26 @@ HowToMap::HowToMap()
 	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 
+	TutorialBGM = LoadSoundMem("sound/Tutorial2.mp3");
+	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
+
 	Exit_flg = false;
 	Anim_flg = false;
 	GoMain_flg = false;
 	GoTitle_flg = false;
 	MoveStop_flg = true;
 	Pressed_flg = false;
+
+	ChangeVolumeSoundMem(255 * 70 / 100, TutorialBGM);
+	PlaySoundMem(TutorialBGM, DX_PLAYTYPE_LOOP);
+
+
 }
 
 AbstractScene* HowToMap::Update()
 {
+	
+
 	if (player.GetLife()<=0)
 	{
 		player.Reset();
@@ -131,12 +141,14 @@ AbstractScene* HowToMap::Update()
 
 	if (player.GetY() / BLOCK_SIZE == MAP_HEIGHT - 3 && player.GetX() / BLOCK_SIZE == MAP_WIDTH_T - 5 && !Getted && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 	{
+		PlaySoundMem(WeaponSE, DX_PLAYTYPE_BACK);
 		player.SetDagger();
 		Getted = true;
 	}
 
 	if (player.GetY() / BLOCK_SIZE == MAP_HEIGHT - 3 && (player.GetX() / BLOCK_SIZE == 5 || player.GetX() / BLOCK_SIZE == MAP_WIDTH_T - 2))
 	{
+		StopSoundMem(TutorialBGM);
 		NextMap();
 	}
 
