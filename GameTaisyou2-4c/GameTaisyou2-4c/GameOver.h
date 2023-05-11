@@ -4,7 +4,7 @@ class GameOver :public AbstractScene
 {
 private:
 	int GameOverImage;
-
+	int GameOverBGM;
 public:
 	~GameOver() {};
 	GameOver();

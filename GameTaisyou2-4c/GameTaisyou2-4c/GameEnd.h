@@ -4,6 +4,7 @@ class GameEnd :public AbstractScene
 {
 private:
 	int GameEndImage;
+	int GameClearBGM;
 
 public:
 	~GameEnd() {};

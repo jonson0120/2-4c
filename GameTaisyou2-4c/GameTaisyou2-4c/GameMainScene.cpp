@@ -122,7 +122,8 @@ GameMainScene::GameMainScene()
 	SetDrawBright(Bright, Bright, Bright);
 
 	PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
-	ChangeVolumeSoundMem(255 * 50 / 100, DungeonBGM);
+	ChangeVolumeSoundMem(255 * 80 / 100, DungeonBGM);
+
 }
 
 AbstractScene* GameMainScene::Update() 
@@ -131,6 +132,7 @@ AbstractScene* GameMainScene::Update()
 	{
 		if (player.GetLife() <= 0)
 		{
+			StopSoundMem(DungeonBGM);
 			return new GameOver();
 		}
 
@@ -359,6 +361,8 @@ AbstractScene* GameMainScene::Update()
 			MoveStop_flg = true;
 			if (51 == Level)
 			{
+				StopSoundMem(NextMapSE);
+				StopSoundMem(DungeonBGM);
 				return new GameEnd();
 			}
 			NextMap();

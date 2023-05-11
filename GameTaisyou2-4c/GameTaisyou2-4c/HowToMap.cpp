@@ -67,7 +67,8 @@ HowToMap::HowToMap()
 
 	ChangeVolumeSoundMem(255 * 70 / 100, TutorialBGM);
 	PlaySoundMem(TutorialBGM, DX_PLAYTYPE_LOOP);
-	
+
+
 }
 
 AbstractScene* HowToMap::Update()

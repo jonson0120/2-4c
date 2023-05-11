@@ -24,6 +24,8 @@ Title::Title() {
 
 	TitleBGM = LoadSoundMem("sound/TitleBGM.mp3");
 	PlaySoundMem(TitleBGM, DX_PLAYTYPE_LOOP);
+	ChangeVolumeSoundMem(255 * 70 / 100, TitleBGM);
+
 }
 
 AbstractScene* Title::Update() {
