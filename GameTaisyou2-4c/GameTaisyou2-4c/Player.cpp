@@ -65,7 +65,8 @@ Player::Player() {
 
 	LoadDivGraph("images/Player_Top.png", 5, 5, 1, 36, 28, PImages);
 	LoadDivGraph("images/Player_Under.png", 7, 7, 1, 48, 28, image_U);
-	ArmImg = LoadGraph("images/arm.png");
+	ArmImg = LoadGraph("images/arm.png"); 
+	BarrierImg= LoadGraph("images/barrier.png");
 
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace2.png");
@@ -722,6 +723,9 @@ void Player::Draw() const {
 			}
 		}
 	}
+
+	//バリア
+	if (nowbarrier)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 0, BarrierImg, true);
 }
 
 void Player::Spawn() {

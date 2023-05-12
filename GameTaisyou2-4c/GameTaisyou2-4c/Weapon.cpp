@@ -95,7 +95,7 @@ void Weapon::SetPassive(int Level)
 				effect = GetRand(2) + 1;
 				break;
 			case REPAIR:
-				effect = GetRand(1 + Level / 10) + 1;
+				effect = GetRand(2) + 1;
 				break;
 			case DODGE:
 				effect = GetRand(1) + 1;

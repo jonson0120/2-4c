@@ -17,7 +17,7 @@ private:
 	int ImgData[MAP_HEIGHT][MAP_WIDTH_T];	//マップ背景データ
 	int MapImg[8];			//マップ画像
 	int Block;				//ブロック
-	int HowToImg[11];		//操作説明画像
+	int HowToImg[13];		//操作説明画像
 
 	int Phase = 0;				//進行度
 	int Anim = 0;				//説明アニメーション

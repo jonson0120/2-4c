@@ -952,7 +952,6 @@ void GameMainScene::MakeMap()
 			if (CheckData[i][j] == 0)MapData[i][j] = 5;
 		}
 	}
-	MapData[player.GetY() / 160][player.GetX() / 160] = 3;
 }
 
 int GameMainScene::CheckSpace(int y, int x, int* cnt)

@@ -9,6 +9,7 @@ private:
 	int PImages[5];	//画像：上半身
 	int image_U[7];	//画像：下半身
 	int ArmImg;
+	int BarrierImg;	//画像：バリア
 
 	int HealSE;
 	int JumpSE;
@@ -169,7 +170,10 @@ public:
 	}
 
 	//攻撃強化
-	void StrAtk() { stat.Atk++; }
+	void StrAtk() {
+		stat.Atk++;
+		SetPassive(EquipNum);
+	}
 
 	//回復力強化
 	void StrHeal() 
