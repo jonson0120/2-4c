@@ -1,6 +1,7 @@
 ﻿#include"DxLib.h"
 #include"TitleScene.h"
 #include"GameMainScene.h"
+#include"GameEnd.h"
 #include"KeyManager.h"
 #include"AbstractScene.h"
 #include"UI.h"
@@ -103,6 +104,17 @@ GameMainScene::GameMainScene()
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 	DoorIcon[3] = LoadGraph("images/ItemIcon.png");
 
+	Restarea = LoadGraph("images/Restarea.png");
+
+	DoorSE = LoadSoundMem("sound/Door.mp3");
+	NextMapSE = LoadSoundMem("sound/NextMap.mp3");
+	AttackSE = LoadSoundMem("sound/Attack.mp3");
+	TreasureSE = LoadSoundMem("sound/Treasure.mp3");
+	DamageSE = LoadSoundMem("sound/Damage.mp3");
+
+	DungeonBGM = LoadSoundMem("sound/Dungeon.mp3");
+
+
 	Exit_flg = true;
 	Anim_flg = true;
 	MakeMap_flg = false;
@@ -111,20 +123,20 @@ GameMainScene::GameMainScene()
 
 	SetDrawBright(Bright, Bright, Bright);
 
-	stage_bgm = LoadSoundMem("sound/click.mp3");
-	safezone_bgm= LoadSoundMem("sound/click.mp3");
+	PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
+	ChangeVolumeSoundMem(255 * 80 / 100, DungeonBGM);
 }
 
 AbstractScene* GameMainScene::Update() 
 {
 
-	//if (SafeZone == false)PlaySoundMem(stage_bgm, DX_PLAYTYPE_LOOP);  //ここでBGMを流す
-	//if (SafeZone == true)StopSoundMem(stage_bgm),PlaySoundMem(safezone_bgm, DX_PLAYTYPE_LOOP);  //休憩所の時のBGMはここで流す
+	
 
 	if (!Pause)
 	{
 		if (player.GetLife() <= 0)
 		{
+			StopSoundMem(DungeonBGM);
 			return new GameOver();
 		}
 
@@ -135,7 +147,7 @@ AbstractScene* GameMainScene::Update()
 			player.Update();
 		}
 
-		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6 && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
+		if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE <= 8 && 6 <= player.GetX() / BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 		{
 			player.Reset();
 			UpGrade = true;
@@ -167,6 +179,7 @@ AbstractScene* GameMainScene::Update()
 					{
 					case 0:	//普通に受けた
 						Damage[0] = { player.GetX(),player.GetY(),DMG,30 };
+						PlaySoundMem(DamageSE, DX_PLAYTYPE_BACK);
 						break;
 
 					case 1:	//回避した
@@ -240,7 +253,8 @@ AbstractScene* GameMainScene::Update()
 					{
 						if (item[j] == nullptr)
 						{
-							item[j] = new Weapon(drop, { treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() }, Level);
+							PlaySoundMem(TreasureSE, DX_PLAYTYPE_BACK);
+							item[j] = new Weapon(drop, { treasurebox[i]->lid_GetX(), treasurebox[i]->lid_GetY() }, Level);
 							item[j]->SetMapData(MapData);
 							break;
 						}
@@ -316,7 +330,11 @@ AbstractScene* GameMainScene::Update()
 			break;
 		}
 
-		if (Hit)player.Vamp();
+		if (Hit)
+		{
+			PlaySoundMem(AttackSE, DX_PLAYTYPE_BACK);
+			player.Vamp();
+		}
 
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
@@ -340,10 +358,14 @@ AbstractScene* GameMainScene::Update()
 			}
 		}
 
-		for (int i = 0; i < ENEMY_MAX; i++)
+		for (int i = 0; i < ENEMY_MAX && !Pressed_flg; i++)
 		{
 			if (enemy[i] != nullptr)break;
-			if (i == ENEMY_MAX - 1)MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
+			if (i == ENEMY_MAX - 1)
+			{
+				if(!SafeZone)PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
+				MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
+			}
 		}
 		/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
 
@@ -352,6 +374,12 @@ AbstractScene* GameMainScene::Update()
 		if (Exit_flg == true)
 		{
 			MoveStop_flg = true;
+			if (51 == Level)
+			{
+				StopSoundMem(NextMapSE);
+				StopSoundMem(DungeonBGM);
+				return new GameEnd();
+			}
 			NextMap();
 		}
 		else
@@ -418,6 +446,7 @@ AbstractScene* GameMainScene::Update()
 			break;
 
 		case Pause::TITLE:
+			StopSoundMem(DungeonBGM);
 			return new Title();
 			break;
 
@@ -467,9 +496,18 @@ void GameMainScene::Draw() const
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
+
 		}
+		
+
 	}
 	
+	if (Level % 10 == 0 && SafeZone)
+	{
+		//DrawGraph(160 * 5 - player.GetX(), 160 * 8 - player.GetY(), Restarea, TRUE);
+		DrawExtendGraph(160 * 5 - player.GetX(), 160 * 8 + 40 - player.GetY(), 160 * 15  - player.GetX(), 160 * 12 + 40 - player.GetY(), Restarea, TRUE);
+	}
+
 	//DrawFormatString(0, 500, 0xff0000, "%d", Space);
 
 	//宝箱描画
@@ -504,9 +542,22 @@ void GameMainScene::Draw() const
 		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
-	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE == 6) 
+	//セーフゾーン
+	if (!UpGrade && SafeZone && player.GetX() / BLOCK_SIZE  <= 7 && 6 <= player.GetX() / BLOCK_SIZE)
 	{
-		DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100 , 1, 0, DoorIcon[3], true);
+		DrawRotaGraph(SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 - 100, 1, 0, DoorIcon[3], true);
+		//DrawRotaGraph2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100, 18, 16, 1, 0, DoorIcon[2], true);
+
+	}
+
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg &&Level % 10 == 0 && SafeZone) {
+
+		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
+		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
+
+		DrawRotaGraph(DoorX, DoorY, 1.2, 0, DoorIcon[0], true);
+		DrawCircleGauge(DoorX, DoorY, 100 * (count / 60.f), DoorIcon[1], 0, 1.2, false, false);
+		DrawRotaGraph2(DoorX, DoorY, 18, 16, 1, 0, DoorIcon[2], true);
 	}
 
 	//ダメージ描画
@@ -821,8 +872,7 @@ void GameMainScene::MakeMap()
 	}
 	else if (SafeZone)
 	{
-		player.SetY(BLOCK_SIZE * 9.5);
-
+	player.SetY(BLOCK_SIZE * 9.5 + BLOCK_SIZE / 2 - player.GetHeight() / 2);
 		Space = 0;
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
@@ -850,9 +900,9 @@ void GameMainScene::MakeMap()
 			}
 		}
 
-		MapData[MAP_HEIGHT - 2][MAP_WIDTH - 3] = 2;
+		//MapData[MAP_HEIGHT - 2][MAP_WIDTH - 3] = 2;
 		MapExitX = MAP_HEIGHT - 2;
-		MapExitY = MAP_WIDTH - 3;
+		MapExitY = MAP_WIDTH - 5;
 
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 	}
@@ -971,6 +1021,13 @@ void GameMainScene::NextMap() {
 			else MaplimitX++;
 		}
 
+		if (SafeZone == true) {
+
+		}
+		if (Level % 10 == 1) {
+			
+		}
+
 		MapExitX = 0;
 		MapExitY = 0;
 		player.Spawn();
@@ -1051,6 +1108,7 @@ void GameMainScene::ExitCheck() {
 			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 				count++;
 				if (count >= 60) {
+					PlaySoundMem(NextMapSE, DX_PLAYTYPE_BACK);
 					for (int i = 0; i < ENEMY_MAX; i++)
 					{
 						if (enemy[i] != nullptr)break;
@@ -1061,6 +1119,8 @@ void GameMainScene::ExitCheck() {
 			else if (--count < 0)count = 0;
 		}
 	}
+
+
 }
 
 void GameMainScene::SearchEnemy() 

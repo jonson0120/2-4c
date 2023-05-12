@@ -26,4 +26,3 @@ public:
 
 	virtual	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) = 0;
 };
-

@@ -4,15 +4,15 @@ class GameOver :public AbstractScene
 {
 private:
 	int GameOverImage;
-
+	int GameOverBGM;
 public:
 	~GameOver() {};
 	GameOver();
 
-	//•`‰æˆÈŠO‚ÌXV‚ğÀ‘•‚·‚é
+	//ï¿½`ï¿½ï¿½ÈŠOï¿½ÌXï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	virtual AbstractScene* Update() override;
 
-	//•`‰æ‚ÉŠÖ‚·‚é‚±‚Æ‚ğÀ‘•‚·‚é
+	//ï¿½`ï¿½ï¿½ÉŠÖ‚ï¿½ï¿½é‚±ï¿½Æ‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	virtual void Draw() const override;
 };
 

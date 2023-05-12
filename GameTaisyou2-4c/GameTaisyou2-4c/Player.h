@@ -10,6 +10,13 @@ private:
 	int image_U[7];	//画像：下半身
 	int ArmImg;
 
+	int HealSE;
+	int JumpSE;
+	int Attack1SE;
+	int KatanaSE;
+	int WeaponSE;
+	int ShardSE;
+
 	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス
@@ -152,7 +159,7 @@ public:
 	void SetBarrier() { nowbarrier = barrier; }
 
 	//シャード取得
-	void AddShard() { stat.Shard++; }
+	void AddShard() {PlaySoundMem(ShardSE, DX_PLAYTYPE_BACK); stat.Shard++; }
 
 	//体力強化
 	void StrHP(int add) 
