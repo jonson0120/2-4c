@@ -24,8 +24,8 @@ Boss::Boss(int level) : Enemy()
 	MapData[eney][enex];
 
 	//敵サイズ
-	Width = 48;
-	Height = 64;
+	Width = 530;
+	Height = 360;
 
 	//敵ステータス
 	Enemy_Hp = 5;
@@ -60,7 +60,7 @@ Boss::Boss(int level) : Enemy()
 	jump = 0;
 
 	//画像関連
-	LoadDivGraph("images/Boss.png", 3, 3, 1, 740, 402, EImages);
+	LoadDivGraph("images/Boss.png", 5, 5, 1, 530, 360, EImages);
 	Anim = 0;
 	Turnflg = false;
 	if (GetRand(1))Turnflg = !Turnflg;
@@ -224,9 +224,9 @@ void Boss::makeEnemy()
 	MakeEnemy = FALSE;
 	while (MakeEnemy == FALSE)
 	{
-		int i = GetRand(11) + 2;
-		int j = GetRand(9) + 1;
-		if (MapData[j][i] == 1 && MapData[j + 1][i] == 0)
+		int i = 7;
+		int j = 7;
+		if (MapData[j][i] == 1)
 		{
 			enex = i * BLOCK_SIZE + BLOCK_SIZE / 2;
 			eney = j * BLOCK_SIZE + BLOCK_SIZE / 2;
@@ -251,14 +251,14 @@ void Boss::Draw(int x, int y) const
 		//敵の表示
 		if (!E_AttackFlg)
 		{
-			if (AttackCool)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);
-			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
+			if (AttackCool)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, !Turnflg, false);
+			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, !Turnflg, false);
 		}
 		else
 		{
-			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);
-			else if (fall < 0) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[3], TRUE, Turnflg, false);
-			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[4], TRUE, Turnflg, false);
+			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[3], TRUE, !Turnflg, false);
+			else if (fall < 0) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[4], TRUE, !Turnflg, false);
+			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[0], TRUE, !Turnflg, false);
 		}
 	}
 
