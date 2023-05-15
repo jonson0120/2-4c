@@ -99,7 +99,7 @@ public:
 	void InitPad();
 	Player();
 	void Update();
-	void Draw() const;
+	void Draw(bool boss) const;
 
 	void Spawn();
 
@@ -197,10 +197,10 @@ public:
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
 	//武器描画
-	void DrawDagger()const;
-	void DrawMace()const;
-	void DrawSpear()const;
-	void DrawKatana()const;
+	void DrawDagger(int fix)const;
+	void DrawMace(int fix)const;
+	void DrawSpear(int fix)const;
+	void DrawKatana(int fix)const;
 
 	//武器アニメーション管理
 	void DaggerAtk();

@@ -9,7 +9,7 @@ class Boss :public Enemy
 {
 private:
 	int image;			//画像
-	int EImages[5];		//画像
+	int EImages[10];		//画像
 	int Anim;			//アニメーション
 
 	int DropItem_Image;	//ドロップアイテム
@@ -18,6 +18,25 @@ private:
 	int direction;		//敵の向き
 
 	int Power;			//攻撃力
+
+	//行動制御---------------
+	int Movecnt = 0;			//移動切り替え時間
+	int Moveswitch = 60;		//移動切り替えタイミング
+	int MoveAng = 1;			//移動方向(1か-1)
+
+	bool Pounce = false;			//飛び掛かり
+	int JumpDis = 0;			//飛び掛かり距離
+
+	bool Claw = false;			//爪攻撃
+	bool ClawTurn = false;		//爪攻撃方向
+	int ClawCool = 600;			//爪攻撃頻度
+	int ClawTime = 0;			//爪攻撃時間
+	float ClawX = 0;				//攻撃位置
+	float ClawY = 0;				//攻撃位置
+	float ClawSpd = 0;			//攻撃速度
+	int ClawImg[6];				//爪画像
+
+	//-----------------------
 
 	bool E_AttackFlg;
 	bool HighJump;
@@ -71,5 +90,8 @@ public:
 
 	void HitPlayer(float damage);
 	bool EnemyAttack(int x, int y);
+
+	void FixX();
+	void FixY();
 };
 

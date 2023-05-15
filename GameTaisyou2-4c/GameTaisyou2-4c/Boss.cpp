@@ -24,8 +24,8 @@ Boss::Boss(int level) : Enemy()
 	MapData[eney][enex];
 
 	//敵サイズ
-	Width = 530;
-	Height = 360;
+	Width = 500;
+	Height = 300;
 
 	//敵ステータス
 	Enemy_Hp = 5;
@@ -39,6 +39,8 @@ Boss::Boss(int level) : Enemy()
 
 	Enemy_Hp += Addhp;
 	Power += addAtk;
+
+	Power = 1;
 
 	MakeEnemy = FALSE;
 
@@ -60,7 +62,10 @@ Boss::Boss(int level) : Enemy()
 	jump = 0;
 
 	//画像関連
-	LoadDivGraph("images/Boss.png", 5, 5, 1, 530, 360, EImages);
+	LoadDivGraph("images/Boss.png", 10, 10, 1, 530, 360, EImages);
+
+	LoadDivGraph("images/claw.png", 6, 6, 1, 120, 330, ClawImg);
+
 	Anim = 0;
 	Turnflg = false;
 	if (GetRand(1))Turnflg = !Turnflg;
@@ -71,12 +76,24 @@ void Boss::Update(Player* player)
 	//ジャンプ強度
 	float fallinit = 12;
 
-	//プレイヤー認識範囲
-	if (enex + BLOCK_SIZE >= player->GetX() && enex - BLOCK_SIZE <= player->GetX() &&
-		eney + BLOCK_SIZE >= player->GetY() && eney - BLOCK_SIZE <= player->GetY() && !E_AttackFlg && !AttackCool)
+	//プレイヤー座標
+	int PlayerX = player->GetX();
+
+	//攻撃に移行
+	int sight = 300;	//プレイヤーを認識する範囲
+	ClawTime++;
+	if (ClawCool < ClawTime && !Claw && !E_AttackFlg)
+	{
+		E_AttackFlg = true;
+		Claw = true;
+		ClawSpd = 0;
+	}
+	else if (enex + sight >= player->GetX() && enex - sight <= player->GetX() &&
+			 eney + sight >= player->GetY() && eney - sight <= player->GetY() && !E_AttackFlg && !AttackCool && !Pounce)
 	{
 		//認識範囲内にいれば攻撃開始
 		E_AttackFlg = true;
+		Pounce = true;
 
 		//プレイヤーの方向を向く
 		if (player->GetX() < enex) Turnflg = true;
@@ -84,26 +101,37 @@ void Boss::Update(Player* player)
 	}
 	else if (!E_AttackFlg && !AttackCool) {
 		//通常の移動----------
-		if (Turnflg)
+		Movecnt++;
+
+		if (PlayerX < enex)
 		{
-			enex -= 3;
-			//壁にぶつかると向きを反転させる
-			if (!MapData[eney / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
-				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
+			int Dis = enex - PlayerX;	//プレイヤー間の距離を取る
+			Turnflg = true;
+			if (Moveswitch <= Movecnt)	//Moveswitch以上経過した時移動方向を変える
 			{
-				Turnflg = !Turnflg;
+				if (Dis < 500) MoveAng = 1;
+				else MoveAng = -1;
+
+				Movecnt = 0;
+				Moveswitch = GetRand(60) + 30;	//方向転換タイミングを変える
 			}
 		}
 		else
 		{
-			enex += 3;
-			//壁にぶつかると向きを反転させる
-			if (!MapData[eney / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
-				MapData[(eney + Height / 2 + 1) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
+			int Dis = PlayerX - enex;	//プレイヤー間の距離を取る
+			Turnflg = false;
+			if (Moveswitch <= Movecnt)	//Moveswitch以上経過した時移動方向を変える
 			{
-				Turnflg = !Turnflg;
+				if (Dis < 500) MoveAng = -1;
+				else MoveAng = 1;
+
+				Movecnt = 0;
+				Moveswitch = GetRand(60) + 30;	//方向転換タイミングを変える
 			}
 		}
+
+		enex += 4 * MoveAng;
+
 		//-------------------
 	}
 
@@ -111,51 +139,115 @@ void Boss::Update(Player* player)
 	if (E_AttackFlg)
 	{
 		Attack++;
-
-		//ジャンプ直前の待機
-		if (Attack == 60)
+		if (Pounce)
 		{
-			//プレイヤーが一定以上高い位置にいると縦方向ジャンプになる
-			if (BLOCK_SIZE - 30 < eney - player->GetY())
+			//ジャンプ直前の待機
+			if (Attack <= 60)
 			{
-				fall = -fallinit * 1.2;
-				HighJump = true;
+				JumpDis = (PlayerX - enex) / 15;	//プレイヤー間の距離を取る
+				if (Attack == 60)
+				{
+					if (0 < JumpDis)Turnflg = false;
+					else Turnflg = true;
+				}
 			}
-			//水平方向ジャンプ
-			else
+			else if (Attack <= 90)
 			{
-				fall = -fallinit * 0.5;
-				HighJump = false;
+				if (Attack < 75)
+				{
+					enex += JumpDis;
+					FixX();
+					eney -= 30;
+					FixY();
+				}
+			}
+			//ジャンプ
+			else if (90 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+			{
+				eney += 24;
+				FixY();
+			}
+			//攻撃終了
+			else if (90 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+			{
+				//ジャンプして着地すれば攻撃終了
+				E_AttackFlg = false;
+				AttackCool = 60;
+				Attack = 0;
+				Pounce = false;
 			}
 		}
-		//ジャンプ
-		else if (60 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
-		{
-			int jump = 9;
 
-			//縦方向ジャンプ
-			if (HighJump)
-			{
-				if (Turnflg)enex -= jump / 3;
-				else enex += jump / 3;
-			}
-			//横方向ジャンプ
-			else
-			{
-				if (Turnflg)enex -= jump;
-				else enex += jump;
-			}
-		}
-		//攻撃終了
-		else if (60 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+		else if (Claw)
 		{
-			//ジャンプして着地すれば攻撃終了
-			E_AttackFlg = false;
-			AttackCool = 60;
-			Attack = 0;
+			//待機
+			if (Attack <= 60 && ClawSpd == 0)
+			{
+				if (Attack == 60)
+				{
+					ClawSpd += 0.1;
+
+					if (!Turnflg)ClawX = enex + 260;
+					else ClawX = enex - 260;
+
+					ClawY = eney;
+
+					ClawTurn = !Turnflg;
+				}
+			}
+			else if (80 < Attack)
+			{
+				E_AttackFlg = false;
+				Attack = 0;
+			}
+
 		}
 	}
 
+	if (0 < ClawSpd)
+	{
+		if (ClawTurn)ClawX += ClawSpd;
+		else ClawX -= ClawSpd;
+		ClawSpd += 0.05;
+	}
+
+	if (12 < ClawSpd)
+	{
+		Claw = false;
+		ClawSpd = 0;
+		ClawTime = 0;
+	}
+
+	FixX();
+
+	//落下とジャンプ
+
+	if (fall < fallinit)
+	{
+		//落下速度を加算
+		fall += (fallinit * 2) / 45;
+
+		//fallinit＝加速最大値
+		if (fall > fallinit)
+		{
+			fall = fallinit;
+		}
+	}
+
+	if (E_AttackFlg)fall = 0;
+	eney += fall;
+
+	FixY();
+
+	//攻撃待機時間・無敵時間を減らす
+	if (HitCool)HitCool--;
+	if (AttackCool)AttackCool--;
+
+	Anim++;
+}
+
+void Boss::FixX() 
+{
 	//壁にめり込んだ時に補正
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
@@ -172,22 +264,10 @@ void Boss::Update(Player* player)
 		speed = 0;
 	}
 
-	//落下とジャンプ
+}
 
-	if (fall < fallinit)
-	{
-		//落下速度を加算
-		fall += (fallinit * 2) / 45;
-
-		//fallinit＝加速最大値
-		if (fall > fallinit)
-		{
-			fall = fallinit;
-		}
-	}
-
-	eney += fall;
-
+void Boss::FixY()
+{
 	//壁にめり込んだ時に補正
 	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
@@ -204,19 +284,6 @@ void Boss::Update(Player* player)
 		eney--;
 		jump = 0;
 	}
-
-
-	//プレイヤーに当たった時攻撃
-	//if (enex == player->GetX() && eney == player->GetY())
-	//{
-	//	player->HitEnemy(float damage);
-	//}
-
-	//攻撃待機時間・無敵時間を減らす
-	if (HitCool)HitCool--;
-	if (AttackCool)AttackCool--;
-
-	Anim++;
 }
 
 void Boss::makeEnemy()
@@ -244,22 +311,46 @@ void Boss::makeEnemy()
 
 void Boss::Draw(int x, int y) const
 {
+
+	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
+	//	enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
+
 	if (MakeEnemy == TRUE && HitCool % 4 < 2)
 	{
 		int WalkAnim = Anim / 18 % 2;
 
+		int DrawX = enex - x + (SCREEN_WIDTH / 2);
+		int DrawY = eney - y + (SCREEN_HEIGHT / 2) + BLOCK_SIZE;
+
 		//敵の表示
 		if (!E_AttackFlg)
 		{
-			if (AttackCool)DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, !Turnflg, false);
-			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, !Turnflg, false);
+			if (AttackCool)DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[2], TRUE, !Turnflg, false);
+			else DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[WalkAnim], TRUE, !Turnflg, false);
 		}
-		else
+		else if(Pounce)
 		{
-			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[3], TRUE, !Turnflg, false);
-			else if (fall < 0) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[4], TRUE, !Turnflg, false);
-			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[0], TRUE, !Turnflg, false);
+			if (Attack < 60) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[3], TRUE, !Turnflg, false);
+			else if (Attack < 90) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[4], TRUE, !Turnflg, false);
+			else DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[0], TRUE, !Turnflg, false);
 		}
+		else if (Claw)
+		{
+			if (Attack < 60) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[5], TRUE, !Turnflg, false);
+			else if (Attack < 80) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[6], TRUE, !Turnflg, false);
+		}
+	}
+
+	if (0 < ClawSpd) 
+	{
+		int cX = ClawX - x + (SCREEN_WIDTH / 2);
+		int cY = ClawY - y + (SCREEN_HEIGHT / 2) + BLOCK_SIZE;
+		int cAnim = 0;
+		if (ClawSpd < 3)cAnim = 0 + (Anim / 15 % 2);
+		else if (ClawSpd < 6)cAnim = 2 + (Anim / 15 % 2);
+		else cAnim = 4 + (Anim / 15 % 2);
+
+		DrawRotaGraph(cX, cY, 1, 0, ClawImg[cAnim], true, ClawTurn);
 	}
 
 	if (Enemy_Hp == 0)
@@ -272,8 +363,6 @@ void Boss::Draw(int x, int y) const
 
 	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
-	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2) , eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-	//		  enex + (Width / 2) - x + (SCREEN_WIDTH / 2) , eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 }
 
 void Boss::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
@@ -307,15 +396,36 @@ void Boss::HitPlayer(float damage) {
 //プレイヤーへの攻撃
 bool Boss::EnemyAttack(int x, int y)
 {
-	if (E_AttackFlg && 60 < Attack)
+	if (Pounce)
 	{
-		float DisX = pow(enex - x, 2);
-		float DisY = pow(eney - y, 2);
+		if (E_AttackFlg && 60 < Attack)
+		{
+			float DisX = fabs(enex - x);
+			float DisY = fabs(eney - y);
 
-		int Dis = (int)sqrt((int)(DisX + DisY));
-
-		if (Dis < Width)return true;
+			if (DisX < Width / 2 && DisY < Height / 2)return true;
+			else return false;
+		}
 		else return false;
 	}
-	else return false;
+
+	if (Claw) 
+	{
+		if (0 < ClawSpd) 
+		{
+			float DisX = fabs(ClawX - x);
+			float DisY = fabs(ClawY - y);
+
+			int ColY = 0;
+
+			if (ClawSpd < 3)ColY = 330;
+			else if (ClawSpd < 6)ColY = 250;
+			else ColY = 120;
+
+			if (DisX < 60 && DisY < ColY / 2)return true;
+			else return false;
+		}
+	}
+
+	return false;
 }

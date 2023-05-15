@@ -430,6 +430,11 @@ AbstractScene* GameMainScene::Update()
 			}
 		}
 
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_R) && !SafeZone)
+		{
+			Level = 49;
+		}
+
 		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
 		{
 			player.AddShard();
@@ -491,16 +496,19 @@ void GameMainScene::SortItem()
 
 void GameMainScene::Draw() const
 {
+	//ボスエリアで描画方法を変える
+	bool boss = false;
+	if (Level == 50 && !SafeZone)boss = true;
+
+	int fix = 0;
+	if (boss)fix = BLOCK_SIZE;
 	//マップ描画
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
-
+			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY()+ fix, MapImg[MapData[i][j]], TRUE);
 		}
-		
-
 	}
 	
 	if (Level % 10 == 0 && SafeZone)
@@ -524,7 +532,7 @@ void GameMainScene::Draw() const
 	}
 
 	//プレイヤー描画
-	player.Draw();
+	player.Draw(boss);
 
 	//敵描画
 	for (int i = 0; i < ENEMY_MAX; i++)
@@ -564,12 +572,24 @@ void GameMainScene::Draw() const
 	//ダメージ描画
 	for (int i = 0; i < ENEMY_MAX + 1; i++)
 	{
-		if (i == 0) 
+		if (!boss)
 		{
-			if (Damage[i].NumB < 0)DrawDamage(Damage[i], i);
-		}
+			if (i == 0)
+			{
+				if (Damage[i].NumB < 0)DrawDamage(Damage[i], i);
+			}
 
-		if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
+			if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
+		}
+		else
+		{
+			if (i == 0)
+			{
+				if (Damage[i].NumB < 0)DrawDamage({ Damage[i].X,Damage[i].Y + BLOCK_SIZE,Damage[i].NumA,Damage[i].NumB }, i);
+			}
+
+			if (0 < Damage[i].NumB) DrawDamage({ Damage[i].X,Damage[i].Y + BLOCK_SIZE,Damage[i].NumA,Damage[i].NumB }, i);
+		}
 	}
 
 	ui.Draw();
