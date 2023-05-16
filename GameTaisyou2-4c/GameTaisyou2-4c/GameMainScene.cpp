@@ -564,7 +564,7 @@ void GameMainScene::Draw() const
 	if (UpGrade)ui.UpGradeDraw();
 	if (Pause)ui.PauseDraw();
 
-	DrawRotaGraph(1030, 50, 1.15, 0, BF_font, TRUE);
+	DrawRotaGraph(1025, 50, 1.15, 0, BF_font, TRUE);
 	DrawRotaGraph(1200, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
 	DrawRotaGraph(1140, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
 
