@@ -72,6 +72,16 @@ Player::Player() {
 	Weapon[2] = LoadGraph("images/spear.png");
 	Weapon[3] = LoadGraph("images/katana.png");
 
+	HealSE = LoadSoundMem("sound/Heal.mp3");
+	JumpSE = LoadSoundMem("sound/Jump.mp3");
+	Attack1SE = LoadSoundMem("sound/Attack1.mp3");
+	KatanaSE = LoadSoundMem("sound/Katana3.mp3");
+
+	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
+	ShardSE = LoadSoundMem("sound/Shard.mp3");
+	
+	ChangeVolumeSoundMem(255 * 70 / 100, JumpSE);
+
 	LoadDivGraph("images/slash.png", 4, 4, 1, 8, 80, WeaponEffect);
 
 	JoypadX = 0;
@@ -166,6 +176,7 @@ void Player::ChangeEquip(weapons get, Passive passive[4]) {
 		}
 		SetPassive(EquipNum);
 	}
+	PlaySoundMem(WeaponSE, DX_PLAYTYPE_BACK);
 }
 
 void Player::Update() {
@@ -402,6 +413,7 @@ void Player::Update() {
 			//Aボタン・ジャンプ
 			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
 			{
+				PlaySoundMem(JumpSE, DX_PLAYTYPE_BACK);
 				fall = -fallinit;	//落下速度をマイナスにする
 				jump++;				//ジャンプ回数を増やす
 			}
@@ -455,11 +467,13 @@ void Player::Update() {
 			{
 				if (Combo == 0)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					Attack++;
 					Combo++;
 				}
 				else if (Combo == 1 && 10 < Attack && Yinput != Inp_UD::UP)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					Attack = 1;
 					Combo++;
 				}
@@ -478,9 +492,10 @@ void Player::Update() {
 			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
 			{
 				spear_angle = PadangL;
-
+				
 				if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					if (TurnFlg)spear_angle = -90;
 					else spear_angle = 90;
 				}
@@ -495,16 +510,19 @@ void Player::Update() {
 			{
 				if (Combo == 0)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					Attack++;
 					Combo++;
 				}
 				else if (Combo == 1 && 9 < Attack)
 				{
+					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
 					Attack = 1;
 					Combo++;
 				}
 				else if (Combo == 2 && 12 < Attack && !wall)
 				{
+					PlaySoundMem(KatanaSE, DX_PLAYTYPE_BACK);
 					Attack = 1;
 					Combo++;
 				}
@@ -576,6 +594,7 @@ void Player::Update() {
 			{
 				stat.Potion--;
 				stat.Hp += (stat.MaxHp * stat.PotionPower);
+				PlaySoundMem(HealSE, DX_PLAYTYPE_BACK);
 			}
 		}
 		else UsePotion = 0;
@@ -1672,6 +1691,8 @@ void Player::MaceAtk()
 	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && stat.Power == 0)Attack++;	//ボタン長押し中に力をためる
 	else if (PAD_INPUT::OnRelease(XINPUT_BUTTON_B) && stat.Power == 0)		//離すとためた力に応じて強化
 	{
+		PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+
 		if (Attack < 20 || wall != 0)
 		{
 			stat.Power = 2;

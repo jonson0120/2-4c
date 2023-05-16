@@ -34,6 +34,10 @@ UI::UI()
 	LoadDivGraph("images/str.png", 6, 6, 1, 128, 128, UpGradeImg);
 	LoadDivGraph("images/strui.png", 4, 1, 4, 112, 24, UpGradeTxt);
 
+
+	StrengthenSE = LoadSoundMem("sound/Strengthen.mp3");
+	CursorSE = LoadSoundMem("sound/Cursor.mp3");
+
 	Damage = 0;
 
 	PlayerHP = 0;
@@ -122,10 +126,12 @@ bool UI::UpGradeUI(Player* player)
 	int JoyPadX = PAD_INPUT::GetPadThumbLX();
 
 	if (JoyPadX > MARGIN && WaitTime <= 0) {
+		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		if (3 < ++MenuNum)MenuNum = 0;
 		WaitTime = 20;
 	}
 	if (JoyPadX < -MARGIN && WaitTime <= 0) {
+		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		if (--MenuNum < 0)MenuNum = 3;
 		WaitTime = 20;
 	}
@@ -137,6 +143,7 @@ bool UI::UpGradeUI(Player* player)
 		case 0:
 			if (cost[HP] <= player->GetShard())
 			{
+				PlaySoundMem(StrengthenSE, DX_PLAYTYPE_BACK);
 				player->StrHP(5);
 				player->UseShard(cost[HP]);
 				cost[HP] += 5;
@@ -146,6 +153,7 @@ bool UI::UpGradeUI(Player* player)
 		case 1:
 			if (cost[ATK] <= player->GetShard())
 			{
+				PlaySoundMem(StrengthenSE, DX_PLAYTYPE_BACK);
 				player->StrAtk();
 				player->UseShard(cost[ATK]);
 				cost[ATK] += 5;
@@ -155,6 +163,7 @@ bool UI::UpGradeUI(Player* player)
 		case 2:
 			if (cost[HEAL] <= player->GetShard() && player->GetPotionMax() < 5)
 			{
+				PlaySoundMem(StrengthenSE, DX_PLAYTYPE_BACK);
 				player->StrHeal();
 				player->UseShard(cost[HEAL]);
 				cost[HEAL] += 20;
@@ -175,15 +184,15 @@ bool UI::UpGradeUI(Player* player)
 	return true;
 }
 
-//ƒAƒbƒvƒOƒŒ[ƒh‰æ–Ê
+//ï¿½Aï¿½bï¿½vï¿½Oï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½
 void UI::UpGradeDraw() const
 {
 	int Dis = 140;
 
-	//ƒJ[ƒ\ƒ‹
+	//ï¿½Jï¿½[ï¿½\ï¿½ï¿½
 	DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * MenuNum, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[4], TRUE);
 
-	//‹­‰»”ï—p•\¦
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½\ï¿½ï¿½
 	for (int i = 0; i < 4; i++)
 	{
 		DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2, 1, 0, UpGradeImg[i], TRUE);
@@ -192,29 +201,29 @@ void UI::UpGradeDraw() const
 			DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 120, 1, 0, UpGradeTxt[i], TRUE);
 			if (i != 3)
 			{
-				//‹­‰»”ï—p•\¦
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½\ï¿½ï¿½
 				if (i == 2 && 5 <= nowstat[2]) {}
-				//3Œ…‚Ìê‡
+				//3ï¿½ï¿½ï¿½Ìê‡
 				else if (cost[i] >= 100)
 				{
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 100 % 10], TRUE);
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10], TRUE);
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
 				}
-				//2Œ…‚Ìê‡
+				//2ï¿½ï¿½ï¿½Ìê‡
 				else if (cost[i] >= 10)
 				{
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] / 10 % 10], TRUE);
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
 				}
-				//1Œ…‚Ìê‡
+				//1ï¿½ï¿½ï¿½Ìê‡
 				else
 				{
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 + 90, 2, 0, Number[cost[i] % 10], TRUE);
 				}
 
-				//Œ»İƒXƒe[ƒ^ƒX‚Ì•\¦
-				//3Œ…‚Ìê‡
+				//ï¿½ï¿½ï¿½İƒXï¿½eï¿½[ï¿½^ï¿½Xï¿½Ì•\ï¿½ï¿½
+				//3ï¿½ï¿½ï¿½Ìê‡
 				if (!(i == 2 && 5 <= nowstat[2]))
 				{
 					if (nowstat[i] >= 100)
@@ -223,13 +232,13 @@ void UI::UpGradeDraw() const
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
 					}
-					//2Œ…‚Ìê‡
+					//2ï¿½ï¿½ï¿½Ìê‡
 					else if (nowstat[i] >= 10)
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 52, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
 					}
-					//1Œ…‚Ìê‡
+					//1ï¿½ï¿½ï¿½Ìê‡
 					else
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 40, SCREEN_HEIGHT / 2 - 70, 1, 0, Number[nowstat[i] % 10], TRUE);
@@ -238,18 +247,18 @@ void UI::UpGradeDraw() const
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 20, SCREEN_HEIGHT / 2 - 70, 2, 0, Sign[3], TRUE);
 				}
 
-				//‹­‰»ŒãƒXƒe[ƒ^ƒX‚Ì•\¦
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ì•\ï¿½ï¿½
 				switch (i)
 				{
-				case 0:	//‘Ì—Í
-					//3Œ…‚Ìê‡
+				case 0:	//ï¿½Ì—ï¿½
+					//3ï¿½ï¿½ï¿½Ìê‡
 					if (nowstat[i] + 5 >= 100)
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 100 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) % 10], TRUE);
 					}
-					//2Œ…‚Ìê‡
+					//2ï¿½ï¿½ï¿½Ìê‡
 					else
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 5) / 10 % 10], TRUE);
@@ -257,29 +266,29 @@ void UI::UpGradeDraw() const
 					}
 					break;
 
-				case 1:	//UŒ‚—Í
-				//3Œ…‚Ìê‡
+				case 1:	//ï¿½Uï¿½ï¿½ï¿½ï¿½
+				//3ï¿½ï¿½ï¿½Ìê‡
 					if (nowstat[i] + 1 >= 100)
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 100 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 60, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
 					}
-					//2Œ…‚Ìê‡
+					//2ï¿½ï¿½ï¿½Ìê‡
 					else if (nowstat[i] + 1 >= 10)
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) / 10 % 10], TRUE);
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 35, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
 					}
-					//1Œ…‚Ìê‡
+					//1ï¿½ï¿½ï¿½Ìê‡
 					else
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i + 10, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i] + 1) % 10], TRUE);
 					}
 					break;
 
-				case 2:	//ƒ|[ƒVƒ‡ƒ“
-				//Å‘å‹­‰»‚Ìê‡
+				case 2:	//ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½
+				//ï¿½Å‘å‹­ï¿½ï¿½ï¿½Ìê‡
 					if (5 <= nowstat[i])
 					{
 						DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i, SCREEN_HEIGHT / 2 - 80, 2, 0, Number[(nowstat[i]) % 10], TRUE);
@@ -299,7 +308,7 @@ void UI::UpGradeDraw() const
 					break;
 				}
 
-				//ƒVƒƒ[ƒhA‹L†
+				//ï¿½Vï¿½ï¿½ï¿½[ï¿½hï¿½Aï¿½Lï¿½ï¿½
 				if (!(i == 2 && 5 <= nowstat[2])) {
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 10, SCREEN_HEIGHT / 2 + 95, 1, 0, Sign[0], TRUE);
 					DrawRotaGraph(SCREEN_WIDTH / 2 - Dis * 1.5 + Dis * i - 30, SCREEN_HEIGHT / 2 + 90, 1, 0, ItemImg[1], TRUE);
@@ -359,7 +368,7 @@ void UI::PauseDraw() const
 {
 	int Dis = 100;
 
-	//ƒJ[ƒ\ƒ‹
+	//ï¿½Jï¿½[ï¿½\ï¿½ï¿½
 	DrawExtendGraph(SCREEN_WIDTH / 2 - Dis * 2, SCREEN_HEIGHT / 2 - Dis + (Dis * 2 * MenuNum) ,
 					SCREEN_WIDTH / 2 + Dis * 2, SCREEN_HEIGHT / 2 + (Dis * 2 * MenuNum), UpGradeImg[5], true);
 	
@@ -418,13 +427,13 @@ void UI::Draw() const
 	DrawFormatString(0, 300, GetColor(255, 255, 255), "%.1f", PlayerHP);
 	DrawFormatString(0, 400, GetColor(255, 255, 255), "%d", Damage);*/
 
-	//ƒ|[ƒVƒ‡ƒ“g—p‚Ìœ
+	//ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½Ìï¿½
 	for (int i = 0; i < PotionMax; i++)
 	{
 		DrawCircle(165 + (i * 55), 75, 5, GetColor(255, 0, 0), TRUE);
 	}
 
-	//ƒ|[ƒVƒ‡ƒ“‰æ‘œ‚Ì•\¦---------------
+	//ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½æ‘œï¿½Ì•\ï¿½ï¿½---------------
 
 	for (int i = 0; i < PotionCount; i++)
 	{
@@ -436,7 +445,7 @@ void UI::Draw() const
 	DrawRotaGraph(140, 100, 0.9, 0, ButtonImg[0], TRUE);
 	//-----------------------------------
 
-	//•Ší-------------------------------------------------
+	//ï¿½ï¿½ï¿½ï¿½-------------------------------------------------
 	DrawCircle(75, 50, 50, GetColor(35, 59, 108), TRUE);
 	switch (Weapon)
 	{
@@ -479,7 +488,7 @@ void UI::Draw() const
 
 	DrawRotaGraph(15, 50, 1.5, 0, ButtonImg[1], TRUE);
 
-	//ƒpƒbƒVƒu
+	//ï¿½pï¿½bï¿½Vï¿½u
 	for (int i = 0; i < 4; i++)
 	{
 		if (passive[i].Kinds != NONE)
@@ -490,54 +499,54 @@ void UI::Draw() const
 	}
 	//-----------------------------------------------------
 
-	//HPÔ
+	//HPï¿½ï¿½
 	DrawBox(135, 10, 535, 50, GetColor(255, 0, 0), TRUE);
 
-	//HP—Î
+	//HPï¿½ï¿½
 	DrawBox(135, 10, 135 + (PlayerHP / MaxHP) * 400, 50, GetColor(0, 255, 0), TRUE);
 
-	//HPƒo[‚Ì˜g(”’)
+	//HPï¿½oï¿½[ï¿½Ì˜g(ï¿½ï¿½)
 	DrawBox(135, 10, 135 + (PlayerHP / MaxHP) * 400, 50, GetColor(255, 255, 255), FALSE);
 
-	//HP•\¦
+	//HPï¿½\ï¿½ï¿½
 	int danger = 0;
 	if (PlayerHP / MaxHP <= 0.21)danger = 33;
 	else if (PlayerHP / MaxHP <= 0.41)danger = 22;
 
-	//100‚ÌˆÊ
+	//100ï¿½Ìˆï¿½
 	if (100 <= MaxHP)
 	{
 		if (100 <= PlayerHP)DrawRotaGraph(150, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10 + danger], TRUE);
 		DrawRotaGraph(218, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10], TRUE);
 	}
 
-	//10‚ÌˆÊ
+	//10ï¿½Ìˆï¿½
 	if(10 <= PlayerHP)DrawRotaGraph(167, 30, 1.5, 0, Number[(int)PlayerHP / 10 % 10 + danger], TRUE);
 	DrawRotaGraph(235, 30, 1.5, 0, Number[(int)MaxHP / 10 % 10 + danger], TRUE);
 
-	//1‚ÌˆÊ
+	//1ï¿½Ìˆï¿½
 	DrawRotaGraph(184, 30, 1.5, 0, Number[(int)PlayerHP % 10 + danger], TRUE);
 	DrawRotaGraph(252, 30, 1.5, 0, Number[(int)MaxHP % 10 + danger], TRUE);
 
-	//ƒXƒ‰ƒbƒVƒ…
+	//ï¿½Xï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½
 	DrawRotaGraph(201, 30, 1.5, 0, Number[10 + danger], TRUE);
 
 
-	//ƒVƒƒ[ƒhŠ”
-	//ƒVƒƒ[ƒh
+	//ï¿½Vï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½Vï¿½ï¿½ï¿½[ï¿½h
 	DrawRotaGraph(225, 125, 1, 0, ItemImg[1], TRUE);
 
-	//~ˆó
+	//ï¿½~ï¿½ï¿½
 	DrawRotaGraph(245, 130, 1, 0, Sign[0], TRUE);
 
-	//100‚ÌˆÊ
+	//100ï¿½Ìˆï¿½
 	if (100 <= Shard) DrawRotaGraph(262, 125, 1.5, 0, Number[Shard / 100 % 10], TRUE);
 
-	//10‚ÌˆÊ
+	//10ï¿½Ìˆï¿½
 	if (100 <= Shard)DrawRotaGraph(279, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
 	else if (10 <= Shard)DrawRotaGraph(262, 125, 1.5, 0, Number[Shard / 10 % 10], TRUE);
 
-	//1‚ÌˆÊ
+	//1ï¿½Ìˆï¿½
 	if (100 <= Shard)DrawRotaGraph(296, 125, 1.5, 0, Number[Shard % 10], TRUE);
 	else if (10 <= Shard)DrawRotaGraph(279, 125, 1.5, 0, Number[Shard % 10], TRUE);
 	else DrawRotaGraph(262, 125, 1.5, 0, Number[Shard % 10], TRUE);

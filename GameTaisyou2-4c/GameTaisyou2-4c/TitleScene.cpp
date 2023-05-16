@@ -20,6 +20,12 @@ Title::Title() {
 	Debug_font= LoadGraph("images/null.png");
 
 	click_sound = LoadSoundMem("sound/click.mp3");
+	CursorSE = LoadSoundMem("sound/Cursor.mp3");
+
+	TitleBGM = LoadSoundMem("sound/TitleBGM.mp3");
+	PlaySoundMem(TitleBGM, DX_PLAYTYPE_LOOP);
+	ChangeVolumeSoundMem(255 * 70 / 100, TitleBGM);
+
 }
 
 AbstractScene* Title::Update() {
@@ -27,10 +33,12 @@ AbstractScene* Title::Update() {
 	JoyPadY = PAD_INPUT::GetPadThumbLY();
 
 	if (JoyPadY > MARGIN && interval >= 30) {
+		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		select--;
 		interval = 0;
 	}
 	if (JoyPadY < -MARGIN && interval >= 30) {
+		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		select++;
 		interval = 0;
 	}
@@ -44,6 +52,7 @@ AbstractScene* Title::Update() {
 	if (Tutorial_flg == false) {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
 			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
+			StopSoundMem(TitleBGM);
 			if (TITLE_MENU::START == Menu_Number) Tutorial_flg = true;
 			if (TITLE_MENU::Debug == Menu_Number)return new TestMap();
 			interval = 0;
@@ -52,8 +61,9 @@ AbstractScene* Title::Update() {
 	if (Tutorial_flg == true) {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
 			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
-			if (TITLE_MENU::START == Menu_Number) return new GameMainScene(); //ƒQ[ƒ€‚ªƒXƒ^[ƒg‚·‚é
-			if (TITLE_MENU::Debug == Menu_Number)return new HowToMap(); //ƒ`ƒ…[ƒgƒŠƒAƒ‹‚ªƒXƒ^[ƒg‚·‚é
+			StopSoundMem(TitleBGM);
+			if (TITLE_MENU::START == Menu_Number) return new GameMainScene(); //ï¿½Qï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½^ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½
+			if (TITLE_MENU::Debug == Menu_Number)return new HowToMap(); //ï¿½`ï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½^ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½
 			interval = 0;
 		}
 

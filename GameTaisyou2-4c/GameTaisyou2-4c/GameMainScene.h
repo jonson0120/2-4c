@@ -36,7 +36,7 @@ private:
 	//Enemy2 enemy2;
 	UI ui;
 	TreasureBox** treasurebox;
-
+	int Restarea;
 	int CameraX;
 	int CameraY;
 
@@ -62,8 +62,13 @@ private:
 	int BF_font;
 	int Chara[28];		//文字
 
-	int stage_bgm;
-	int safezone_bgm;
+	int DoorSE;
+	int NextMapSE;
+	int AttackSE;
+	int TreasureSE;
+	int DamageSE;
+
+	int DungeonBGM;
 
 public:
 	GameMainScene();
