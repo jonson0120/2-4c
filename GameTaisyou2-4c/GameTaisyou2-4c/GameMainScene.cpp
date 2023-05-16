@@ -86,7 +86,7 @@ GameMainScene::GameMainScene()
 
 	time = 0;
 
-
+	BF_font = LoadGraph("images/BF.png");
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, hierarchy_font);
 	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 
@@ -518,6 +518,7 @@ void GameMainScene::Draw() const
 	if (UpGrade)ui.UpGradeDraw();
 	if (Pause)ui.PauseDraw();
 
+	DrawRotaGraph(1030, 50, 1.15, 0, BF_font, TRUE);
 	DrawRotaGraph(1200, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
 	DrawRotaGraph(1140, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
 

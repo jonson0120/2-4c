@@ -59,6 +59,7 @@ private:
 	int count;
 
 	int hierarchy_font[44]; //階層用フォント画像変数
+	int BF_font;
 	int Chara[28];		//文字
 
 	int stage_bgm;
