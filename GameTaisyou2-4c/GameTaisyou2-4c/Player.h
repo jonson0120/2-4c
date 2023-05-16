@@ -225,6 +225,13 @@ public:
 	//敵との当たり判定(返り値　0：ダメージを受けた　1：回避した　2：バリアで防いだ)
 	int HitEnemy(float damage, int EneX);
 
+	//ノックバック
+	void SetKnockBack(float power,int EneX)
+	{
+		if (EneX < x)KnockBack = power;
+		else KnockBack = -power;
+	}
+
 	//全回復
 	void Reset() 
 	{

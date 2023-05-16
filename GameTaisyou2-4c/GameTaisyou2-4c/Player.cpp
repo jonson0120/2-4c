@@ -8,7 +8,7 @@
 Player::Player() {
 	Walk = 0;
 
-	stat.Hp = 100;
+	stat.Hp = 10;
 	stat.MaxHp = stat.Hp;
 	stat.Atk = 1;
 	stat.Power = 0;
@@ -1003,7 +1003,7 @@ void Player::DrawMace(int fix)const
 				break;
 			}
 
-		case 5:
+		case 3:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1057,7 +1057,7 @@ void Player::DrawMace(int fix)const
 				break;
 			}
 
-		case 8:
+		case 5:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1707,12 +1707,12 @@ void Player::MaceAtk()
 		}
 		else if (Attack < 40)
 		{
-			stat.Power = 5;
+			stat.Power = 3;
 			Attack = 20;
 		}
 		else
 		{
-			stat.Power = 8;
+			stat.Power = 5;
 			Attack = 20;
 		}
 	}
@@ -1838,7 +1838,7 @@ void Player::MaceAtk()
 				break;
 			}
 
-		case 5:
+		case 3:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1876,7 +1876,7 @@ void Player::MaceAtk()
 				break;
 			}
 
-		case 8:
+		case 5:
 			switch (TurnFlg)
 			{
 			case true:
@@ -2525,7 +2525,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-			case 5:
+			case 3:
 				switch (TurnFlg)
 				{
 				case true:
@@ -2583,7 +2583,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-			case 8:
+			case 5:
 				switch (TurnFlg)
 				{
 				case true:

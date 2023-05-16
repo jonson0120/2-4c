@@ -36,6 +36,11 @@ private:
 	float ClawSpd = 0;			//攻撃速度
 	int ClawImg[6];				//爪画像
 
+	bool Roar = false;			//咆哮
+	int Oldx = 0;				//1フレーム前のx座標
+	int RoarTime = 0;			//咆哮までの時間
+	int RoarImg;				//咆哮画像
+
 	//-----------------------
 
 	bool E_AttackFlg;

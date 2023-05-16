@@ -28,19 +28,8 @@ Boss::Boss(int level) : Enemy()
 	Height = 300;
 
 	//敵ステータス
-	Enemy_Hp = 5;
-
-	//敵攻撃力
-	Power = 1;
-
-	//レベルによる強化
-	int Addhp = level / 3 + (level / 10 * 10);
-	int addAtk = level / 4 + (level / 10);
-
-	Enemy_Hp += Addhp;
-	Power += addAtk;
-
-	Power = 1;
+	Enemy_Hp = 700;
+	Power = 15;
 
 	MakeEnemy = FALSE;
 
@@ -66,6 +55,8 @@ Boss::Boss(int level) : Enemy()
 
 	LoadDivGraph("images/claw.png", 6, 6, 1, 120, 330, ClawImg);
 
+	RoarImg = LoadGraph("images/ripples.png");
+
 	Anim = 0;
 	Turnflg = false;
 	if (GetRand(1))Turnflg = !Turnflg;
@@ -82,12 +73,23 @@ void Boss::Update(Player* player)
 	//攻撃に移行
 	int sight = 300;	//プレイヤーを認識する範囲
 	ClawTime++;
+
+	if (300 < RoarTime && !E_AttackFlg && !Roar) 
+	{
+		E_AttackFlg = true;
+		Roar = true;
+	}
+	//爪攻撃
 	if (ClawCool < ClawTime && !Claw && !E_AttackFlg)
 	{
+		if (player->GetX() < enex) Turnflg = true;
+		else Turnflg = false;
+
 		E_AttackFlg = true;
 		Claw = true;
 		ClawSpd = 0;
 	}
+	//飛び掛かり
 	else if (enex + sight >= player->GetX() && enex - sight <= player->GetX() &&
 			 eney + sight >= player->GetY() && eney - sight <= player->GetY() && !E_AttackFlg && !AttackCool && !Pounce)
 	{
@@ -185,6 +187,7 @@ void Boss::Update(Player* player)
 			{
 				if (Attack == 60)
 				{
+
 					ClawSpd += 0.1;
 
 					if (!Turnflg)ClawX = enex + 260;
@@ -202,7 +205,22 @@ void Boss::Update(Player* player)
 			}
 
 		}
+
+		if (Roar)
+		{
+			if (Attack == 30)
+			{
+				player->SetKnockBack(30, enex);
+			}
+			else if (60 < Attack)
+			{
+				Roar = false;
+				E_AttackFlg = false;
+				RoarTime = 0;
+			}
+		}
 	}
+	else Attack = 0;
 
 	if (0 < ClawSpd)
 	{
@@ -244,6 +262,8 @@ void Boss::Update(Player* player)
 	if (AttackCool)AttackCool--;
 
 	Anim++;
+	if (enex == Oldx)RoarTime++;
+	Oldx = enex;
 }
 
 void Boss::FixX() 
@@ -333,6 +353,16 @@ void Boss::Draw(int x, int y) const
 			if (Attack < 60) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[3], TRUE, !Turnflg, false);
 			else if (Attack < 90) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[4], TRUE, !Turnflg, false);
 			else DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[0], TRUE, !Turnflg, false);
+		}
+		else if (Roar)
+		{
+			if (Attack < 30) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[9], TRUE, !Turnflg, false);
+			else
+			{
+				DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[8], TRUE, !Turnflg, false);
+				if (Turnflg)DrawRotaGraph(DrawX - 200, DrawY, Attack - 30, 0, RoarImg, TRUE, !Turnflg, false);
+				else	   DrawRotaGraph(DrawX + 200, DrawY, Attack - 30, 0, RoarImg, TRUE, !Turnflg, false);
+			}
 		}
 		else if (Claw)
 		{
