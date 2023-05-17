@@ -79,7 +79,7 @@ void Title::Draw() const{
 	/*DrawFormatString(540, 100, 0xffffff, "TITLE");
 	DrawFormatString(540, 360, 0xffffff, "START");
 	DrawFormatString(540, 460, 0xffffff, "Debug");*/
-	DrawGraph(380, 100, Title_font, TRUE);
+	DrawRotaGraph(SCREEN_WIDTH / 2, 200, 1, 0, Title_font, TRUE);
 	if (Tutorial_flg == false) {
 		DrawGraph(440, 360, Start_font, TRUE);
 		DrawGraph(440, 460, Debug_font, TRUE);

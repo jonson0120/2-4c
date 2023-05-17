@@ -70,7 +70,8 @@ private:
 	int DamageSE;
 
 	int DungeonBGM;
-
+	int BossBGM;
+	int SafeZoneBGM;
 public:
 	GameMainScene();
 	//デストラクト

@@ -41,14 +41,14 @@ enum struct Pause
 
 enum Enchant
 {
-	ATTACK,		//UŒ‚‹­‰»
-	DEFENSE,	//”íƒ_ƒŒyŒ¸
-	GREED,		//ƒVƒƒ[ƒhƒhƒƒbƒv‘‰Á
-	BARRIER,		//ŠK‘wˆÚ“®ŽžƒoƒŠƒAŒø‰Ê
-	VAMP,		//UŒ‚Žž‰ñ•œ
-	REPAIR,		//Ž©“®‰ñ•œ
-	DODGE,		//Šm—¦‰ñ”ð
-	NONE		//ƒXƒLƒ‹‚È‚µ
+	ATTACK,		//ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	DEFENSE,	//ï¿½ï¿½_ï¿½ï¿½ï¿½yï¿½ï¿½
+	GREED,		//ï¿½Vï¿½ï¿½ï¿½[ï¿½hï¿½hï¿½ï¿½ï¿½bï¿½vï¿½ï¿½ï¿½ï¿½
+	BARRIER,		//ï¿½Kï¿½wï¿½Ú“ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½
+	VAMP,		//ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	REPAIR,		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	DODGE,		//ï¿½mï¿½ï¿½ï¿½ï¿½ï¿½
+	NONE		//ï¿½Xï¿½Lï¿½ï¿½ï¿½È‚ï¿½
 };
 
 struct Passive 
@@ -65,20 +65,20 @@ struct Range
 
 struct Stat
 {
-	int Hp;			//‘Ì—Í
-	int MaxHp;		//Å‘å‘Ì—Í
-	int Atk;		//Šî‘bUŒ‚—Í
-	float Power;	//UŒ‚”{—¦
-	int Potion;		//ƒ|[ƒVƒ‡ƒ“ŠŽ”
-	int PotionMax;	//ƒ|[ƒVƒ‡ƒ“Å‘åŠŽ”
-	float PotionPower;//ƒ|[ƒVƒ‡ƒ“Œø‰Ê—Ê
-	int Shard;		//ƒVƒƒ[ƒhŠŽ”
+	int Hp;			//ï¿½Ì—ï¿½
+	int MaxHp;		//ï¿½Å‘ï¿½Ì—ï¿½
+	int Atk;		//ï¿½ï¿½bï¿½Uï¿½ï¿½ï¿½ï¿½
+	float Power;	//ï¿½Uï¿½ï¿½ï¿½{ï¿½ï¿½
+	int Potion;		//ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int PotionMax;	//ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Å‘åŠï¿½ï¿½ï¿½ï¿½
+	float PotionPower;//ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê—ï¿½
+	int Shard;		//ï¿½Vï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 };
 
 struct LocNum
 {
-	int X;		//XÀ•W
-	int Y;		//YÀ•W
-	int NumA;	//”CˆÓ‚Ì”’l
-	int NumB;	//”CˆÓ‚Ì”’l
+	int X;		//Xï¿½ï¿½ï¿½W
+	int Y;		//Yï¿½ï¿½ï¿½W
+	int NumA;	//ï¿½Cï¿½Ó‚Ìï¿½ï¿½l
+	int NumB;	//ï¿½Cï¿½Ó‚Ìï¿½ï¿½l
 };

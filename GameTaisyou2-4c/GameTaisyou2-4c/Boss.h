@@ -8,50 +8,50 @@ class Player;
 class Boss :public Enemy
 {
 private:
-	int image;			//‰æ‘œ
-	int EImages[10];		//‰æ‘œ
-	int Anim;			//ƒAƒjƒ[ƒVƒ‡ƒ“
+	int image;			//ï¿½æ‘œ
+	int EImages[10];		//ï¿½æ‘œ
+	int Anim;			//ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½
 
-	int DropItem_Image;	//ƒhƒƒbƒvƒAƒCƒeƒ€
-	int enex, eney;		//X,YÀ•W
-	int Width, Height;	//“G‚Ì‚‚³
-	int direction;		//“G‚ÌŒü‚«
+	int DropItem_Image;	//ï¿½hï¿½ï¿½ï¿½bï¿½vï¿½Aï¿½Cï¿½eï¿½ï¿½
+	int enex, eney;		//X,Yï¿½ï¿½ï¿½W
+	int Width, Height;	//ï¿½Gï¿½Ìï¿½ï¿½ï¿½
+	int direction;		//ï¿½Gï¿½ÌŒï¿½ï¿½ï¿½
 
-	int Power;			//UŒ‚—Í
+	int Power;			//ï¿½Uï¿½ï¿½ï¿½ï¿½
 
-	//s“®§Œä---------------
-	int Movecnt = 0;			//ˆÚ“®Ø‚è‘Ö‚¦ŠÔ
-	int Moveswitch = 60;		//ˆÚ“®Ø‚è‘Ö‚¦ƒ^ƒCƒ~ƒ“ƒO
-	int MoveAng = 1;			//ˆÚ“®•ûŒü(1‚©-1)
+	//ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½---------------
+	int Movecnt = 0;			//ï¿½Ú“ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½ï¿½ï¿½
+	int Moveswitch = 60;		//ï¿½Ú“ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½^ï¿½Cï¿½~ï¿½ï¿½ï¿½O
+	int MoveAng = 1;			//ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½-1)
 
-	bool Pounce = false;			//”ò‚ÑŠ|‚©‚è
-	int JumpDis = 0;			//”ò‚ÑŠ|‚©‚è‹——£
+	bool Pounce = false;			//ï¿½ï¿½ÑŠ|ï¿½ï¿½ï¿½ï¿½
+	int JumpDis = 0;			//ï¿½ï¿½ÑŠ|ï¿½ï¿½ï¿½è‹—ï¿½ï¿½
 
-	bool Claw = false;			//’ÜUŒ‚
-	bool ClawTurn = false;		//’ÜUŒ‚•ûŒü
-	int ClawCool = 450;			//’ÜUŒ‚•p“x
-	int ClawTime = 0;			//’ÜUŒ‚ŠÔ
-	float ClawX = 0;				//UŒ‚ˆÊ’u
-	float ClawY = 0;				//UŒ‚ˆÊ’u
-	float ClawSpd = 0;			//UŒ‚‘¬“x
-	int ClawImg[6];				//’Ü‰æ‘œ
+	bool Claw = false;			//ï¿½ÜUï¿½ï¿½
+	bool ClawTurn = false;		//ï¿½ÜUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int ClawCool = 450;			//ï¿½ÜUï¿½ï¿½ï¿½pï¿½x
+	int ClawTime = 0;			//ï¿½ÜUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float ClawX = 0;				//ï¿½Uï¿½ï¿½ï¿½Ê’u
+	float ClawY = 0;				//ï¿½Uï¿½ï¿½ï¿½Ê’u
+	float ClawSpd = 0;			//ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½x
+	int ClawImg[6];				//ï¿½Ü‰æ‘œ
 
-	bool Roar = false;			//™ôšK
-	int Oldx = 0;				//1ƒtƒŒ[ƒ€‘O‚ÌxÀ•W
-	int RoarTime = 0;			//™ôšK‚Ü‚Å‚ÌŠÔ
-	int RoarImg;				//™ôšK‰æ‘œ
+	bool Roar = false;			//ï¿½ï¿½K
+	int Oldx = 0;				//1ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Oï¿½ï¿½xï¿½ï¿½ï¿½W
+	int RoarTime = 0;			//ï¿½ï¿½Kï¿½Ü‚Å‚Ìï¿½ï¿½ï¿½
+	int RoarImg;				//ï¿½ï¿½Kï¿½æ‘œ
 
 	//-----------------------
 
 	bool E_AttackFlg;
 	bool HighJump;
 	bool LowJump;
-	int Attack;			//UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“
+	int Attack;			//ï¿½Uï¿½ï¿½ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½
 	int AttackSpeed;
-	float AttackVec;		//UŒ‚Šp“x
+	float AttackVec;		//ï¿½Uï¿½ï¿½ï¿½pï¿½x
 	int Dive;
 
-	bool Turnflg;		//‰æ‘œ”½“]
+	bool Turnflg;		//ï¿½æ‘œï¿½ï¿½ï¿½]
 
 	int Player_Damage;
 	int Enemy_Damage;
@@ -63,14 +63,19 @@ private:
 
 	//Player player;
 
-	int AttackCool;	//UŒ‚ƒN[ƒ‹ƒ^ƒCƒ€
-	int HitCool;	//”í’eƒN[ƒ‹ƒ^ƒCƒ€
+	int AttackCool;	//ï¿½Uï¿½ï¿½ï¿½Nï¿½[ï¿½ï¿½ï¿½^ï¿½Cï¿½ï¿½
+	int HitCool;	//ï¿½ï¿½eï¿½Nï¿½[ï¿½ï¿½ï¿½^ï¿½Cï¿½ï¿½
 
-	float speed; //ˆÚ“®‘¬“x
-	float fall;	 //—‰º‘¬“x
-	int jump;	 //ƒWƒƒƒ“ƒv‰ñ”
+	float speed; //ï¿½Ú“ï¿½ï¿½ï¿½ï¿½x
+	float fall;	 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x
+	int jump;	 //ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½
 
-	int MapData[MAP_HEIGHT][MAP_WIDTH];	//ƒ}ƒbƒvƒf[ƒ^
+	int MapData[MAP_HEIGHT][MAP_WIDTH];	//ï¿½}ï¿½bï¿½vï¿½fï¿½[ï¿½^
+
+	int ClawSE;
+	int PounceSE;
+	int RoarSE;
+
 
 public:
 	Boss(int level);
@@ -85,7 +90,7 @@ public:
 
 	virtual int GetPower()const { return Power; }
 
-	//”í’eƒN[ƒ‹æ“¾
+	//ï¿½ï¿½eï¿½Nï¿½[ï¿½ï¿½ï¿½æ“¾
 	virtual int GetCool()const { return HitCool; }
 
 	virtual void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);

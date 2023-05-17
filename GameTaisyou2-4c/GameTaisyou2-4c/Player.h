@@ -17,6 +17,10 @@ private:
 	int KatanaSE;
 	int WeaponSE;
 	int ShardSE;
+	int DamageSE;
+	int DodgeSE;
+	int DefenseSE;
+
 
 	int Walk;	//歩行アニメーション管理
 
