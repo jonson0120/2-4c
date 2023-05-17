@@ -80,6 +80,9 @@ Player::Player() {
 
 	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
 	ShardSE = LoadSoundMem("sound/Shard.mp3");
+	DamageSE = LoadSoundMem("sound/Damage.mp3");
+	DodgeSE = LoadSoundMem("sound/Dodge.mp3");
+	DefenseSE = LoadSoundMem("sound/Defense.mp3");
 	
 	ChangeVolumeSoundMem(255 * 70 / 100, JumpSE);
 
@@ -366,7 +369,7 @@ void Player::Update() {
 		}
 
 		//壁で移動を止める
-		while (!MapData[y / 160][(x + Width / 2) / 160])
+		while (!MapData[y / 160][(x + Width / 2) / 160] && x + Width / 2 != 0)
 		{
 			x--;
 			speed = 0;
@@ -3123,7 +3126,7 @@ int Player::HitEnemy(float damage,int EneX)
 	if (GetRand(99) < dodge * 20 || Dodgespd) 
 	{
 		HitCool = 30;
-
+		PlaySoundMem(DodgeSE, DX_PLAYTYPE_BACK);
 		return 1;
 	}
 
@@ -3133,7 +3136,7 @@ int Player::HitEnemy(float damage,int EneX)
 		if (EneX < x)KnockBack = 12;
 		else KnockBack = -12;
 		HitCool = 30;
-
+		PlaySoundMem(DefenseSE, DX_PLAYTYPE_BACK);
 		return 2;
 	}
 
@@ -3147,6 +3150,7 @@ int Player::HitEnemy(float damage,int EneX)
 		else KnockBack = -12;
 		if (stat.Hp < 0)stat.Hp = 0;
 		HitCool = 30;
+		PlaySoundMem(DamageSE, DX_PLAYTYPE_BACK);
 		return 0;
 	}
 	return 0;

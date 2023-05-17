@@ -16,18 +16,18 @@ Boss::Boss(int level) : Enemy()
 
 	DropItem_Image = LoadGraph("shard.png", TRUE);
 
-	//“GÀ•W
+	//ï¿½Gï¿½ï¿½ï¿½W
 	enex = 0;
 	eney = 0;
 
-	//ƒ}ƒbƒvƒf[ƒ^
+	//ï¿½}ï¿½bï¿½vï¿½fï¿½[ï¿½^
 	MapData[eney][enex];
 
-	//“GƒTƒCƒY
+	//ï¿½Gï¿½Tï¿½Cï¿½Y
 	Width = 450;
 	Height = 300;
 
-	//“GƒXƒe[ƒ^ƒX
+	//ï¿½Gï¿½Xï¿½eï¿½[ï¿½^ï¿½X
 	Enemy_Hp = 20;
 	Power = 9;
 
@@ -35,25 +35,32 @@ Boss::Boss(int level) : Enemy()
 
 	E_AttackFlg = FALSE;
 
-	//UŒ‚ŠÖ˜A
+	//ï¿½Uï¿½ï¿½ï¿½Ö˜A
 	HighJump = false;
 	Attack = 0;
 
-	//UŒ‚Œã‚Ìd’¼ŠÔ
+	//ï¿½Uï¿½ï¿½ï¿½ï¿½Ìdï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	AttackCool = 0;
 
-	//”í’eŒã‚Ì–³“GŠÔ
+	//ï¿½ï¿½eï¿½ï¿½Ì–ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½
 	HitCool = 0;
 
-	//ˆÚ“®ŠÖ˜A
+	//ï¿½Ú“ï¿½ï¿½Ö˜A
 	speed = 0;
 	fall = 12;
 	jump = 0;
 
-	//‰æ‘œŠÖ˜A
+	//ï¿½æ‘œï¿½Ö˜A
 	LoadDivGraph("images/Boss.png", 10, 10, 1, 530, 360, EImages);
 
 	LoadDivGraph("images/claw.png", 6, 6, 1, 120, 330, ClawImg);
+
+	ClawSE = LoadSoundMem("sound/Claw.mp3");
+	RoarSE = LoadSoundMem("sound/Roar.mp3");
+	PounceSE = LoadSoundMem("sound/Pounce.mp3");
+	ChangeVolumeSoundMem(255 * 150 / 100, ClawSE);
+	ChangeVolumeSoundMem(255 * 150 / 100, RoarSE);
+	ChangeVolumeSoundMem(255 * 150 / 100, PounceSE);
 
 	RoarImg = LoadGraph("images/ripples.png");
 
@@ -64,14 +71,14 @@ Boss::Boss(int level) : Enemy()
 
 void Boss::Update(Player* player)
 {
-	//ƒWƒƒƒ“ƒv‹­“x
+	//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½x
 	float fallinit = 12;
 
-	//ƒvƒŒƒCƒ„[À•W
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½W
 	int PlayerX = player->GetX();
 
-	//UŒ‚‚ÉˆÚs
-	int sight = 300;	//ƒvƒŒƒCƒ„[‚ğ”F¯‚·‚é”ÍˆÍ
+	//ï¿½Uï¿½ï¿½ï¿½ÉˆÚs
+	int sight = 300;	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íˆï¿½
 	ClawTime++;
 
 	if (450 < RoarTime && !E_AttackFlg && !Roar) 
@@ -79,7 +86,7 @@ void Boss::Update(Player* player)
 		E_AttackFlg = true;
 		Roar = true;
 	}
-	//’ÜUŒ‚
+	//ï¿½ÜUï¿½ï¿½
 	if (ClawCool < ClawTime && !Claw && !E_AttackFlg)
 	{
 		if (player->GetX() < enex) Turnflg = true;
@@ -89,46 +96,46 @@ void Boss::Update(Player* player)
 		Claw = true;
 		ClawSpd = 0;
 	}
-	//”ò‚ÑŠ|‚©‚è
+	//ï¿½ï¿½ÑŠ|ï¿½ï¿½ï¿½ï¿½
 	else if (enex + sight >= player->GetX() && enex - sight <= player->GetX() &&
 			 eney + sight >= player->GetY() && eney - sight <= player->GetY() && !E_AttackFlg && !AttackCool && !Pounce)
 	{
-		//”F¯”ÍˆÍ“à‚É‚¢‚ê‚ÎUŒ‚ŠJn
+		//ï¿½Fï¿½ï¿½ï¿½ÍˆÍ“ï¿½É‚ï¿½ï¿½ï¿½ÎUï¿½ï¿½ï¿½Jï¿½n
 		E_AttackFlg = true;
 		Pounce = true;
 
-		//ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚­
+		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (player->GetX() < enex) Turnflg = true;
 		else Turnflg = false;
 	}
 	else if (!E_AttackFlg && !AttackCool) {
-		//’Êí‚ÌˆÚ“®----------
+		//ï¿½Êï¿½ÌˆÚ“ï¿½----------
 		Movecnt++;
 
 		if (PlayerX < enex)
 		{
-			int Dis = enex - PlayerX;	//ƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£‚ğæ‚é
+			int Dis = enex - PlayerX;	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ô‚Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			Turnflg = true;
-			if (Moveswitch <= Movecnt)	//MoveswitchˆÈãŒo‰ß‚µ‚½ˆÚ“®•ûŒü‚ğ•Ï‚¦‚é
+			if (Moveswitch <= Movecnt)	//Moveswitchï¿½Èï¿½oï¿½ß‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï‚ï¿½ï¿½ï¿½
 			{
 				if (Dis < 500) MoveAng = 1;
 				else MoveAng = -1;
 
 				Movecnt = 0;
-				Moveswitch = GetRand(60) + 30;	//•ûŒü“]Š·ƒ^ƒCƒ~ƒ“ƒO‚ğ•Ï‚¦‚é
+				Moveswitch = GetRand(60) + 30;	//ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½^ï¿½Cï¿½~ï¿½ï¿½ï¿½Oï¿½ï¿½Ï‚ï¿½ï¿½ï¿½
 			}
 		}
 		else
 		{
-			int Dis = PlayerX - enex;	//ƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£‚ğæ‚é
+			int Dis = PlayerX - enex;	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ô‚Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			Turnflg = false;
-			if (Moveswitch <= Movecnt)	//MoveswitchˆÈãŒo‰ß‚µ‚½ˆÚ“®•ûŒü‚ğ•Ï‚¦‚é
+			if (Moveswitch <= Movecnt)	//Moveswitchï¿½Èï¿½oï¿½ß‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï‚ï¿½ï¿½ï¿½
 			{
 				if (Dis < 500) MoveAng = -1;
 				else MoveAng = 1;
 
 				Movecnt = 0;
-				Moveswitch = GetRand(60) + 30;	//•ûŒü“]Š·ƒ^ƒCƒ~ƒ“ƒO‚ğ•Ï‚¦‚é
+				Moveswitch = GetRand(60) + 30;	//ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½^ï¿½Cï¿½~ï¿½ï¿½ï¿½Oï¿½ï¿½Ï‚ï¿½ï¿½ï¿½
 			}
 		}
 
@@ -137,18 +144,19 @@ void Boss::Update(Player* player)
 		//-------------------
 	}
 
-	//UŒ‚s“®
+	//ï¿½Uï¿½ï¿½ï¿½sï¿½ï¿½
 	if (E_AttackFlg)
 	{
 		Attack++;
 		if (Pounce)
 		{
-			//ƒWƒƒƒ“ƒv’¼‘O‚Ì‘Ò‹@
+			//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Oï¿½Ì‘Ò‹@
 			if (Attack <= 60)
 			{
-				JumpDis = (PlayerX - enex) / 15;	//ƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£‚ğæ‚é
+				JumpDis = (PlayerX - enex) / 15;	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ô‚Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if (Attack == 60)
 				{
+					
 					if (0 < JumpDis)Turnflg = false;
 					else Turnflg = true;
 				}
@@ -163,16 +171,17 @@ void Boss::Update(Player* player)
 					FixY();
 				}
 			}
-			//ƒWƒƒƒ“ƒv
+			//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½v
 			else if (100 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 			{
 				eney += 30;
 				FixY();
 			}
-			//UŒ‚I—¹
+			//ï¿½Uï¿½ï¿½ï¿½Iï¿½ï¿½
 			else if (90 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 			{
-				//ƒWƒƒƒ“ƒv‚µ‚Ä’…’n‚·‚ê‚ÎUŒ‚I—¹
+				//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Ä’ï¿½ï¿½nï¿½ï¿½ï¿½ï¿½ÎUï¿½ï¿½ï¿½Iï¿½ï¿½
+				PlaySoundMem(PounceSE, DX_PLAYTYPE_BACK);
 				E_AttackFlg = false;
 				AttackCool = 60;
 				Attack = 0;
@@ -183,7 +192,7 @@ void Boss::Update(Player* player)
 
 		else if (Claw)
 		{
-			//‘Ò‹@
+			//ï¿½Ò‹@
 			if (Attack <= 60 && ClawSpd == 0)
 			{
 				if (Attack == 60)
@@ -197,6 +206,7 @@ void Boss::Update(Player* player)
 					ClawY = eney;
 
 					ClawTurn = !Turnflg;
+					PlaySoundMem(ClawSE, DX_PLAYTYPE_BACK);
 				}
 			}
 			else if (80 < Attack)
@@ -212,6 +222,7 @@ void Boss::Update(Player* player)
 			if (Attack == 30)
 			{
 				player->SetKnockBack(30, enex);
+				PlaySoundMem(RoarSE, DX_PLAYTYPE_BACK);
 			}
 			else if (60 < Attack)
 			{
@@ -219,12 +230,12 @@ void Boss::Update(Player* player)
 				E_AttackFlg = false;
 				RoarTime = 0;
 
-				//”ò‚ÑŠ|‚©‚è‚É”h¶
+				//ï¿½ï¿½ÑŠ|ï¿½ï¿½ï¿½ï¿½É”hï¿½ï¿½
 				E_AttackFlg = true;
 				Pounce = true;
 				Attack = 50;
 
-				//ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚­
+				//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if (player->GetX() < enex) Turnflg = true;
 				else Turnflg = false;
 			}
@@ -248,14 +259,14 @@ void Boss::Update(Player* player)
 
 	FixX();
 
-	//—‰º‚ÆƒWƒƒƒ“ƒv
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ÆƒWï¿½ï¿½ï¿½ï¿½ï¿½v
 
 	if (fall < fallinit)
 	{
-		//—‰º‘¬“x‚ğ‰ÁZ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½Z
 		fall += (fallinit * 2) / 45;
 
-		//fallinit‰Á‘¬Å‘å’l
+		//fallinitï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å‘ï¿½l
 		if (fall > fallinit)
 		{
 			fall = fallinit;
@@ -267,7 +278,7 @@ void Boss::Update(Player* player)
 
 	FixY();
 
-	//UŒ‚‘Ò‹@ŠÔE–³“GŠÔ‚ğŒ¸‚ç‚·
+	//ï¿½Uï¿½ï¿½ï¿½Ò‹@ï¿½ï¿½ï¿½ÔEï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ç‚·
 	if (HitCool)HitCool--;
 	if (AttackCool)AttackCool--;
 
@@ -278,7 +289,7 @@ void Boss::Update(Player* player)
 
 void Boss::FixX() 
 {
-	//•Ç‚É‚ß‚è‚ñ‚¾‚É•â³
+	//ï¿½Ç‚É‚ß‚èï¿½ñ‚¾ï¿½ï¿½É•â³
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE])
 	{
@@ -286,7 +297,7 @@ void Boss::FixX()
 		speed = 0;
 	}
 
-	//•Ç‚É‚ß‚è‚ñ‚¾‚É•â³
+	//ï¿½Ç‚É‚ß‚èï¿½ñ‚¾ï¿½ï¿½É•â³
 	while (!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE] ||
 		!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE])
 	{
@@ -298,7 +309,7 @@ void Boss::FixX()
 
 void Boss::FixY()
 {
-	//•Ç‚É‚ß‚è‚ñ‚¾‚É•â³
+	//ï¿½Ç‚É‚ß‚èï¿½ñ‚¾ï¿½ï¿½É•â³
 	while ((!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex + 1 - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney - Height / 2) / BLOCK_SIZE][(enex - 1 + Width / 2) / BLOCK_SIZE]))
 	{
@@ -307,7 +318,7 @@ void Boss::FixY()
 		jump = 0;
 	}
 
-	//•Ç‚É‚ß‚è‚ñ‚¾‚É•â³
+	//ï¿½Ç‚É‚ß‚èï¿½ñ‚¾ï¿½ï¿½É•â³
 	while ((!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex - Width / 2) / BLOCK_SIZE]) ||
 		(!MapData[(eney + Height / 2) / BLOCK_SIZE][(enex + Width / 2) / BLOCK_SIZE]))
 	{
@@ -352,7 +363,7 @@ void Boss::Draw(int x, int y) const
 		int DrawX = enex - x + (SCREEN_WIDTH / 2);
 		int DrawY = eney - y + (SCREEN_HEIGHT / 2) + BLOCK_SIZE;
 
-		//“G‚Ì•\¦
+		//ï¿½Gï¿½Ì•\ï¿½ï¿½
 		if (!E_AttackFlg)
 		{
 			if (AttackCool)DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[2], TRUE, !Turnflg, false);
@@ -418,14 +429,14 @@ void Boss::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 	makeEnemy();
 }
 
-//‘Ì—ÍŠm”F
+//ï¿½Ì—ÍŠmï¿½F
 bool Boss::CheckHp() {
 	if (Enemy_Hp <= 0)return true;
 
 	return false;
 }
 
-//ƒvƒŒƒCƒ„[‚©‚ç‚ÌUŒ‚
+//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ÌUï¿½ï¿½
 void Boss::HitPlayer(float damage) {
 	if (!HitCool) {
 		Enemy_Hp -= damage;
@@ -433,7 +444,7 @@ void Boss::HitPlayer(float damage) {
 	}
 }
 
-//ƒvƒŒƒCƒ„[‚Ö‚ÌUŒ‚
+//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ö‚ÌUï¿½ï¿½
 bool Boss::EnemyAttack(int x, int y)
 {
 	if (Pounce)

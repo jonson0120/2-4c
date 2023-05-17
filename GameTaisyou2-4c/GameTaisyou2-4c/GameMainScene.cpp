@@ -111,10 +111,12 @@ GameMainScene::GameMainScene()
 	NextMapSE = LoadSoundMem("sound/NextMap.mp3");
 	AttackSE = LoadSoundMem("sound/Attack.mp3");
 	TreasureSE = LoadSoundMem("sound/Treasure.mp3");
-	DamageSE = LoadSoundMem("sound/Damage.mp3");
+	
 
 	DungeonBGM = LoadSoundMem("sound/Dungeon.mp3");
-
+	BossBGM = LoadSoundMem("sound/BOSS.mp3");
+	SafeZoneBGM = LoadSoundMem("sound/SafeZone.mp3");
+	ChangeVolumeSoundMem(255 * 79 / 100, BossBGM);
 
 	Exit_flg = true;
 	Anim_flg = true;
@@ -136,6 +138,7 @@ AbstractScene* GameMainScene::Update()
 		if (player.GetLife() <= 0)
 		{
 			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
 			return new GameOver();
 		}
 
@@ -177,7 +180,6 @@ AbstractScene* GameMainScene::Update()
 					{
 					case 0:	//普通に受けた
 						Damage[0] = { player.GetX(),player.GetY(),DMG,30 };
-						PlaySoundMem(DamageSE, DX_PLAYTYPE_BACK);
 						break;
 
 					case 1:	//回避した
@@ -386,13 +388,25 @@ AbstractScene* GameMainScene::Update()
 		ExitCheck();
 		if (Exit_flg == true)
 		{
-			MoveStop_flg = true;/*
-			if (51 == Level)
+			if (CheckSoundMem(SafeZoneBGM))
+			{
+				StopSoundMem(SafeZoneBGM);
+				PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
+			}
+			MoveStop_flg = true;
+			if (BOSS_LEVEL == Level&&!SafeZone)
 			{
 				StopSoundMem(NextMapSE);
 				StopSoundMem(DungeonBGM);
-				return new GameEnd();
-			}*/
+				PlaySoundMem(BossBGM, DX_PLAYTYPE_LOOP);
+			}
+			else if(SafeZone)
+			{
+				StopSoundMem(DungeonBGM);
+				PlaySoundMem(SafeZoneBGM, DX_PLAYTYPE_LOOP);
+			}
+
+			
 			NextMap();
 		}
 		else
@@ -465,6 +479,7 @@ AbstractScene* GameMainScene::Update()
 
 		case Pause::TITLE:
 			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
 			return new Title();
 			break;
 
@@ -489,6 +504,7 @@ AbstractScene* GameMainScene::Update()
 		{
 			StopSoundMem(NextMapSE);
 			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
 			return new GameEnd();
 		}
 	}
