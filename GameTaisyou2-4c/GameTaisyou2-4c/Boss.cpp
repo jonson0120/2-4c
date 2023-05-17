@@ -28,8 +28,8 @@ Boss::Boss(int level) : Enemy()
 	Height = 300;
 
 	//敵ステータス
-	Enemy_Hp = 20;
-	Power = 9;
+	Enemy_Hp = 1000;
+	Power = 10;
 
 	MakeEnemy = FALSE;
 

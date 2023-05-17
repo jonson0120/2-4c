@@ -37,11 +37,13 @@ AbstractScene* Title::Update() {
 		select--;
 		interval = 0;
 	}
-	if (JoyPadY < -MARGIN && interval >= 30) {
+	else if (JoyPadY < -MARGIN && interval >= 30) {
 		PlaySoundMem(CursorSE, DX_PLAYTYPE_BACK);
 		select++;
 		interval = 0;
 	}
+	
+	if (JoyPadY < MARGIN && -MARGIN < JoyPadY && !PAD_INPUT::OnPressed(XINPUT_BUTTON_B))interval = 30;
 
 	if (select == 0) Menu_Number = TITLE_MENU::START;
 	if (select == 1) Menu_Number = TITLE_MENU::Debug;

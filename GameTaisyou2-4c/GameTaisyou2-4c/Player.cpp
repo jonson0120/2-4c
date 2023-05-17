@@ -8,7 +8,7 @@
 Player::Player() {
 	Walk = 0;
 
-	stat.Hp = 100;
+	stat.Hp = 10;
 	stat.MaxHp = stat.Hp;
 	stat.Atk = 1;
 	stat.Power = 0;

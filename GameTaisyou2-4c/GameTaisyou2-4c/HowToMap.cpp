@@ -166,18 +166,25 @@ AbstractScene* HowToMap::Update()
 
 void HowToMap::Draw() const
 {
+
+	//柱を描画する
 	DrawGraph(BLOCK_SIZE * 22 - player.GetX() - 15, 360 + BLOCK_SIZE * 8 - player.GetY() + 110, MapImg[3], TRUE);
 	DrawGraph(BLOCK_SIZE * 28 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 110, MapImg[3], TRUE);
 	DrawGraph(BLOCK_SIZE * 35 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 110, MapImg[3], TRUE);
 	DrawGraph(BLOCK_SIZE * 38 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 110, MapImg[3], TRUE);
 	DrawGraph(BLOCK_SIZE * 43 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 110, MapImg[3], TRUE);
 
+	//ブロックを描画する
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
-		for (int j = 0; j < MAP_WIDTH_T; j++)
+		for (int j = 0; j < MAP_WIDTH_T + 10; j++)
 		{
-			if (ImgData[i][j] <= 1) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY() + 150, MapImg[ImgData[i][j]], TRUE);
-			else if (ImgData[i][j] == 5) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY() + 150, Block, TRUE);
+			if (j < MAP_WIDTH_T)
+			{
+				if (ImgData[i][j] <= 1) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY() + 150, MapImg[ImgData[i][j]], TRUE);
+				else if (ImgData[i][j] == 5) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY() + 150, Block, TRUE);
+			}
+			else DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY() + 150, Block, TRUE);
 		}
 	}
 
