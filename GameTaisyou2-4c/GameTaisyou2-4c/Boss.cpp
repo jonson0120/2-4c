@@ -24,12 +24,12 @@ Boss::Boss(int level) : Enemy()
 	MapData[eney][enex];
 
 	//敵サイズ
-	Width = 500;
+	Width = 450;
 	Height = 300;
 
 	//敵ステータス
-	Enemy_Hp = 700;
-	Power = 15;
+	Enemy_Hp = 20;
+	Power = 9;
 
 	MakeEnemy = FALSE;
 
@@ -74,7 +74,7 @@ void Boss::Update(Player* player)
 	int sight = 300;	//プレイヤーを認識する範囲
 	ClawTime++;
 
-	if (300 < RoarTime && !E_AttackFlg && !Roar) 
+	if (450 < RoarTime && !E_AttackFlg && !Roar) 
 	{
 		E_AttackFlg = true;
 		Roar = true;
@@ -155,18 +155,18 @@ void Boss::Update(Player* player)
 			}
 			else if (Attack <= 90)
 			{
-				if (Attack < 75)
+				if (Attack < 80)
 				{
 					enex += JumpDis;
 					FixX();
-					eney -= 30;
+					eney -= 25;
 					FixY();
 				}
 			}
 			//ジャンプ
-			else if (90 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+			else if (100 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 			{
-				eney += 24;
+				eney += 30;
 				FixY();
 			}
 			//攻撃終了
@@ -177,6 +177,7 @@ void Boss::Update(Player* player)
 				AttackCool = 60;
 				Attack = 0;
 				Pounce = false;
+				ClawTime += 20;
 			}
 		}
 
@@ -217,6 +218,15 @@ void Boss::Update(Player* player)
 				Roar = false;
 				E_AttackFlg = false;
 				RoarTime = 0;
+
+				//飛び掛かりに派生
+				E_AttackFlg = true;
+				Pounce = true;
+				Attack = 50;
+
+				//プレイヤーの方向を向く
+				if (player->GetX() < enex) Turnflg = true;
+				else Turnflg = false;
 			}
 		}
 	}
@@ -351,7 +361,7 @@ void Boss::Draw(int x, int y) const
 		else if(Pounce)
 		{
 			if (Attack < 60) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[3], TRUE, !Turnflg, false);
-			else if (Attack < 90) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[4], TRUE, !Turnflg, false);
+			else if (Attack < 100) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[4], TRUE, !Turnflg, false);
 			else DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[0], TRUE, !Turnflg, false);
 		}
 		else if (Roar)
@@ -376,8 +386,8 @@ void Boss::Draw(int x, int y) const
 		int cX = ClawX - x + (SCREEN_WIDTH / 2);
 		int cY = ClawY - y + (SCREEN_HEIGHT / 2) + BLOCK_SIZE;
 		int cAnim = 0;
-		if (ClawSpd < 3)cAnim = 0 + (Anim / 15 % 2);
-		else if (ClawSpd < 6)cAnim = 2 + (Anim / 15 % 2);
+		if (ClawSpd < 4)cAnim = 0 + (Anim / 15 % 2);
+		else if (ClawSpd < 8)cAnim = 2 + (Anim / 15 % 2);
 		else cAnim = 4 + (Anim / 15 % 2);
 
 		DrawRotaGraph(cX, cY, 1, 0, ClawImg[cAnim], true, ClawTurn);
@@ -448,8 +458,8 @@ bool Boss::EnemyAttack(int x, int y)
 
 			int ColY = 0;
 
-			if (ClawSpd < 3)ColY = 330;
-			else if (ClawSpd < 6)ColY = 250;
+			if (ClawSpd < 4)ColY = 330;
+			else if (ClawSpd < 8)ColY = 250;
 			else ColY = 120;
 
 			if (DisX < 60 && DisY < ColY / 2)return true;

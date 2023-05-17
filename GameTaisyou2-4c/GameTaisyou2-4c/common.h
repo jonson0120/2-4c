@@ -14,6 +14,8 @@
 #define ENEMY_MAX 20
 #define TREASURE_MAX 3
 
+#define BOSS_LEVEL 30
+
 enum struct weapons
 {
 	dagger, //0

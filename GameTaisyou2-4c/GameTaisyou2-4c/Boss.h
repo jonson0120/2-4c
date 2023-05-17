@@ -29,7 +29,7 @@ private:
 
 	bool Claw = false;			//’ÜUŒ‚
 	bool ClawTurn = false;		//’ÜUŒ‚•ûŒü
-	int ClawCool = 600;			//’ÜUŒ‚•p“x
+	int ClawCool = 450;			//’ÜUŒ‚•p“x
 	int ClawTime = 0;			//’ÜUŒ‚ŠÔ
 	float ClawX = 0;				//UŒ‚ˆÊ’u
 	float ClawY = 0;				//UŒ‚ˆÊ’u

@@ -29,6 +29,7 @@ private:
 	Range Arm_L, Arm_R;
 	int ArmAngle_L, ArmAngle_R;
 
+	bool Move = true;	//入力受付
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
 	float Dodgespd;	//回避速度
@@ -244,5 +245,8 @@ public:
 		stat.Hp += vamp; 
 		if (stat.MaxHp < stat.Hp)stat.Hp = stat.MaxHp;
 	}
+
+	//入力可否の切り替え
+	void SwitchMove() { Move = !Move; }
 };
 

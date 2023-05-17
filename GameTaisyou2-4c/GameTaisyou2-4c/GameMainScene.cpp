@@ -131,16 +131,13 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 
-	
-
-	if (!Pause)
+	if (!Pause && !ClearGame)
 	{
 		if (player.GetLife() <= 0)
 		{
 			StopSoundMem(DungeonBGM);
 			return new GameOver();
 		}
-
 
 		if ((!MoveStop_flg || Bright == 0) && !UpGrade)
 		{
@@ -366,6 +363,21 @@ AbstractScene* GameMainScene::Update()
 			{
 				if(!SafeZone)PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
 				MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
+				if (Level == BOSS_LEVEL && !SafeZone)
+				{
+					for (int i = 0; i < ENEMY_MAX; i++)
+					{
+						if (enemy[i] != nullptr)enemy[i] = nullptr;
+					}
+
+					for (int i = 0; i < ITEM_MAX; i++)
+					{
+						item[i] = nullptr;
+					}
+
+					ClearGame = true;
+					player.SwitchMove();
+				}
 			}
 		}
 		/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
@@ -374,13 +386,13 @@ AbstractScene* GameMainScene::Update()
 		ExitCheck();
 		if (Exit_flg == true)
 		{
-			MoveStop_flg = true;
+			MoveStop_flg = true;/*
 			if (51 == Level)
 			{
 				StopSoundMem(NextMapSE);
 				StopSoundMem(DungeonBGM);
 				return new GameEnd();
-			}
+			}*/
 			NextMap();
 		}
 		else
@@ -432,7 +444,7 @@ AbstractScene* GameMainScene::Update()
 
 		if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_R) && !SafeZone)
 		{
-			Level = 49;
+			Level = BOSS_LEVEL - 1;
 		}
 
 		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
@@ -443,7 +455,7 @@ AbstractScene* GameMainScene::Update()
 #endif // DEBUG
 
 	}
-	else
+	else if(Pause)
 	{
 		switch (ui.PauseUI())
 		{
@@ -458,6 +470,26 @@ AbstractScene* GameMainScene::Update()
 
 		default:
 			break;
+		}
+	}
+	else if (ClearGame) 
+	{
+		player.Update();
+
+		CameraX = player.GetX();
+		CameraY = player.GetY();
+
+		for (int i = 0; i < ENEMY_MAX + 1; i++)
+		{
+			if (--Damage[i].NumB < 0)Damage[i].NumB = 0;
+		}
+
+		EndAnim++;
+		if (180 < EndAnim)
+		{
+			StopSoundMem(NextMapSE);
+			StopSoundMem(DungeonBGM);
+			return new GameEnd();
 		}
 	}
 
@@ -498,7 +530,7 @@ void GameMainScene::Draw() const
 {
 	//ボスエリアで描画方法を変える
 	bool boss = false;
-	if (Level == 50 && !SafeZone)boss = true;
+	if (Level == BOSS_LEVEL && !SafeZone)boss = true;
 
 	int fix = 0;
 	if (boss)fix = BLOCK_SIZE;
@@ -541,7 +573,7 @@ void GameMainScene::Draw() const
 	}
 
 	//出口アイコン描画
-	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg && Level != BOSS_LEVEL) {
 
 		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
 		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
@@ -792,7 +824,7 @@ void GameMainScene::MakeMap()
 	int x = player.GetX();
 
 	//マップデータ作成
-	if (!SafeZone && Level != 50)
+	if (!SafeZone && Level != BOSS_LEVEL)
 	{
 		do {
 
@@ -1070,11 +1102,11 @@ void GameMainScene::NextMap() {
 			treasurebox[i] = nullptr;
 		}
 
-		if (!SafeZone && Level != 50) {
+		if (!SafeZone && Level != BOSS_LEVEL) {
 			MakeEnemy();
 			treasurebox[0] = new TreasureBox();
 		}
-		else if (!SafeZone&&Level == 50) {
+		else if (!SafeZone && Level == BOSS_LEVEL) {
 			enemy[0] = new Boss(Level);
 		}
 

@@ -43,18 +43,14 @@ void Weapon::SetPassive(int Level)
 	{
 		if (i == 0) 
 		{
-			if (Level < 10)chance = 25;
-			else if (Level < 20)chance = 50;
-			else if (Level < 30)chance = 65;
-			else if (Level < 40)chance = 80;
+			if (Level < 10)chance = 50;
+			else if (Level < 20)chance = 75;
 			else chance = 100;
 		}
 		if (i == 1)
 		{
-			if (Level < 10)chance = 15;
-			else if (Level < 20)chance = 30;
-			else if (Level < 30)chance = 50;
-			else if (Level < 40)chance = 65;
+			if (Level < 10)chance = 25;
+			else if (Level < 20)chance = 50;
 			else chance = 75;
 
 			if (potential == 0)chance = 0;
@@ -62,10 +58,8 @@ void Weapon::SetPassive(int Level)
 		if (i == 2)
 		{
 			if (Level < 10)chance = 5;
-			else if (Level < 20)chance = 20;
-			else if (Level < 30)chance = 40;
-			else if (Level < 40)chance = 50;
-			else chance = 40;
+			else if (Level < 20)chance = 25;
+			else chance = 50;
 
 			if (potential <= 1)chance = 0;
 		}
@@ -83,13 +77,13 @@ void Weapon::SetPassive(int Level)
 			case ATTACK:
 				break;
 			case DEFENSE:
-				effect = GetRand(1 + Level / 10) + 1;
+				effect = GetRand(2 + Level / 10) + 1;
 				break;
 			case GREED:
 				effect = GetRand(1) + 1;
 				break;
 			case BARRIER:
-				effect = GetRand(1 + Level / 10) + 1;
+				effect = GetRand(2 + Level / 10) + 1;
 				break;
 			case VAMP:
 				effect = GetRand(2) + 1;

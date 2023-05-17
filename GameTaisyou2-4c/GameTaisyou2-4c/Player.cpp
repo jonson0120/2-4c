@@ -8,7 +8,7 @@
 Player::Player() {
 	Walk = 0;
 
-	stat.Hp = 10;
+	stat.Hp = 100;
 	stat.MaxHp = stat.Hp;
 	stat.Atk = 1;
 	stat.Power = 0;
@@ -188,7 +188,7 @@ void Player::Update() {
 
 	//壁面移動・Aボタン長押しで処理に入る
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) || (wall && PAD_INPUT::OnPressed(XINPUT_BUTTON_A)) ||
-											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2))
+											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2) && Move)
 	{
 		//壁面移動・左壁
 		//壁面移動中か左側が壁なら入る
@@ -261,12 +261,12 @@ void Player::Update() {
 
 		//横移動
 		//スティック入力時
-		if (JoypadX >= MARGIN) {
+		if (JoypadX >= MARGIN && Move) {
 			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
 			if (Attack < 1)TurnFlg = FALSE;				//向きを変える
 			if (!wall)Walk++;							//歩行アニメーション進行
 		}
-		else if (JoypadX <= -MARGIN) {
+		else if (JoypadX <= -MARGIN && Move) {
 			if (wall != 1 && wall != 2)speed -= 0.5;	//移動量を減算
 			if (Attack < 1)TurnFlg = TRUE;				//向きを変える
 			if (!wall)Walk++;							//歩行アニメーション進行
@@ -292,7 +292,7 @@ void Player::Update() {
 		if (Maxspeed < speed)speed = Maxspeed;
 
 		//バックステップ回避
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0 && Move)
 		{
 			float Dodge = 18;
 			if (TurnFlg)
@@ -392,7 +392,7 @@ void Player::Update() {
 		}
 
 		//武器切り替え・攻撃アニメーション・コンボ数をリセット
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER) && !Attack)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER) && !Attack && Move)
 		{
 			if (1 < ++EquipNum) EquipNum = 0;
 			if (Equip[EquipNum] == weapons::NONE)
@@ -412,7 +412,7 @@ void Player::Update() {
 		if (wall == 0)
 		{
 			//Aボタン・ジャンプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2 && Move)
 			{
 				PlaySoundMem(JumpSE, DX_PLAYTYPE_BACK);
 				fall = -fallinit;	//落下速度をマイナスにする
@@ -461,77 +461,80 @@ void Player::Update() {
 		}
 
 		//攻撃
-		switch (Equip[EquipNum])
+		if (Move)
 		{
-		case weapons::dagger:	//短剣：ボタン単押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+			switch (Equip[EquipNum])
 			{
-				if (Combo == 0)
+			case weapons::dagger:	//短剣：ボタン単押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
 				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+					if (Combo == 0)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack++;
+						Combo++;
+					}
+					else if (Combo == 1 && 10 < Attack && Yinput != Inp_UD::UP)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack = 1;
+						Combo++;
+					}
+
+				}
+				break;
+
+			case weapons::mace:		//メイス：ボタン長押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
+				{
 					Attack++;
-					Combo++;
 				}
-				else if (Combo == 1 && 10 < Attack && Yinput != Inp_UD::UP)
+				break;
+
+			case weapons::spear:		//槍：ボタン単押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
 				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
-					Attack = 1;
-					Combo++;
-				}
+					spear_angle = PadangL;
 
-			}
-			break;
+					if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						if (TurnFlg)spear_angle = -90;
+						else spear_angle = 90;
+					}
 
-		case weapons::mace:		//メイス：ボタン長押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
-			{
-				Attack++;
-			}
-			break;
-
-		case weapons::spear:		//槍：ボタン単押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
-			{
-				spear_angle = PadangL;
-				
-				if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
-				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
-					if (TurnFlg)spear_angle = -90;
-					else spear_angle = 90;
-				}
-
-				Atkpt = wall;
-				Attack++;
-			}
-			break;
-
-		case weapons::katana:		//刀：ボタン単押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
-			{
-				if (Combo == 0)
-				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+					Atkpt = wall;
 					Attack++;
-					Combo++;
 				}
-				else if (Combo == 1 && 9 < Attack)
-				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
-					Attack = 1;
-					Combo++;
-				}
-				else if (Combo == 2 && 12 < Attack && !wall)
-				{
-					PlaySoundMem(KatanaSE, DX_PLAYTYPE_BACK);
-					Attack = 1;
-					Combo++;
-				}
-			}
-			break;
+				break;
 
-		default:
-			break;
+			case weapons::katana:		//刀：ボタン単押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+				{
+					if (Combo == 0)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack++;
+						Combo++;
+					}
+					else if (Combo == 1 && 9 < Attack)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack = 1;
+						Combo++;
+					}
+					else if (Combo == 2 && 12 < Attack && !wall)
+					{
+						PlaySoundMem(KatanaSE, DX_PLAYTYPE_BACK);
+						Attack = 1;
+						Combo++;
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		//攻撃ステータス・武器、腕アニメーション管理
@@ -589,7 +592,7 @@ void Player::Update() {
 		//回復
 
 		//Xボタンを押すと回復
-		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_X) && 0 < stat.Potion)
+		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_X) && 0 < stat.Potion && Move)
 		{
 			if (60 == ++UsePotion)
 			{
