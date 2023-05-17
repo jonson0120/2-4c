@@ -420,7 +420,11 @@ AbstractScene* GameMainScene::Update()
 
 		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
 		{
-			player.AddShard();
+			//forを消す
+			for (int i = 0; i < 9999; i++)
+			{
+				player.AddShard();
+			}
 		}
 
 #endif // DEBUG

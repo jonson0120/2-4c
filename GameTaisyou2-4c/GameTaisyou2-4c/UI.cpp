@@ -136,8 +136,8 @@ bool UI::UpGradeUI(Player* player)
 		if (--MenuNum < 0)MenuNum = 3;
 		WaitTime = 20;
 	}
-
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B)) 
+	//click
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B)) 
 	{
 		switch (MenuNum)
 		{
