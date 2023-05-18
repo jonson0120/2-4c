@@ -64,6 +64,7 @@ private:
 
 	int StrengthenSE;
 	int CursorSE;
+	int CancelSE;
 
 public:
 	

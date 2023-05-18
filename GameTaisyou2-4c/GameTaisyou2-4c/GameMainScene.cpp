@@ -463,7 +463,7 @@ AbstractScene* GameMainScene::Update()
 
 		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
 		{
-			player.AddShard();
+				player.AddShard();
 		}
 
 #endif // DEBUG

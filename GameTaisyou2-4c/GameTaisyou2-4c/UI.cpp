@@ -37,6 +37,7 @@ UI::UI()
 
 	StrengthenSE = LoadSoundMem("sound/Strengthen.mp3");
 	CursorSE = LoadSoundMem("sound/Cursor.mp3");
+	CancelSE = LoadSoundMem("sound/Cancel.mp3");
 
 	Damage = 0;
 
@@ -135,7 +136,7 @@ bool UI::UpGradeUI(Player* player)
 		if (--MenuNum < 0)MenuNum = 3;
 		WaitTime = 20;
 	}
-
+	//click
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B)) 
 	{
 		switch (MenuNum)
@@ -148,6 +149,10 @@ bool UI::UpGradeUI(Player* player)
 				player->UseShard(cost[HP]);
 				cost[HP] += 5;
 			}
+			else
+			{
+				PlaySoundMem(CancelSE, DX_PLAYTYPE_BACK);
+			}
 			break;
 
 		case 1:
@@ -158,6 +163,10 @@ bool UI::UpGradeUI(Player* player)
 				player->UseShard(cost[ATK]);
 				cost[ATK] += 5;
 			}
+			else
+			{
+				PlaySoundMem(CancelSE, DX_PLAYTYPE_BACK);
+			}
 			break;
 
 		case 2:
@@ -167,6 +176,10 @@ bool UI::UpGradeUI(Player* player)
 				player->StrHeal();
 				player->UseShard(cost[HEAL]);
 				cost[HEAL] += 20;
+			}
+			else
+			{
+				PlaySoundMem(CancelSE, DX_PLAYTYPE_BACK);
 			}
 			break;
 
