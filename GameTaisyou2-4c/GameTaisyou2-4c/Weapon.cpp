@@ -30,7 +30,7 @@ Weapon::Weapon(weapons Weapon, Range position, int Level)
 
 void Weapon::SetPassive(int Level) 
 {
-	int potential = Level / 4;		//oŒ»‚·‚é‰Â”\«‚Ì‚ ‚éƒXƒLƒ‹”
+	int potential = Level / 4;		//ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â”\ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ï¿½Xï¿½Lï¿½ï¿½ï¿½ï¿½
 	if (5 < potential)potential = 5;
 
 	bool getted[6] = { false,false,false,false,false,false };
@@ -43,18 +43,14 @@ void Weapon::SetPassive(int Level)
 	{
 		if (i == 0) 
 		{
-			if (Level < 10)chance = 25;
-			else if (Level < 20)chance = 50;
-			else if (Level < 30)chance = 65;
-			else if (Level < 40)chance = 80;
+			if (Level < 10)chance = 50;
+			else if (Level < 20)chance = 75;
 			else chance = 100;
 		}
 		if (i == 1)
 		{
-			if (Level < 10)chance = 15;
-			else if (Level < 20)chance = 30;
-			else if (Level < 30)chance = 50;
-			else if (Level < 40)chance = 65;
+			if (Level < 10)chance = 25;
+			else if (Level < 20)chance = 50;
 			else chance = 75;
 
 			if (potential == 0)chance = 0;
@@ -62,10 +58,8 @@ void Weapon::SetPassive(int Level)
 		if (i == 2)
 		{
 			if (Level < 10)chance = 5;
-			else if (Level < 20)chance = 20;
-			else if (Level < 30)chance = 40;
-			else if (Level < 40)chance = 50;
-			else chance = 40;
+			else if (Level < 20)chance = 25;
+			else chance = 50;
 
 			if (potential <= 1)chance = 0;
 		}
@@ -83,19 +77,19 @@ void Weapon::SetPassive(int Level)
 			case ATTACK:
 				break;
 			case DEFENSE:
-				effect = GetRand(1 + Level / 10) + 1;
+				effect = GetRand(2 + Level / 10) + 1;
 				break;
 			case GREED:
 				effect = GetRand(1) + 1;
 				break;
 			case BARRIER:
-				effect = GetRand(1 + Level / 10) + 1;
+				effect = GetRand(2 + Level / 10) + 1;
 				break;
 			case VAMP:
 				effect = GetRand(2) + 1;
 				break;
 			case REPAIR:
-				effect = GetRand(1 + Level / 10) + 1;
+				effect = GetRand(2) + 1;
 				break;
 			case DODGE:
 				effect = GetRand(1) + 1;
@@ -130,10 +124,10 @@ void Weapon::Update(Player* player)
 {
 	Getted = false;
 
-	//ƒvƒŒƒCƒ„[‚ªƒAƒCƒeƒ€‚ğæ‚ê‚éˆÊ’u‚É‚¢‚é‚©”»’è
-	int CanGetDistance = BLOCK_SIZE / 3;	//ƒvƒŒƒCƒ„[‚ªƒAƒCƒeƒ€‚ğæ‚ê‚é‹«ŠE
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½É‚ï¿½ï¿½é‚©ï¿½ï¿½ï¿½ï¿½
+	int CanGetDistance = BLOCK_SIZE / 3;	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‹«ï¿½E
 
-	int dis = GetDis({ player->GetX(),player->GetY() });	//ƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£
+	int dis = GetDis({ player->GetX(),player->GetY() });	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ô‚Ì‹ï¿½ï¿½ï¿½
 
 	if (dis <= CanGetDistance)
 	{
@@ -141,7 +135,7 @@ void Weapon::Update(Player* player)
 	}
 	else CanGet = false;
 
-	//•ŠíE•ŠíØ‚è‘Ö‚¦
+	//ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½
 	if (CanGet && !player->GetAttack() && PAD_INPUT::OnClick(XINPUT_BUTTON_Y))
 	{
 		weapons old = player->GetEquip();
@@ -162,9 +156,9 @@ void Weapon::Update(Player* player)
 			Getted = true;
 	}
 
-	//—‰º‚ÆƒWƒƒƒ“ƒv
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ÆƒWï¿½ï¿½ï¿½ï¿½ï¿½v
 	// 
-	//ƒWƒƒƒ“ƒv‹­“x
+	//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½x
 	float fallinit = 12;
 
 	if (fall < fallinit)
@@ -177,7 +171,7 @@ void Weapon::Update(Player* player)
 	}
 	pos.Y += fall;
 
-	//ˆÊ’u’²®
+	//ï¿½Ê’uï¿½ï¿½ï¿½ï¿½
 
 	while (!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE]||
 		   !MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])

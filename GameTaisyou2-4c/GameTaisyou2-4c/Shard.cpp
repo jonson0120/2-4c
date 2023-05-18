@@ -11,7 +11,7 @@ Shard::Shard(Range position)
 
 	SetItem();
 
-	fall = -(GetRand(3) + (0.1 * GetRand(9)));
+	fall = -(GetRand(4) + (0.1 * GetRand(9)));
 	Slide = GetRand(3) + (0.1 * GetRand(9));
 
 	if (GetRand(1))Slide *= -1;
@@ -29,7 +29,7 @@ void Shard::Update(Player* player)
 	int CanGetDistance = 30;	//�v���C���[���A�C�e������鋫�E
 	int dis = GetDis({ player->GetX(),player->GetY() });	//�v���C���[�Ԃ̋���
 
-	if (dis <= CanGetDistance)
+	if (dis <= CanGetDistance && Slide == 0)
 	{
 		player->AddShard();
 		Getted = true;
@@ -66,17 +66,12 @@ void Shard::Update(Player* player)
 
 	//�ʒu����
 
-	if (MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
-		MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
-	{
-		Slide = 0;
-	}
-
 	while (!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
 		!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
 	{
 		pos.Y--;
 		Slide = 0;
+		fall = 0;
 	}
 
 }

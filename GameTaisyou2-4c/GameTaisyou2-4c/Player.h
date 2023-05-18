@@ -9,6 +9,7 @@ private:
 	int PImages[5];	//画像：上半身
 	int image_U[7];	//画像：下半身
 	int ArmImg;
+	int BarrierImg;	//画像：バリア
 
 	int HealSE;
 	int JumpSE;
@@ -16,6 +17,10 @@ private:
 	int KatanaSE;
 	int WeaponSE;
 	int ShardSE;
+	int DamageSE;
+	int DodgeSE;
+	int DefenseSE;
+
 
 	int Walk;	//歩行アニメーション管理
 
@@ -28,6 +33,7 @@ private:
 	Range Arm_L, Arm_R;
 	int ArmAngle_L, ArmAngle_R;
 
+	bool Move = true;	//入力受付
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
 	float Dodgespd;	//回避速度
@@ -98,7 +104,7 @@ public:
 	void InitPad();
 	Player();
 	void Update();
-	void Draw() const;
+	void Draw(bool boss) const;
 
 	void Spawn();
 
@@ -169,7 +175,10 @@ public:
 	}
 
 	//攻撃強化
-	void StrAtk() { stat.Atk++; }
+	void StrAtk() {
+		stat.Atk++;
+		SetPassive(EquipNum);
+	}
 
 	//回復力強化
 	void StrHeal() 
@@ -193,10 +202,10 @@ public:
 	void SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]);
 
 	//武器描画
-	void DrawDagger()const;
-	void DrawMace()const;
-	void DrawSpear()const;
-	void DrawKatana()const;
+	void DrawDagger(int fix)const;
+	void DrawMace(int fix)const;
+	void DrawSpear(int fix)const;
+	void DrawKatana(int fix)const;
 
 	//武器アニメーション管理
 	void DaggerAtk();
@@ -221,6 +230,13 @@ public:
 	//敵との当たり判定(返り値　0：ダメージを受けた　1：回避した　2：バリアで防いだ)
 	int HitEnemy(float damage, int EneX);
 
+	//ノックバック
+	void SetKnockBack(float power,int EneX)
+	{
+		if (EneX < x)KnockBack = power;
+		else KnockBack = -power;
+	}
+
 	//全回復
 	void Reset() 
 	{
@@ -233,5 +249,8 @@ public:
 		stat.Hp += vamp; 
 		if (stat.MaxHp < stat.Hp)stat.Hp = stat.MaxHp;
 	}
+
+	//入力可否の切り替え
+	void SwitchMove() { Move = !Move; }
 };
 

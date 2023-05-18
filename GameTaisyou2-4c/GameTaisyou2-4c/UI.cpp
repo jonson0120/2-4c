@@ -517,7 +517,7 @@ void UI::Draw() const
 	if (100 <= MaxHP)
 	{
 		if (100 <= PlayerHP)DrawRotaGraph(150, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10 + danger], TRUE);
-		DrawRotaGraph(218, 30, 1.5, 0, Number[(int)PlayerHP / 100 % 10], TRUE);
+		DrawRotaGraph(218, 30, 1.5, 0, Number[(int)MaxHP / 100 % 10 + danger], TRUE);
 	}
 
 	//10�̈�

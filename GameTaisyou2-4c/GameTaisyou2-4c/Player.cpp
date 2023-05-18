@@ -8,7 +8,7 @@
 Player::Player() {
 	Walk = 0;
 
-	stat.Hp = 10;
+	stat.Hp = 100;
 	stat.MaxHp = stat.Hp;
 	stat.Atk = 1;
 	stat.Power = 0;
@@ -65,7 +65,8 @@ Player::Player() {
 
 	LoadDivGraph("images/Player_Top.png", 5, 5, 1, 36, 28, PImages);
 	LoadDivGraph("images/Player_Under.png", 7, 7, 1, 48, 28, image_U);
-	ArmImg = LoadGraph("images/arm.png");
+	ArmImg = LoadGraph("images/arm.png"); 
+	BarrierImg= LoadGraph("images/barrier.png");
 
 	Weapon[0] = LoadGraph("images/Dagger.png");
 	Weapon[1] = LoadGraph("images/mace2.png");
@@ -79,6 +80,9 @@ Player::Player() {
 
 	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
 	ShardSE = LoadSoundMem("sound/Shard.mp3");
+	DamageSE = LoadSoundMem("sound/Damage.mp3");
+	DodgeSE = LoadSoundMem("sound/Dodge.mp3");
+	DefenseSE = LoadSoundMem("sound/Defense.mp3");
 	
 	ChangeVolumeSoundMem(255 * 70 / 100, JumpSE);
 
@@ -187,7 +191,7 @@ void Player::Update() {
 
 	//壁面移動・Aボタン長押しで処理に入る
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) || (wall && PAD_INPUT::OnPressed(XINPUT_BUTTON_A)) ||
-											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2))
+											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2) && Move)
 	{
 		//壁面移動・左壁
 		//壁面移動中か左側が壁なら入る
@@ -260,12 +264,12 @@ void Player::Update() {
 
 		//横移動
 		//スティック入力時
-		if (JoypadX >= MARGIN) {
+		if (JoypadX >= MARGIN && Move) {
 			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
 			if (Attack < 1)TurnFlg = FALSE;				//向きを変える
 			if (!wall)Walk++;							//歩行アニメーション進行
 		}
-		else if (JoypadX <= -MARGIN) {
+		else if (JoypadX <= -MARGIN && Move) {
 			if (wall != 1 && wall != 2)speed -= 0.5;	//移動量を減算
 			if (Attack < 1)TurnFlg = TRUE;				//向きを変える
 			if (!wall)Walk++;							//歩行アニメーション進行
@@ -291,7 +295,7 @@ void Player::Update() {
 		if (Maxspeed < speed)speed = Maxspeed;
 
 		//バックステップ回避
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_RIGHT_SHOULDER) && Dodgespd == 0 && Move)
 		{
 			float Dodge = 18;
 			if (TurnFlg)
@@ -365,7 +369,7 @@ void Player::Update() {
 		}
 
 		//壁で移動を止める
-		while (!MapData[y / 160][(x + Width / 2) / 160])
+		while (!MapData[y / 160][(x + Width / 2) / 160] && x + Width / 2 != 0)
 		{
 			x--;
 			speed = 0;
@@ -391,7 +395,7 @@ void Player::Update() {
 		}
 
 		//武器切り替え・攻撃アニメーション・コンボ数をリセット
-		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER) && !Attack)
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_LEFT_SHOULDER) && !Attack && Move)
 		{
 			if (1 < ++EquipNum) EquipNum = 0;
 			if (Equip[EquipNum] == weapons::NONE)
@@ -411,7 +415,7 @@ void Player::Update() {
 		if (wall == 0)
 		{
 			//Aボタン・ジャンプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2)
+			if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) && jump < 2 && Move)
 			{
 				PlaySoundMem(JumpSE, DX_PLAYTYPE_BACK);
 				fall = -fallinit;	//落下速度をマイナスにする
@@ -460,77 +464,80 @@ void Player::Update() {
 		}
 
 		//攻撃
-		switch (Equip[EquipNum])
+		if (Move)
 		{
-		case weapons::dagger:	//短剣：ボタン単押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+			switch (Equip[EquipNum])
 			{
-				if (Combo == 0)
+			case weapons::dagger:	//短剣：ボタン単押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
 				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+					if (Combo == 0)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack++;
+						Combo++;
+					}
+					else if (Combo == 1 && 10 < Attack && Yinput != Inp_UD::UP)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack = 1;
+						Combo++;
+					}
+
+				}
+				break;
+
+			case weapons::mace:		//メイス：ボタン長押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
+				{
 					Attack++;
-					Combo++;
 				}
-				else if (Combo == 1 && 10 < Attack && Yinput != Inp_UD::UP)
+				break;
+
+			case weapons::spear:		//槍：ボタン単押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
 				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
-					Attack = 1;
-					Combo++;
-				}
+					spear_angle = PadangL;
 
-			}
-			break;
+					if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						if (TurnFlg)spear_angle = -90;
+						else spear_angle = 90;
+					}
 
-		case weapons::mace:		//メイス：ボタン長押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
-			{
-				Attack++;
-			}
-			break;
-
-		case weapons::spear:		//槍：ボタン単押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && Attack == 0)
-			{
-				spear_angle = PadangL;
-				
-				if (JoypadX < MARGIN && -MARGIN < JoypadX && JoypadY < MARGIN && -MARGIN < JoypadY)
-				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
-					if (TurnFlg)spear_angle = -90;
-					else spear_angle = 90;
-				}
-
-				Atkpt = wall;
-				Attack++;
-			}
-			break;
-
-		case weapons::katana:		//刀：ボタン単押しタイプ
-			if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
-			{
-				if (Combo == 0)
-				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+					Atkpt = wall;
 					Attack++;
-					Combo++;
 				}
-				else if (Combo == 1 && 9 < Attack)
-				{
-					PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
-					Attack = 1;
-					Combo++;
-				}
-				else if (Combo == 2 && 12 < Attack && !wall)
-				{
-					PlaySoundMem(KatanaSE, DX_PLAYTYPE_BACK);
-					Attack = 1;
-					Combo++;
-				}
-			}
-			break;
+				break;
 
-		default:
-			break;
+			case weapons::katana:		//刀：ボタン単押しタイプ
+				if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+				{
+					if (Combo == 0)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack++;
+						Combo++;
+					}
+					else if (Combo == 1 && 9 < Attack)
+					{
+						PlaySoundMem(Attack1SE, DX_PLAYTYPE_BACK);
+						Attack = 1;
+						Combo++;
+					}
+					else if (Combo == 2 && 12 < Attack && !wall)
+					{
+						PlaySoundMem(KatanaSE, DX_PLAYTYPE_BACK);
+						Attack = 1;
+						Combo++;
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		//攻撃ステータス・武器、腕アニメーション管理
@@ -588,7 +595,7 @@ void Player::Update() {
 		//回復
 
 		//Xボタンを押すと回復
-		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_X) && 0 < stat.Potion)
+		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_X) && 0 < stat.Potion && Move)
 		{
 			if (60 == ++UsePotion)
 			{
@@ -618,27 +625,30 @@ void Player::Update() {
 		if (HitCool)HitCool--;
 }
 
-void Player::Draw() const {
-		
+void Player::Draw(bool boss) const {
+
+	int fix = 0;
+	if (boss)fix = BLOCK_SIZE;
+
 	//攻撃描画：プレイヤー後方
 	if (Attack) 
 	{
 		switch (Equip[EquipNum])
 		{
 		case weapons::dagger:	//短剣
-			DrawDagger();
+			DrawDagger(fix);
 			break;
 
 		case weapons::mace:	//メイス
-			DrawMace();
+			DrawMace(fix);
 			break;
 
 		case weapons::spear:	//槍
-			if (!TurnFlg || wall)DrawSpear();
+			if (!TurnFlg || wall)DrawSpear(fix);
 			break;
 
 		case weapons::katana:	//刀
-			if (!TurnFlg)DrawKatana();
+			if (!TurnFlg)DrawKatana(fix);
 			break;
 
 		default:
@@ -651,52 +661,52 @@ void Player::Draw() const {
 		//腕：プレイヤー後方
 		if (TurnFlg || wall == 1 || wall == 3)
 		{
-			DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+			DrawRotaGraph(Arm_R.X, Arm_R.Y + fix , 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
 		}
 		else if (wall == 0)
 		{
-			DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
+			DrawRotaGraph(Arm_L.X, Arm_L.Y + fix, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
 		}
 
 		if (Attack && Equip[EquipNum] == weapons::katana)
-			DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+			DrawRotaGraph(Arm_R.X, Arm_R.Y + fix, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
 
 		//プレイヤー本体
 
 		//上半身
 		if (wall)
 		{
-			if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[2], TRUE, true);
-			if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[1], TRUE, false);
-			if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[3 + TurnFlg], TRUE, TurnFlg);
+			if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4 + fix, 1.0f, 0, PImages[2], TRUE, true);
+			if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4 + fix, 1.0f, 0, PImages[1], TRUE, false);
+			if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4 + fix, 1.0f, 0, PImages[3 + TurnFlg], TRUE, TurnFlg);
 		}
-		else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4, 1.0f, 0, PImages[0], TRUE, TurnFlg);
+		else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - Height / 4 + fix, 1.0f, 0, PImages[0], TRUE, TurnFlg);
 
 		//下半身
 		if (wall)
 		{
-			if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[6], TRUE, true);
-			if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[5], TRUE, false);
-			if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[5 + TurnFlg], TRUE, TurnFlg);
+			if (wall == 1)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4 + fix, 1.0f, 0, image_U[6], TRUE, true);
+			if (wall == 2)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4 + fix, 1.0f, 0, image_U[5], TRUE, false);
+			if (wall == 3)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4 + fix, 1.0f, 0, image_U[5 + TurnFlg], TRUE, TurnFlg);
 		}
 		else if (MapData[(y + Height / 2 + 1) / 160][(x - Width / 2) / 160] &&
 			MapData[(y + Height / 2 + 1) / 160][(x + Width / 2) / 160]) {
-			DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[4], TRUE, TurnFlg);
+			DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4 + fix, 1.0f, 0, image_U[4], TRUE, TurnFlg);
 		}
 		else
 		{
-			DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4, 1.0f, 0, image_U[Walk / 10], TRUE, TurnFlg);
+			DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + Height / 4 + fix, 1.0f, 0, image_U[Walk / 10], TRUE, TurnFlg);
 		}
 
 		//腕：プレイヤー前面
 		if (TurnFlg)
 		{
-			if (wall == 0)DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
+			if (wall == 0)DrawRotaGraph(Arm_L.X, Arm_L.Y + fix, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
 		}
 		else
 		{
 			if (wall != 1 && (!Attack || Equip[EquipNum] != weapons::katana))
-				DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+				DrawRotaGraph(Arm_R.X, Arm_R.Y + fix, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
 		}
 
 		//攻撃描画：プレイヤー前方
@@ -705,15 +715,15 @@ void Player::Draw() const {
 			switch (Equip[EquipNum])
 			{
 			case weapons::spear:	//槍
-				if (TurnFlg && !wall)DrawSpear();
+				if (TurnFlg && !wall)DrawSpear(fix);
 				break;
 
 			case weapons::katana:	//刀
 				if (TurnFlg)
 				{
-					DrawKatana();
-					DrawRotaGraph(Arm_R.X, Arm_R.Y, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
-					DrawRotaGraph(Arm_L.X, Arm_L.Y, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
+					DrawKatana(fix);
+					DrawRotaGraph(Arm_R.X, Arm_R.Y + fix, 1, (3.14 / 180) * ArmAngle_R, ArmImg, true, false);
+					DrawRotaGraph(Arm_L.X, Arm_L.Y + fix, 1, (3.14 / 180) * ArmAngle_L, ArmImg, true, true);
 				}
 				break;
 
@@ -722,6 +732,9 @@ void Player::Draw() const {
 			}
 		}
 	}
+
+	//バリア
+	if (nowbarrier)DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + fix, 1, 0, BarrierImg, true);
 }
 
 void Player::Spawn() {
@@ -764,7 +777,7 @@ void Player::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH]) {
 }
 
 //攻撃描画：短剣
-void Player::DrawDagger()const
+void Player::DrawDagger(int fix)const
 {
 	float size = 0.3;
 
@@ -773,16 +786,16 @@ void Player::DrawDagger()const
 		switch (TurnFlg)
 		{
 		case true:	//左向き時
-			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack), SCREEN_HEIGHT / 2 - Height,
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * Attack), SCREEN_HEIGHT / 2 - Height + fix,
 				size, (3.14 / 180) * (-45 + ((90 / 10) * Attack)), Weapon[0], true, false);
-			else if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10)), SCREEN_HEIGHT / 2 - Height,
+			else if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * (Attack - 10)), SCREEN_HEIGHT / 2 - Height + fix,
 				size, (3.14 / 180) * (45 - ((90 / 10) * (Attack - 10))), Weapon[0], true, true);
 			break;
 
 			case false:	//右向き時
-			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack), SCREEN_HEIGHT / 2 - Height,
+			if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width) - ((1.2 * Width) * 2 / 10 * Attack), SCREEN_HEIGHT / 2 - Height + fix,
 				size, (3.14 / 180) * (45 - ((90 / 10) * Attack)), Weapon[0], true, true);
-			else if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10)), SCREEN_HEIGHT / 2 - Height,
+			else if (Attack < 20) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width) + ((1.2 * Width) * 2 / 10 * (Attack - 10)), SCREEN_HEIGHT / 2 - Height + fix,
 				size, (3.14 / 180) * (-45 + ((90 / 10) * (Attack - 10))), Weapon[0], true, false);
 			break;
 			default:
@@ -798,16 +811,16 @@ void Player::DrawDagger()const
 			switch (TurnFlg)
 			{
 			case true:	//左向き時
-				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 11 * Attack),
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 11 * Attack) + fix,
 					size, (3.14 / 180) * (315 - ((90 / 10) * Attack)), Weapon[0], true, true);
-				else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
+				else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20) + fix,
 					size, (3.14 / 180) * (315 - 90), Weapon[0], true, true);
 				break;
 
 			case false:	//右向き時
-				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 11 * Attack),
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 11 * Attack) + fix,
 					size, (3.14 / 180) * (45 + ((90 / 10) * Attack)), Weapon[0], true, false);
-				else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20),
+				else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 - Height + ((Height * 2) / 20 * 20) + fix,
 					size, (3.14 / 180) * (45 + 90), Weapon[0], true, false);
 				break;
 
@@ -820,16 +833,16 @@ void Player::DrawDagger()const
 			switch (TurnFlg)
 			{
 			case true:	//左向き時
-				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack) + fix,
 					size, (3.14 / 180) * (225 + ((90 / 10) * Attack)), Weapon[0], true, false);
-				else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
+				else DrawRotaGraph(SCREEN_WIDTH / 2 - (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20) + fix,
 					size, (3.14 / 180) * (315), Weapon[0], true, false);
 				break;
 
 			case false:	//右向き時
-				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack),
+				if (Attack < 10) DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 10 * Attack) + fix,
 					size, (3.14 / 180) * (135 - ((90 / 10) * Attack)), Weapon[0], true, true);
-				else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20),
+				else DrawRotaGraph(SCREEN_WIDTH / 2 + (1.2 * Width), SCREEN_HEIGHT / 2 + Height - ((Height * 2.1) / 20 * 20) + fix,
 					size, (3.14 / 180) * (45), Weapon[0], true, true);
 				break;
 
@@ -845,7 +858,7 @@ void Player::DrawDagger()const
 }
 
 //攻撃描画：メイス
-void Player::DrawMace()const
+void Player::DrawMace(int fix)const
 {
 	float size = 0.2;
 
@@ -996,7 +1009,7 @@ void Player::DrawMace()const
 				break;
 			}
 
-		case 5:
+		case 3:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1050,7 +1063,7 @@ void Player::DrawMace()const
 				break;
 			}
 
-		case 8:
+		case 5:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1108,12 +1121,12 @@ void Player::DrawMace()const
 			break;
 		}
 	}
-	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
-	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[1], true, false);
+	DrawRotaGraph(finX, finY + fix, size, (3.14 / 180) * finAng, Weapon[1], true, false);
+	DrawRotaGraph(finX, finY + fix, size, (3.14 / 180) * finAng, Weapon[1], true, false);
 }
 
 //攻撃描画：槍
-void Player::DrawSpear()const
+void Player::DrawSpear(int fix)const
 {
 	float size = 0.2;
 
@@ -1255,11 +1268,11 @@ void Player::DrawSpear()const
 		break;
 	}
 
-	DrawRotaGraph(finX, finY, size, (3.14 / 180) * finAng, Weapon[2], true, false);
+	DrawRotaGraph(finX, finY + fix, size, (3.14 / 180) * finAng, Weapon[2], true, false);
 }
 
 //攻撃描画：刀
-void Player::DrawKatana()const
+void Player::DrawKatana(int fix)const
 {
 	float size = 0.2;
 	float sizeY = 1;
@@ -1500,24 +1513,24 @@ void Player::DrawKatana()const
 	switch (Combo)
 	{
 	case 1:
-		DrawRotaGraph3(finX, finY, imgX / 2, imgY / 2, size, sizeY * size,
+		DrawRotaGraph3(finX, finY + fix, imgX / 2, imgY / 2, size, sizeY * size,
 			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
 		break;
 
 	case 2:
-		DrawRotaGraph3(finX, finY, imgX / 2, imgY / 2, size, sizeY * size,
+		DrawRotaGraph3(finX, finY + fix, imgX / 2, imgY / 2, size, sizeY * size,
 			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
 		break;
 
 	case 3:
-		DrawRotaGraph3(finX, finY, imgX / 2, imgY, size, sizeY * size,
+		DrawRotaGraph3(finX, finY + fix, imgX / 2, imgY, size, sizeY * size,
 			(3.14 / 180) * finAng, Weapon[3], true, TurnX, false);
 
 		if (18 < Attack) {
 			for (int i = 0; i < Katana_num; i++)
 			{
 				DrawRotaGraph(katana_slash[i].X - GetX() + SCREEN_WIDTH / 2,
-							  katana_slash[i].Y - GetY() + SCREEN_HEIGHT / 2,
+							  katana_slash[i].Y - GetY() + SCREEN_HEIGHT / 2 + fix,
 					1, (3.14 / 180)* katana_angle[i], WeaponEffect[slashanim], true, false, false);
 			}
 		}
@@ -1700,12 +1713,12 @@ void Player::MaceAtk()
 		}
 		else if (Attack < 40)
 		{
-			stat.Power = 5;
+			stat.Power = 3;
 			Attack = 20;
 		}
 		else
 		{
-			stat.Power = 8;
+			stat.Power = 5;
 			Attack = 20;
 		}
 	}
@@ -1831,7 +1844,7 @@ void Player::MaceAtk()
 				break;
 			}
 
-		case 5:
+		case 3:
 			switch (TurnFlg)
 			{
 			case true:
@@ -1869,7 +1882,7 @@ void Player::MaceAtk()
 				break;
 			}
 
-		case 8:
+		case 5:
 			switch (TurnFlg)
 			{
 			case true:
@@ -2518,7 +2531,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-			case 5:
+			case 3:
 				switch (TurnFlg)
 				{
 				case true:
@@ -2576,7 +2589,7 @@ bool Player::HitMace(int EneX, int EneY, int EneW, int EneH) {
 					break;
 				}
 
-			case 8:
+			case 5:
 				switch (TurnFlg)
 				{
 				case true:
@@ -3110,10 +3123,10 @@ void Player::SetNear(int X, int Y, int Dis)
 //敵からの攻撃(返り値　0：ダメージを受けた　1：回避した　2：バリアで防いだ)
 int Player::HitEnemy(float damage,int EneX)
 {
-	if (GetRand(99) < dodge * 20) 
+	if (GetRand(99) < dodge * 20 || Dodgespd) 
 	{
 		HitCool = 30;
-
+		PlaySoundMem(DodgeSE, DX_PLAYTYPE_BACK);
 		return 1;
 	}
 
@@ -3123,11 +3136,11 @@ int Player::HitEnemy(float damage,int EneX)
 		if (EneX < x)KnockBack = 12;
 		else KnockBack = -12;
 		HitCool = 30;
-
+		PlaySoundMem(DefenseSE, DX_PLAYTYPE_BACK);
 		return 2;
 	}
 
-	if (!HitCool && !Dodgespd)
+	if (!HitCool)
 	{
 		int DMG = damage - Defense;
 		if (DMG < 1)DMG = 1;
@@ -3137,6 +3150,7 @@ int Player::HitEnemy(float damage,int EneX)
 		else KnockBack = -12;
 		if (stat.Hp < 0)stat.Hp = 0;
 		HitCool = 30;
+		PlaySoundMem(DamageSE, DX_PLAYTYPE_BACK);
 		return 0;
 	}
 	return 0;

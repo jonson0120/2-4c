@@ -17,6 +17,7 @@
 #include "Grim_Reaper.h"
 #include "DeepSlime.h"
 #include"Bomber.h"
+#include"Boss.h"
 
 #include"Item.h"
 #include"Weapon.h"
@@ -111,10 +112,12 @@ GameMainScene::GameMainScene()
 	NextMapSE = LoadSoundMem("sound/NextMap.mp3");
 	AttackSE = LoadSoundMem("sound/Attack.mp3");
 	TreasureSE = LoadSoundMem("sound/Treasure.mp3");
-	DamageSE = LoadSoundMem("sound/Damage.mp3");
+	
 
 	DungeonBGM = LoadSoundMem("sound/Dungeon.mp3");
-
+	BossBGM = LoadSoundMem("sound/BOSS.mp3");
+	SafeZoneBGM = LoadSoundMem("sound/SafeZone.mp3");
+	ChangeVolumeSoundMem(255 * 79 / 100, BossBGM);
 
 	Exit_flg = true;
 	Anim_flg = true;
@@ -131,16 +134,14 @@ GameMainScene::GameMainScene()
 AbstractScene* GameMainScene::Update() 
 {
 
-	
-
-	if (!Pause)
+	if (!Pause && !ClearGame)
 	{
 		if (player.GetLife() <= 0)
 		{
 			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
 			return new GameOver();
 		}
-
 
 		if ((!MoveStop_flg || Bright == 0) && !UpGrade)
 		{
@@ -180,7 +181,6 @@ AbstractScene* GameMainScene::Update()
 					{
 					case 0:	//普通に受けた
 						Damage[0] = { player.GetX(),player.GetY(),DMG,30 };
-						PlaySoundMem(DamageSE, DX_PLAYTYPE_BACK);
 						break;
 
 					case 1:	//回避した
@@ -258,6 +258,17 @@ AbstractScene* GameMainScene::Update()
 							item[j] = new Weapon(drop, { treasurebox[i]->lid_GetX(), treasurebox[i]->lid_GetY() }, Level);
 							item[j]->SetMapData(MapData);
 							break;
+						}
+					}
+
+					int Drop = 0;
+					for (int j = 0; j < ITEM_MAX - 1 && Drop < 3 + (Level / 5) + player.GetDrop(); j++)
+					{
+						if (item[j] == nullptr)
+						{
+							item[j] = new Shard({ treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() });
+							item[j]->SetMapData(MapData);
+							Drop++;
 						}
 					}
 				}
@@ -355,6 +366,21 @@ AbstractScene* GameMainScene::Update()
 			{
 				if(!SafeZone)PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
 				MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
+				if (Level == BOSS_LEVEL && !SafeZone)
+				{
+					for (int i = 0; i < ENEMY_MAX; i++)
+					{
+						if (enemy[i] != nullptr)enemy[i] = nullptr;
+					}
+
+					for (int i = 0; i < ITEM_MAX; i++)
+					{
+						item[i] = nullptr;
+					}
+
+					ClearGame = true;
+					player.SwitchMove();
+				}
 			}
 		}
 		/*if (player.GetX() / 160 == MapExitY && player.GetY() / 160 == MapExitX) Exit_flg = true;*/
@@ -363,13 +389,25 @@ AbstractScene* GameMainScene::Update()
 		ExitCheck();
 		if (Exit_flg == true)
 		{
+			if (CheckSoundMem(SafeZoneBGM))
+			{
+				StopSoundMem(SafeZoneBGM);
+				PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
+			}
 			MoveStop_flg = true;
-			if (51 == Level)
+			if (BOSS_LEVEL == Level&&!SafeZone)
 			{
 				StopSoundMem(NextMapSE);
 				StopSoundMem(DungeonBGM);
-				return new GameEnd();
+				PlaySoundMem(BossBGM, DX_PLAYTYPE_LOOP);
 			}
+			else if(SafeZone)
+			{
+				StopSoundMem(DungeonBGM);
+				PlaySoundMem(SafeZoneBGM, DX_PLAYTYPE_LOOP);
+			}
+
+			
 			NextMap();
 		}
 		else
@@ -419,6 +457,11 @@ AbstractScene* GameMainScene::Update()
 			}
 		}
 
+		if (PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_R) && !SafeZone)
+		{
+			Level = BOSS_LEVEL - 1;
+		}
+
 		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
 		{
 			player.AddShard();
@@ -427,7 +470,7 @@ AbstractScene* GameMainScene::Update()
 #endif // DEBUG
 
 	}
-	else
+	else if(Pause)
 	{
 		switch (ui.PauseUI())
 		{
@@ -437,11 +480,33 @@ AbstractScene* GameMainScene::Update()
 
 		case Pause::TITLE:
 			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
 			return new Title();
 			break;
 
 		default:
 			break;
+		}
+	}
+	else if (ClearGame) 
+	{
+		player.Update();
+
+		CameraX = player.GetX();
+		CameraY = player.GetY();
+
+		for (int i = 0; i < ENEMY_MAX + 1; i++)
+		{
+			if (--Damage[i].NumB < 0)Damage[i].NumB = 0;
+		}
+
+		EndAnim++;
+		if (180 < EndAnim)
+		{
+			StopSoundMem(NextMapSE);
+			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
+			return new GameEnd();
 		}
 	}
 
@@ -480,16 +545,19 @@ void GameMainScene::SortItem()
 
 void GameMainScene::Draw() const
 {
+	//ボスエリアで描画方法を変える
+	bool boss = false;
+	if (Level == BOSS_LEVEL && !SafeZone)boss = true;
+
+	int fix = 0;
+	if (boss)fix = BLOCK_SIZE;
 	//マップ描画
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY(), MapImg[MapData[i][j]], TRUE);
-
+			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY()+ fix, MapImg[MapData[i][j]], TRUE);
 		}
-		
-
 	}
 	
 	if (Level % 10 == 0 && SafeZone)
@@ -513,7 +581,7 @@ void GameMainScene::Draw() const
 	}
 
 	//プレイヤー描画
-	player.Draw();
+	player.Draw(boss);
 
 	//敵描画
 	for (int i = 0; i < ENEMY_MAX; i++)
@@ -522,7 +590,7 @@ void GameMainScene::Draw() const
 	}
 
 	//出口アイコン描画
-	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg) {
+	if (MapExitY * 160 + 100 > player.GetX() && MapExitY * 160 + 60 < player.GetX() && player.GetY() == MapExitX * 160 + 131 && !Exit_flg && Level != BOSS_LEVEL) {
 
 		int DoorX = 160 * (4 + MapExitY) + 80 - player.GetX();
 		int DoorY = 360 + 160 * MapExitX + 120 - player.GetY() - BLOCK_SIZE * 0.7;
@@ -553,12 +621,24 @@ void GameMainScene::Draw() const
 	//ダメージ描画
 	for (int i = 0; i < ENEMY_MAX + 1; i++)
 	{
-		if (i == 0) 
+		if (!boss)
 		{
-			if (Damage[i].NumB < 0)DrawDamage(Damage[i], i);
-		}
+			if (i == 0)
+			{
+				if (Damage[i].NumB < 0)DrawDamage(Damage[i], i);
+			}
 
-		if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
+			if (0 < Damage[i].NumB) DrawDamage(Damage[i], i);
+		}
+		else
+		{
+			if (i == 0)
+			{
+				if (Damage[i].NumB < 0)DrawDamage({ Damage[i].X,Damage[i].Y + BLOCK_SIZE,Damage[i].NumA,Damage[i].NumB }, i);
+			}
+
+			if (0 < Damage[i].NumB) DrawDamage({ Damage[i].X,Damage[i].Y + BLOCK_SIZE,Damage[i].NumA,Damage[i].NumB }, i);
+		}
 	}
 
 	ui.Draw();
@@ -763,7 +843,7 @@ void GameMainScene::MakeMap()
 	int x = player.GetX();
 
 	//マップデータ作成
-	if (!SafeZone)
+	if (!SafeZone && Level != BOSS_LEVEL)
 	{
 		do {
 
@@ -862,19 +942,18 @@ void GameMainScene::MakeMap()
 		}
 
 	}
-	else
+	else if (SafeZone)
 	{
 	player.SetY(BLOCK_SIZE * 9.5 + BLOCK_SIZE / 2 - player.GetHeight() / 2);
-
-	Space = 0;
-	for (int i = 0; i < MAP_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAP_WIDTH; j++)
+		Space = 0;
+		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
-			CheckData[i][j] = 0;
-			MapData[i][j] = 0;
+			for (int j = 0; j < MAP_WIDTH; j++)
+			{
+				CheckData[i][j] = 0;
+				MapData[i][j] = 0;
+			}
 		}
-	}
 
 		for (int i = 0; i < MAP_HEIGHT; i++)
 		{
@@ -899,6 +978,43 @@ void GameMainScene::MakeMap()
 
 		CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
 	}
+	else 
+	{
+	player.SetY(BLOCK_SIZE * 9.5);
+
+	Space = 0;
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			CheckData[i][j] = 0;
+			MapData[i][j] = 0;
+		}
+	}
+
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			if (MAP_WIDTH - 1 <= j || j == 0)
+			{
+				MapData[i][j] = 0;
+			}
+			else MapData[i][j] = 1;
+
+			if (MAP_HEIGHT - 1 <= i || i <= 4)
+			{
+				MapData[i][j] = 0;
+			}
+		}
+	}
+
+	MapData[MAP_HEIGHT - 2][MAP_WIDTH - 2] = 2;
+	MapExitX = MAP_HEIGHT - 2;
+	MapExitY = MAP_WIDTH - 2;
+
+	CheckSpace(player.GetY() / 160, player.GetX() / 160, &Space);
+	}
 
 	//孤立した空間を埋める
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -908,7 +1024,6 @@ void GameMainScene::MakeMap()
 			if (CheckData[i][j] == 0)MapData[i][j] = 5;
 		}
 	}
-	MapData[player.GetY() / 160][player.GetX() / 160] = 3;
 }
 
 int GameMainScene::CheckSpace(int y, int x, int* cnt)
@@ -1006,11 +1121,14 @@ void GameMainScene::NextMap() {
 			treasurebox[i] = nullptr;
 		}
 
-		if (!SafeZone) {
+		if (!SafeZone && Level != BOSS_LEVEL) {
 			MakeEnemy();
-
 			treasurebox[0] = new TreasureBox();
 		}
+		else if (!SafeZone && Level == BOSS_LEVEL) {
+			enemy[0] = new Boss(Level);
+		}
+
 		for (int i = 0; i < ENEMY_MAX; i++)
 		{
 			if (enemy[i] != nullptr)enemy[i]->SetMapData(MapData);
@@ -1038,20 +1156,21 @@ void GameMainScene::MakeEnemy()
 	for (int i = 0; i < Spawn; i++)
 	{
 		enemy[i] = nullptr;
-		switch (GetRand(3))
+		if (GetRand(99) < 10 - 1) enemy[i] = new Grim_Reaper(Level);
+		else
 		{
-		case 0:
-			enemy[i] = new Slime(Level);
-			break;
-		case 1:
-			enemy[i] = new Bat(Level);
-			break;
-		case 2:
-			enemy[i] = new Grim_Reaper(Level);
-			break;
-		case 3:
-			enemy[i] = new DeepSlime(Level);
-			break;
+			switch (GetRand(2))
+			{
+			case 0:
+				enemy[i] = new Slime(Level);
+				break;
+			case 1:
+				enemy[i] = new Bat(Level);
+				break;
+			case 2:
+				enemy[i] = new DeepSlime(Level);
+				break;
+			}
 		}
 
 	}
