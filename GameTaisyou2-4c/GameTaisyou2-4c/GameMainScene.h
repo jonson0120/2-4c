@@ -61,6 +61,8 @@ private:
 	int count;
 
 	int hierarchy_font[44]; //階層用フォント画像変数
+	int B_font;
+	int F_font;
 	int Chara[28];		//文字
 
 	int DoorSE;
