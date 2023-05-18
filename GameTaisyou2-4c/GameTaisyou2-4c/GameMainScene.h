@@ -23,9 +23,11 @@ private:
 	int MapExitY; //マップの出口のY座標
 
 	int Level;		//階層
-	bool SafeZone;	//今いるのは安全地帯?
-	bool UpGrade = false;	//アップグレードメニューを開く?
-	bool Pause = false;		//ポーズメニューを開く？
+	bool SafeZone;	//安全地帯に入るとtrue
+	bool UpGrade = false;	//アップグレードメニューを開くとtrue
+	bool Pause = false;		//ポーズメニューを開くとtrue
+	bool ClearGame = false;	//ボスを倒せばtrue
+	int EndAnim = 0;	//ゲームクリア演出に使う
 
 	int time;
 	Player player;				//プレイヤー
@@ -68,7 +70,8 @@ private:
 	int DamageSE;
 
 	int DungeonBGM;
-
+	int BossBGM;
+	int SafeZoneBGM;
 public:
 	GameMainScene();
 	//デストラクト

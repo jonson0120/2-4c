@@ -357,7 +357,7 @@ void TestMap::Draw() const
 		if (item[i] != nullptr)item[i]->Draw({ player.GetX() ,player.GetY() });
 	}
 
-	player.Draw();
+	player.Draw(false);
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		if (enemy[i] != nullptr)enemy[i]->Draw(player.GetX(), player.GetY());

@@ -34,8 +34,8 @@ HowToMap::HowToMap()
 
 	Block= LoadGraph("images/singleblock.png");
 
-	LoadDivGraph("images/methot.png", 10, 5, 2, 192, 160, HowToImg);
-	HowToImg[10] = LoadGraph("images/oksign.png");
+	LoadDivGraph("images/methot.png", 12, 5, 3, 192, 160, HowToImg);
+	HowToImg[12] = LoadGraph("images/oksign.png");
 
 	LoadDivGraph("images/HowDagger.png", 2, 2, 1, 60, 53, Dagger);
 	Icon = LoadGraph("images/ItemIcon.png");
@@ -90,7 +90,7 @@ AbstractScene* HowToMap::Update()
 	{
 		Phase++;
 	}
-	else if (Phase == 1 && PAD_INPUT::OnClick(XINPUT_BUTTON_A))
+	else if (Phase == 1 && player.GetX() / BLOCK_SIZE == 24)
 	{
 		PhaseCount = 60;
 		Phase++;
@@ -197,30 +197,30 @@ void HowToMap::Draw() const
 
 	if (Phase == 1 || (Phase == 2 && PhaseCount))
 	{
-		int flame = Anim / 30 % 2;
-		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[0 + flame], TRUE);
-		if (Phase == 2)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[10], TRUE);
+		int flame = Anim / 30 % 4;
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[0 + flame], TRUE);
+		if (Phase == 2)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[12], TRUE);
 	}
 
 	if (Phase == 3 || (Phase == 4 && PhaseCount))
 	{
 		int flame = Anim / 30 % 3;
-		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[2 + flame], TRUE);
-		if (Phase == 4)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[10], TRUE);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[4 + flame], TRUE);
+		if (Phase == 4)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[12], TRUE);
 	}
 
 	if (Phase == 5 || (Phase == 6 && PhaseCount))
 	{
 		int flame = Anim / 30 % 3;
-		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[5 + flame], TRUE);
-		if (Phase == 6)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[10], TRUE);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[7 + flame], TRUE);
+		if (Phase == 6)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[12], TRUE);
 	}
 
 	if ((7 <= Phase && Phase <= 9) || (Phase == 10 && PhaseCount))
 	{
 		int flame = Anim / 30 % 2;
-		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[8 + flame], TRUE);
-		if (Phase == 10)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.0f, 0, HowToImg[10], TRUE);
+		DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[10 + flame], TRUE);
+		if (Phase == 10)DrawRotaGraph(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2, 1.5, 0, HowToImg[12], TRUE);
 	}
 
 	player.Draw();
