@@ -389,25 +389,6 @@ AbstractScene* GameMainScene::Update()
 		ExitCheck();
 		if (Exit_flg == true)
 		{
-			if (CheckSoundMem(SafeZoneBGM))
-			{
-				StopSoundMem(SafeZoneBGM);
-				PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
-			}
-			MoveStop_flg = true;
-			if (BOSS_LEVEL == Level&&!SafeZone)
-			{
-				StopSoundMem(NextMapSE);
-				StopSoundMem(DungeonBGM);
-				PlaySoundMem(BossBGM, DX_PLAYTYPE_LOOP);
-			}
-			else if(SafeZone)
-			{
-				StopSoundMem(DungeonBGM);
-				PlaySoundMem(SafeZoneBGM, DX_PLAYTYPE_LOOP);
-			}
-
-			
 			NextMap();
 		}
 		else
@@ -1143,6 +1124,25 @@ void GameMainScene::NextMap() {
 
 		//enemy2.SetMapData(MapData);
 
+		if (CheckSoundMem(SafeZoneBGM))
+		{
+			StopSoundMem(SafeZoneBGM);
+			StopSoundMem(NextMapSE);
+			PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
+		}
+		if (BOSS_LEVEL == Level && !SafeZone)
+		{
+			StopSoundMem(DungeonBGM);
+			StopSoundMem(NextMapSE);
+			PlaySoundMem(BossBGM, DX_PLAYTYPE_LOOP);
+		}
+		else if (SafeZone)
+		{
+			StopSoundMem(DungeonBGM);
+			StopSoundMem(NextMapSE);
+			PlaySoundMem(SafeZoneBGM, DX_PLAYTYPE_LOOP);
+		}
+
 		MakeMap_flg = false;
 		Pressed_flg = false;
 		count = 0;
@@ -1184,19 +1184,18 @@ void GameMainScene::ExitCheck() {
 			if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y)) {
 				count++;
 				if (count >= 60) {
-					PlaySoundMem(NextMapSE, DX_PLAYTYPE_BACK);
 					for (int i = 0; i < ENEMY_MAX; i++)
 					{
 						if (enemy[i] != nullptr)break;
 						if (i == 9)Exit_flg = true;
 					}
+					PlaySoundMem(NextMapSE, DX_PLAYTYPE_BACK);
+					MoveStop_flg = true;
 				}
 			}
 			else if (--count < 0)count = 0;
 		}
 	}
-
-
 }
 
 void GameMainScene::SearchEnemy() 
