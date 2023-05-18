@@ -645,10 +645,11 @@ void GameMainScene::Draw() const
 	if (UpGrade)ui.UpGradeDraw();
 	if (Pause)ui.PauseDraw();
 
+	//階層表示
 	DrawRotaGraph(1040, 80, 4, 0, Chara[1], TRUE);
 	DrawRotaGraph(1210, 80, 4, 0, Chara[5], TRUE);
-	DrawRotaGraph(1150, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
-	DrawRotaGraph(1100, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
+	DrawRotaGraph(1155, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
+	DrawRotaGraph(1095, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
 
 #ifdef DEBUG
 

@@ -89,7 +89,4 @@ void Title::Draw() const{
 		DrawRotaGraph(630, 400, 2.0, 0, Tutorial_font, FALSE);
 		DrawRotaGraph(550, 430 + select * 32, 0.5, 0, mini_select_image, TRUE);
 	}
-	DrawFormatString(0, 500, 0xff0000, "%d", select);
-	DrawFormatString(0, 550, 0xff0000, "%d", interval);
-	DrawFormatString(0, 600, 0xff0000, "%d", JoyPadY);;
 }
