@@ -1,9 +1,8 @@
 #include"TitleScene.h"
 #include"HowToMap.h"
 #include"GameMainScene.h"
-#include"TestMap.h"
 
-Title::Title() {
+Title::Title(int BgmSet[7]) {
 	SetDrawBright(255, 255, 255);
 	Menu_Number = TITLE_MENU::START;
 	interval = 0;
@@ -22,7 +21,15 @@ Title::Title() {
 	click_sound = LoadSoundMem("sound/click.mp3");
 	CursorSE = LoadSoundMem("sound/Cursor.mp3");
 
-	TitleBGM = LoadSoundMem("sound/TitleBGM.mp3");
+	this->BgmSet[TITLE] = BgmSet[TITLE];
+	this->BgmSet[HOWTO] = BgmSet[HOWTO];
+	this->BgmSet[DUNGEON] = BgmSet[DUNGEON];
+	this->BgmSet[BOSS] = BgmSet[BOSS];
+	this->BgmSet[SAFEZONE] = BgmSet[SAFEZONE];
+	this->BgmSet[GAMECLEAR] = BgmSet[GAMECLEAR];
+	this->BgmSet[GAMEOVER] = BgmSet[GAMEOVER];
+
+	TitleBGM = BgmSet[TITLE];
 	PlaySoundMem(TitleBGM, DX_PLAYTYPE_LOOP);
 	ChangeVolumeSoundMem(255 * 70 / 100, TitleBGM);
 
@@ -46,7 +53,7 @@ AbstractScene* Title::Update() {
 	if (JoyPadY < MARGIN && -MARGIN < JoyPadY && !PAD_INPUT::OnPressed(XINPUT_BUTTON_B))interval = 30;
 
 	if (select == 0) Menu_Number = TITLE_MENU::START;
-	if (select == 1) Menu_Number = TITLE_MENU::Debug;
+	if (select == 1) Menu_Number = TITLE_MENU::END;
 
 	if (select < 0)select = 1;
 	if (select > 1)select = 0;
@@ -56,7 +63,7 @@ AbstractScene* Title::Update() {
 			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
 			StopSoundMem(TitleBGM);
 			if (TITLE_MENU::START == Menu_Number) Tutorial_flg = true;
-			if (TITLE_MENU::Debug == Menu_Number)return new TestMap();
+			if (TITLE_MENU::END == Menu_Number)return nullptr;
 			interval = 0;
 		}
 	}
@@ -64,8 +71,8 @@ AbstractScene* Title::Update() {
 		if (PAD_INPUT::OnPressed(XINPUT_BUTTON_B) && interval >= 30) {
 			PlaySoundMem(click_sound, DX_PLAYTYPE_BACK);
 			StopSoundMem(TitleBGM);
-			if (TITLE_MENU::START == Menu_Number) return new GameMainScene(); //�Q�[�����X�^�[�g����
-			if (TITLE_MENU::Debug == Menu_Number)return new HowToMap(); //�`���[�g���A�����X�^�[�g����
+			if (TITLE_MENU::START == Menu_Number) return new GameMainScene(BgmSet); //�Q�[�����X�^�[�g����
+			if (TITLE_MENU::END == Menu_Number)return new HowToMap(BgmSet); //�`���[�g���A�����X�^�[�g����
 			interval = 0;
 		}
 

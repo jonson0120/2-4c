@@ -27,6 +27,7 @@ private:
 	bool UpGrade = false;	//アップグレードメニューを開くとtrue
 	bool Pause = false;		//ポーズメニューを開くとtrue
 	bool ClearGame = false;	//ボスを倒せばtrue
+
 	int EndAnim = 0;	//ゲームクリア演出に使う
 
 	int time;
@@ -64,18 +65,22 @@ private:
 	int B_font;
 	int F_font;
 	int Chara[28];		//文字
+	int ClearImg[3];
 
 	int DoorSE;
 	int NextMapSE;
 	int AttackSE;
 	int TreasureSE;
 	int DamageSE;
+	int ClearSE;
 
 	int DungeonBGM;
 	int BossBGM;
 	int SafeZoneBGM;
+
+	int BgmSet[7];	//読み込まれたBGMデータ
 public:
-	GameMainScene();
+	GameMainScene(int BgmSet[7]);
 	//デストラクト
 	virtual ~GameMainScene()
 	{

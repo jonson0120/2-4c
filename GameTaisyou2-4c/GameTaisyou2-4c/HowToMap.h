@@ -59,9 +59,10 @@ private:
 
 	int TutorialBGM;
 	int WeaponSE;
-	
+
+	int BgmSet[7];
 public:
-	HowToMap();
+	HowToMap(int BgmSet[7]);
 	//デストラクト
 	virtual ~HowToMap()
 	{

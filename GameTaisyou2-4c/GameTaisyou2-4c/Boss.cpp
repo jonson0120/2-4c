@@ -58,9 +58,18 @@ Boss::Boss(int level) : Enemy()
 	ClawSE = LoadSoundMem("sound/Claw.mp3");
 	RoarSE = LoadSoundMem("sound/Roar.mp3");
 	PounceSE = LoadSoundMem("sound/Pounce.mp3");
+
+	SetCreateSoundPitchRate(-1200.0f);
+	SetCreateSoundTimeStretchRate(1.5f);
+	DeathSE = LoadSoundMem("sound/Roar.mp3");
+
+	SetCreateSoundPitchRate(0);
+	SetCreateSoundTimeStretchRate(1.0f);
+
 	ChangeVolumeSoundMem(255 * 150 / 100, ClawSE);
 	ChangeVolumeSoundMem(255 * 150 / 100, RoarSE);
 	ChangeVolumeSoundMem(255 * 150 / 100, PounceSE);
+	ChangeVolumeSoundMem(255 * 150 / 100, DeathSE);
 
 	RoarImg = LoadGraph("images/ripples.png");
 
@@ -71,220 +80,230 @@ Boss::Boss(int level) : Enemy()
 
 void Boss::Update(Player* player)
 {
-	//�W�����v���x
-	float fallinit = 12;
-
-	//�v���C���[���W
-	int PlayerX = player->GetX();
-
-	//�U���Ɉڍs
-	int sight = 300;	//�v���C���[��F������͈�
-	ClawTime++;
-
-	if (450 < RoarTime && !E_AttackFlg && !Roar) 
+	if (!Death)
 	{
-		E_AttackFlg = true;
-		Roar = true;
-	}
-	//�܍U��
-	if (ClawCool < ClawTime && !Claw && !E_AttackFlg)
-	{
-		if (player->GetX() < enex) Turnflg = true;
-		else Turnflg = false;
+		//�W�����v���x
+		float fallinit = 12;
 
-		E_AttackFlg = true;
-		Claw = true;
-		ClawSpd = 0;
-	}
-	//��ъ|����
-	else if (enex + sight >= player->GetX() && enex - sight <= player->GetX() &&
-			 eney + sight >= player->GetY() && eney - sight <= player->GetY() && !E_AttackFlg && !AttackCool && !Pounce)
-	{
-		//�F���͈͓�ɂ���΍U���J�n
-		E_AttackFlg = true;
-		Pounce = true;
+		//�v���C���[���W
+		int PlayerX = player->GetX();
 
-		//�v���C���[�̕��������
-		if (player->GetX() < enex) Turnflg = true;
-		else Turnflg = false;
-	}
-	else if (!E_AttackFlg && !AttackCool) {
-		//�ʏ�̈ړ�----------
-		Movecnt++;
+		//�U���Ɉڍs
+		int sight = 300;	//�v���C���[��F������͈�
+		ClawTime++;
 
-		if (PlayerX < enex)
+		if (450 < RoarTime && !E_AttackFlg && !Roar)
 		{
-			int Dis = enex - PlayerX;	//�v���C���[�Ԃ̋�������
-			Turnflg = true;
-			if (Moveswitch <= Movecnt)	//Moveswitch�ȏ�o�߂������ړ�������ς���
-			{
-				if (Dis < 500) MoveAng = 1;
-				else MoveAng = -1;
-
-				Movecnt = 0;
-				Moveswitch = GetRand(60) + 30;	//�����]���^�C�~���O��ς���
-			}
+			E_AttackFlg = true;
+			Roar = true;
 		}
-		else
+		//�܍U��
+		if (ClawCool < ClawTime && !Claw && !E_AttackFlg)
 		{
-			int Dis = PlayerX - enex;	//�v���C���[�Ԃ̋�������
-			Turnflg = false;
-			if (Moveswitch <= Movecnt)	//Moveswitch�ȏ�o�߂������ړ�������ς���
-			{
-				if (Dis < 500) MoveAng = -1;
-				else MoveAng = 1;
+			if (player->GetX() < enex) Turnflg = true;
+			else Turnflg = false;
 
-				Movecnt = 0;
-				Moveswitch = GetRand(60) + 30;	//�����]���^�C�~���O��ς���
-			}
+			E_AttackFlg = true;
+			Claw = true;
+			ClawSpd = 0;
 		}
-
-		enex += 4 * MoveAng;
-
-		//-------------------
-	}
-
-	//�U���s��
-	if (E_AttackFlg)
-	{
-		Attack++;
-		if (Pounce)
+		//��ъ|����
+		else if (enex + sight >= player->GetX() && enex - sight <= player->GetX() &&
+			eney + sight >= player->GetY() && eney - sight <= player->GetY() && !E_AttackFlg && !AttackCool && !Pounce)
 		{
-			//�W�����v���O�̑ҋ@
-			if (Attack <= 60)
+			//�F���͈͓�ɂ���΍U���J�n
+			E_AttackFlg = true;
+			Pounce = true;
+
+			//�v���C���[�̕��������
+			if (player->GetX() < enex) Turnflg = true;
+			else Turnflg = false;
+		}
+		else if (!E_AttackFlg && !AttackCool) {
+			//�ʏ�̈ړ�----------
+			Movecnt++;
+
+			if (PlayerX < enex)
 			{
-				JumpDis = (PlayerX - enex) / 15;	//�v���C���[�Ԃ̋�������
-				if (Attack == 60)
+				int Dis = enex - PlayerX;	//�v���C���[�Ԃ̋�������
+				Turnflg = true;
+				if (Moveswitch <= Movecnt)	//Moveswitch�ȏ�o�߂������ړ�������ς���
 				{
-					
-					if (0 < JumpDis)Turnflg = false;
-					else Turnflg = true;
+					if (Dis < 500) MoveAng = 1;
+					else MoveAng = -1;
+
+					Movecnt = 0;
+					Moveswitch = GetRand(60) + 30;	//�����]���^�C�~���O��ς���
 				}
 			}
-			else if (Attack <= 90)
+			else
 			{
-				if (Attack < 80)
+				int Dis = PlayerX - enex;	//�v���C���[�Ԃ̋�������
+				Turnflg = false;
+				if (Moveswitch <= Movecnt)	//Moveswitch�ȏ�o�߂������ړ�������ς���
 				{
-					enex += JumpDis;
-					FixX();
-					eney -= 25;
+					if (Dis < 500) MoveAng = -1;
+					else MoveAng = 1;
+
+					Movecnt = 0;
+					Moveswitch = GetRand(60) + 30;	//�����]���^�C�~���O��ς���
+				}
+			}
+
+			enex += 4 * MoveAng;
+
+			//-------------------
+		}
+
+		//�U���s��
+		if (E_AttackFlg)
+		{
+			Attack++;
+			if (Pounce)
+			{
+				//�W�����v���O�̑ҋ@
+				if (Attack <= 60)
+				{
+					JumpDis = (PlayerX - enex) / 15;	//�v���C���[�Ԃ̋�������
+					if (Attack == 60)
+					{
+
+						if (0 < JumpDis)Turnflg = false;
+						else Turnflg = true;
+					}
+				}
+				else if (Attack <= 90)
+				{
+					if (Attack < 80)
+					{
+						enex += JumpDis;
+						FixX();
+						eney -= 25;
+						FixY();
+					}
+				}
+				//�W�����v
+				else if (100 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
+				{
+					eney += 30;
 					FixY();
 				}
-			}
-			//�W�����v
-			else if (100 < Attack && MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
-			{
-				eney += 30;
-				FixY();
-			}
-			//�U���I��
-			else if (90 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
-			{
-				//�W�����v���Ē��n����΍U���I��
-				PlaySoundMem(PounceSE, DX_PLAYTYPE_BACK);
-				E_AttackFlg = false;
-				AttackCool = 60;
-				Attack = 0;
-				Pounce = false;
-				ClawTime += 20;
-			}
-		}
-
-		else if (Claw)
-		{
-			//�ҋ@
-			if (Attack <= 60 && ClawSpd == 0)
-			{
-				if (Attack == 60)
+				//�U���I��
+				else if (90 < Attack && !MapData[(eney + 1 + Height / 2) / BLOCK_SIZE][enex / BLOCK_SIZE])
 				{
-
-					ClawSpd += 0.1;
-
-					if (!Turnflg)ClawX = enex + 260;
-					else ClawX = enex - 260;
-
-					ClawY = eney;
-
-					ClawTurn = !Turnflg;
-					PlaySoundMem(ClawSE, DX_PLAYTYPE_BACK);
+					//�W�����v���Ē��n����΍U���I��
+					PlaySoundMem(PounceSE, DX_PLAYTYPE_BACK);
+					E_AttackFlg = false;
+					AttackCool = 60;
+					Attack = 0;
+					Pounce = false;
+					ClawTime += 20;
 				}
 			}
-			else if (80 < Attack)
+
+			else if (Claw)
 			{
-				E_AttackFlg = false;
-				Attack = 0;
+				//�ҋ@
+				if (Attack <= 60 && ClawSpd == 0)
+				{
+					if (Attack == 60)
+					{
+
+						ClawSpd += 0.1;
+
+						if (!Turnflg)ClawX = enex + 260;
+						else ClawX = enex - 260;
+
+						ClawY = eney;
+
+						ClawTurn = !Turnflg;
+						PlaySoundMem(ClawSE, DX_PLAYTYPE_BACK);
+					}
+				}
+				else if (80 < Attack)
+				{
+					E_AttackFlg = false;
+					Attack = 0;
+				}
+
 			}
 
-		}
+			if (Roar)
+			{
+				if (Attack == 30)
+				{
+					player->SetKnockBack(30, enex);
+					PlaySoundMem(RoarSE, DX_PLAYTYPE_BACK);
+				}
+				else if (60 < Attack)
+				{
+					Roar = false;
+					E_AttackFlg = false;
+					RoarTime = 0;
 
-		if (Roar)
+					//��ъ|����ɔh��
+					E_AttackFlg = true;
+					Pounce = true;
+					Attack = 50;
+
+					//�v���C���[�̕��������
+					if (player->GetX() < enex) Turnflg = true;
+					else Turnflg = false;
+				}
+			}
+		}
+		else Attack = 0;
+
+		if (0 < ClawSpd)
 		{
-			if (Attack == 30)
-			{
-				player->SetKnockBack(30, enex);
-				PlaySoundMem(RoarSE, DX_PLAYTYPE_BACK);
-			}
-			else if (60 < Attack)
-			{
-				Roar = false;
-				E_AttackFlg = false;
-				RoarTime = 0;
+			if (ClawTurn)ClawX += ClawSpd;
+			else ClawX -= ClawSpd;
+			ClawSpd += 0.05;
+		}
 
-				//��ъ|����ɔh��
-				E_AttackFlg = true;
-				Pounce = true;
-				Attack = 50;
+		if (12 < ClawSpd)
+		{
+			Claw = false;
+			ClawSpd = 0;
+			ClawTime = 0;
+		}
 
-				//�v���C���[�̕��������
-				if (player->GetX() < enex) Turnflg = true;
-				else Turnflg = false;
+		FixX();
+
+		//�����ƃW�����v
+
+		if (fall < fallinit)
+		{
+			//�������x����Z
+			fall += (fallinit * 2) / 45;
+
+			//fallinit�������ő�l
+			if (fall > fallinit)
+			{
+				fall = fallinit;
 			}
 		}
-	}
-	else Attack = 0;
 
-	if (0 < ClawSpd)
-	{
-		if (ClawTurn)ClawX += ClawSpd;
-		else ClawX -= ClawSpd;
-		ClawSpd += 0.05;
-	}
+		if (E_AttackFlg)fall = 0;
+		eney += fall;
 
-	if (12 < ClawSpd)
+		FixY();
+
+		//�U���ҋ@���ԁE���G���Ԃ���炷
+		if (HitCool)HitCool--;
+		if (AttackCool)AttackCool--;
+
+		Anim++;
+		if (enex == Oldx)RoarTime++;
+		Oldx = enex;
+	}
+	else 
 	{
+		Pounce = false;
 		Claw = false;
-		ClawSpd = 0;
-		ClawTime = 0;
+		Roar = false;
+		if (180 < DeathAnim++)Enemy_Hp = 0;
 	}
-
-	FixX();
-
-	//�����ƃW�����v
-
-	if (fall < fallinit)
-	{
-		//�������x����Z
-		fall += (fallinit * 2) / 45;
-
-		//fallinit�������ő�l
-		if (fall > fallinit)
-		{
-			fall = fallinit;
-		}
-	}
-
-	if (E_AttackFlg)fall = 0;
-	eney += fall;
-
-	FixY();
-
-	//�U���ҋ@���ԁE���G���Ԃ���炷
-	if (HitCool)HitCool--;
-	if (AttackCool)AttackCool--;
-
-	Anim++;
-	if (enex == Oldx)RoarTime++;
-	Oldx = enex;
 }
 
 void Boss::FixX() 
@@ -356,12 +375,13 @@ void Boss::Draw(int x, int y) const
 	//DrawBoxAA(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
 	//	enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), 0x00ff00, TRUE);
 
-	if (MakeEnemy == TRUE && HitCool % 4 < 2)
+	int DrawX = enex - x + (SCREEN_WIDTH / 2);
+	int DrawY = eney - y + (SCREEN_HEIGHT / 2) + BLOCK_SIZE;
+
+	if (MakeEnemy == TRUE && HitCool % 4 < 2 && !Death)
 	{
 		int WalkAnim = Anim / 18 % 2;
 
-		int DrawX = enex - x + (SCREEN_WIDTH / 2);
-		int DrawY = eney - y + (SCREEN_HEIGHT / 2) + BLOCK_SIZE;
 
 		//�G�̕\��
 		if (!E_AttackFlg)
@@ -391,6 +411,17 @@ void Boss::Draw(int x, int y) const
 			else if (Attack < 80) DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[6], TRUE, !Turnflg, false);
 		}
 	}
+	else if (Death) //撃破演出
+	{
+		//画像の透明度
+		int Alpha = 255 - (DeathAnim / 30 * 45);
+		if (Alpha < 0)Alpha = 0;
+
+		//画像を徐々に透明にして描画する
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, Alpha);	//ブレンドモードを変更
+		DrawRotaGraph(DrawX, DrawY, 1.0, 0, EImages[8], TRUE, !Turnflg, false);	//描画
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);		//デフォルトのブレンドモードに戻す
+	}
 
 	if (0 < ClawSpd) 
 	{
@@ -403,16 +434,6 @@ void Boss::Draw(int x, int y) const
 
 		DrawRotaGraph(cX, cY, 1, 0, ClawImg[cAnim], true, ClawTurn);
 	}
-
-	if (Enemy_Hp == 0)
-	{
-		DeleteGraph(EImages[0]);
-
-		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
-	}
-
-	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 
 }
 
@@ -431,14 +452,23 @@ void Boss::SetMapData(int MapData[MAP_HEIGHT][MAP_WIDTH])
 
 //�̗͊m�F
 bool Boss::CheckHp() {
-	if (Enemy_Hp <= 0)return true;
-
+	if (Enemy_Hp <= 0)
+	{
+		//撃破演出に移行する
+		if (!Death)
+		{
+			Death = true;
+			Enemy_Hp = 1;
+			PlaySoundMem(DeathSE, DX_PLAYTYPE_BACK);
+		}
+		else return true;
+	}
 	return false;
 }
 
 //�v���C���[����̍U��
 void Boss::HitPlayer(float damage) {
-	if (!HitCool) {
+	if (!HitCool && !Death) {
 		Enemy_Hp -= damage;
 		HitCool = 30;
 	}

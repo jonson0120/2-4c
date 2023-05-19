@@ -51,6 +51,17 @@ enum Enchant
 	NONE		//�X�L���Ȃ�
 };
 
+enum BGM 
+{
+	TITLE,
+	HOWTO,
+	DUNGEON,
+	BOSS,
+	SAFEZONE,
+	GAMECLEAR,
+	GAMEOVER,
+};
+
 struct Passive 
 {
 	Enchant Kinds;

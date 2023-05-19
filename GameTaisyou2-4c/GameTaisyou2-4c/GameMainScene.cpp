@@ -25,7 +25,7 @@
 
 #define DEBUG
 
-GameMainScene::GameMainScene()
+GameMainScene::GameMainScene(int BgmSet[7])
 {
 	enemy = new Enemy * [ENEMY_MAX];
 	item = new Item * [ITEM_MAX];
@@ -37,7 +37,7 @@ GameMainScene::GameMainScene()
 	}
 	enemy[0] = new Slime(Level);
 
-	for (int i = 0; i < ENEMY_MAX+1; i++)
+	for (int i = 0; i < ENEMY_MAX + 1; i++)
 	{
 		Damage[i] = { 0,0,0,0 };
 	}
@@ -93,6 +93,8 @@ GameMainScene::GameMainScene()
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, hierarchy_font);
 	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 
+	LoadDivGraph("images/Clear.png", 3, 3, 1, 800, 800, ClearImg);
+
 	count = 0;
 
 	CameraX = 0;
@@ -112,11 +114,19 @@ GameMainScene::GameMainScene()
 	NextMapSE = LoadSoundMem("sound/NextMap.mp3");
 	AttackSE = LoadSoundMem("sound/Attack.mp3");
 	TreasureSE = LoadSoundMem("sound/Treasure.mp3");
-	
+	ClearSE = LoadSoundMem("sound/ClearSe.mp3");
 
-	DungeonBGM = LoadSoundMem("sound/Dungeon.mp3");
-	BossBGM = LoadSoundMem("sound/BOSS.mp3");
-	SafeZoneBGM = LoadSoundMem("sound/SafeZone.mp3");
+	this->BgmSet[TITLE] = BgmSet[TITLE];
+	this->BgmSet[HOWTO] = BgmSet[HOWTO];
+	this->BgmSet[DUNGEON] = BgmSet[DUNGEON];
+	this->BgmSet[BOSS] = BgmSet[BOSS];
+	this->BgmSet[SAFEZONE] = BgmSet[SAFEZONE];
+	this->BgmSet[GAMECLEAR] = BgmSet[GAMECLEAR];
+	this->BgmSet[GAMEOVER] = BgmSet[GAMEOVER];
+
+	DungeonBGM = BgmSet[DUNGEON];
+	BossBGM = BgmSet[BOSS];
+	SafeZoneBGM = BgmSet[SAFEZONE];
 	ChangeVolumeSoundMem(255 * 79 / 100, BossBGM);
 
 	Exit_flg = true;
@@ -140,7 +150,7 @@ AbstractScene* GameMainScene::Update()
 		{
 			StopSoundMem(DungeonBGM);
 			StopSoundMem(BossBGM);
-			return new GameOver();
+			return new GameOver(BgmSet);
 		}
 
 		if ((!MoveStop_flg || Bright == 0) && !UpGrade)
@@ -364,7 +374,9 @@ AbstractScene* GameMainScene::Update()
 			if (enemy[i] != nullptr)break;
 			if (i == ENEMY_MAX - 1)
 			{
-				if(!SafeZone)PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
+				if (!SafeZone && Level != BOSS_LEVEL) PlaySoundMem(DoorSE, DX_PLAYTYPE_BACK);
+				if (!SafeZone && Level == BOSS_LEVEL)StopSoundMem(BossBGM);
+
 				MapData[MapExitX][MapExitY] = 3, Pressed_flg = true;
 				if (Level == BOSS_LEVEL && !SafeZone)
 				{
@@ -445,7 +457,10 @@ AbstractScene* GameMainScene::Update()
 
 		if ((PAD_INPUT::OnClick(XINPUT_BUTTON_B) && CheckHitKey(KEY_INPUT_A)) || CheckHitKey(KEY_INPUT_S))
 		{
+			for (int i = 0; i < 10; i++)
+			{
 				player.AddShard();
+			}
 		}
 
 #endif // DEBUG
@@ -460,9 +475,10 @@ AbstractScene* GameMainScene::Update()
 			break;
 
 		case Pause::TITLE:
+			StopSoundMem(SafeZoneBGM);
 			StopSoundMem(DungeonBGM);
 			StopSoundMem(BossBGM);
-			return new Title();
+			return new Title(BgmSet);
 			break;
 
 		default:
@@ -471,6 +487,7 @@ AbstractScene* GameMainScene::Update()
 	}
 	else if (ClearGame) 
 	{
+		StopSoundMem(BossBGM);
 		player.Update();
 
 		CameraX = player.GetX();
@@ -482,16 +499,17 @@ AbstractScene* GameMainScene::Update()
 		}
 
 		EndAnim++;
-		if (180 < EndAnim)
+		if (EndAnim == 120)PlaySoundMem(ClearSE,DX_PLAYTYPE_BACK);
+		if (420 < EndAnim)
 		{
 			StopSoundMem(NextMapSE);
 			StopSoundMem(DungeonBGM);
 			StopSoundMem(BossBGM);
-			return new GameEnd();
+			return new GameEnd(BgmSet);
 		}
 	}
 
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_START))
+	if (PAD_INPUT::OnClick(XINPUT_BUTTON_START) && !UpGrade)
 	{
 		if (!Pause)Pause = true;
 		else Pause = false;
@@ -539,6 +557,18 @@ void GameMainScene::Draw() const
 		{
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY()+ fix, MapImg[MapData[i][j]], TRUE);
 		}
+	}
+
+	//クリア演出
+	if (EndAnim) 
+	{
+		int Anim = (EndAnim - 120) / 60;
+		if (2 < Anim)Anim = 2;
+
+		int ImgX = BLOCK_SIZE * 6.5 - player.GetX() + SCREEN_WIDTH / 2;
+		int ImgY = BLOCK_SIZE * 7.5 - player.GetY() + SCREEN_HEIGHT / 2 + 360;
+
+		if (0 <= Anim && 120 <= EndAnim) DrawRotaGraph(ImgX, ImgY, 0.5, 0, ClearImg[Anim], true);
 	}
 	
 	if (Level % 10 == 0 && SafeZone)

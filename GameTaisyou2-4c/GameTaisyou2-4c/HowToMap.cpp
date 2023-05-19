@@ -10,7 +10,7 @@
 #include<stdlib.h>
 
 
-HowToMap::HowToMap()
+HowToMap::HowToMap(int BgmSet[7])
 {
 
 	MapExitX = 0;
@@ -55,8 +55,6 @@ HowToMap::HowToMap()
 	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 
-	TutorialBGM = LoadSoundMem("sound/Tutorial2.mp3");
-	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
 
 	Exit_flg = false;
 	Anim_flg = false;
@@ -65,10 +63,19 @@ HowToMap::HowToMap()
 	MoveStop_flg = true;
 	Pressed_flg = false;
 
+	this->BgmSet[TITLE] = BgmSet[TITLE];
+	this->BgmSet[HOWTO] = BgmSet[HOWTO];
+	this->BgmSet[DUNGEON] = BgmSet[DUNGEON];
+	this->BgmSet[BOSS] = BgmSet[BOSS];
+	this->BgmSet[SAFEZONE] = BgmSet[SAFEZONE];
+	this->BgmSet[GAMECLEAR] = BgmSet[GAMECLEAR];
+	this->BgmSet[GAMEOVER] = BgmSet[GAMEOVER];
+
+	TutorialBGM = BgmSet[HOWTO];
+	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
+
 	ChangeVolumeSoundMem(255 * 70 / 100, TutorialBGM);
 	PlaySoundMem(TutorialBGM, DX_PLAYTYPE_LOOP);
-
-
 }
 
 AbstractScene* HowToMap::Update()
@@ -158,8 +165,8 @@ AbstractScene* HowToMap::Update()
 		player.SetX(BLOCK_SIZE * 45);
 	}
 
-	if (GoMain_flg)return new GameMainScene();
-	if (GoTitle_flg)return new Title();
+	if (GoMain_flg)return new GameMainScene(BgmSet);
+	if (GoTitle_flg)return new Title(BgmSet);
 
 	return this;
 }

@@ -4,13 +4,23 @@
 #include"GameMainScene.h"
 #include"common.h"
 
-GameEnd::GameEnd()
+GameEnd::GameEnd(int BgmSet[7])
 {
-	SetDrawBright(255, 255, 255);
+
+	this->BgmSet[TITLE] = BgmSet[TITLE];
+	this->BgmSet[HOWTO] = BgmSet[HOWTO];
+	this->BgmSet[DUNGEON] = BgmSet[DUNGEON];
+	this->BgmSet[BOSS] = BgmSet[BOSS];
+	this->BgmSet[SAFEZONE] = BgmSet[SAFEZONE];
+	this->BgmSet[GAMECLEAR] = BgmSet[GAMECLEAR];
+	this->BgmSet[GAMEOVER] = BgmSet[GAMEOVER];
+
 	GameEndImage = LoadGraph("images/GameEnd.png");
-	GameClearBGM = LoadSoundMem("sound/GameClear.mp3");
+	GameClearBGM = BgmSet[GAMECLEAR];
 	ChangeVolumeSoundMem(255 * 70 / 100, GameClearBGM);
 	PlaySoundMem(GameClearBGM, DX_PLAYTYPE_LOOP);
+
+	SetDrawBright(255, 255, 255);
 }
 
 AbstractScene* GameEnd::Update()
@@ -18,7 +28,7 @@ AbstractScene* GameEnd::Update()
 	if (PAD_INPUT::OnClick(XINPUT_BUTTON_B))
 	{
 		StopSoundMem(GameClearBGM);
-		return new Title();
+		return new Title(BgmSet);
 	}
 	return this;
 }
