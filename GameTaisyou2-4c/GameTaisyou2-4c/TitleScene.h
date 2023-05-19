@@ -21,6 +21,7 @@ private:
 	int Title_font;
 	int Start_font;
 	int Debug_font;
+	int End_font;
 
 	int CursorSE;
 	int TitleBGM;

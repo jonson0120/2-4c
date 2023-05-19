@@ -18,6 +18,7 @@ Title::Title() {
 	Title_font= LoadGraph("images/TITLE.png");
 	Start_font= LoadGraph("images/START.png");
 	Debug_font= LoadGraph("images/null.png");
+	End_font = LoadGraph("images/End.png");
 
 	click_sound = LoadSoundMem("sound/click.mp3");
 	CursorSE = LoadSoundMem("sound/Cursor.mp3");
@@ -82,7 +83,7 @@ void Title::Draw() const{
 	DrawRotaGraph(SCREEN_WIDTH / 2, 200, 1, 0, Title_font, TRUE);
 	if (Tutorial_flg == false) {
 		DrawGraph(440, 360, Start_font, TRUE);
-		DrawGraph(440, 460, Debug_font, TRUE);
+		DrawGraph(475, 460, End_font, TRUE);
 		DrawGraph(400, 360 + select * 100, select_image, TRUE);
 	}
 	else {
