@@ -93,7 +93,7 @@ GameMainScene::GameMainScene(int BgmSet[7])
 	LoadDivGraph("images/number.png", 44, 11, 4, 10, 16, hierarchy_font);
 	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 
-	LoadDivGraph("images/Clear.png", 3, 3, 1, 800, 800, ClearImg);
+	LoadDivGraph("images/Clear.png", 4, 4, 1, 800, 800, ClearImg);
 
 	count = 0;
 
@@ -137,8 +137,8 @@ GameMainScene::GameMainScene(int BgmSet[7])
 
 	SetDrawBright(Bright, Bright, Bright);
 
-	PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
 	ChangeVolumeSoundMem(255 * 80 / 100, DungeonBGM);
+	PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
 }
 
 AbstractScene* GameMainScene::Update() 
@@ -500,7 +500,14 @@ AbstractScene* GameMainScene::Update()
 
 		EndAnim++;
 		if (EndAnim == 120)PlaySoundMem(ClearSE,DX_PLAYTYPE_BACK);
-		if (420 < EndAnim)
+
+		// フェードアウト処理
+		if (EndAnim % 5 == 0 && 420 < EndAnim) {
+			// 描画輝度をセット
+			SetDrawBright(Bright, Bright, Bright);
+			Bright -= Bright_minus;
+		}
+		if (Bright <= 0)
 		{
 			StopSoundMem(NextMapSE);
 			StopSoundMem(DungeonBGM);
@@ -556,11 +563,12 @@ void GameMainScene::Draw() const
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
 			if (MapData[i][j] < 4)DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY()+ fix, MapImg[MapData[i][j]], TRUE);
+			if ((MapData[i][j] == 2 || MapData[i][j] == 3) && boss) DrawGraph(160 * (4 + j) - player.GetX(), 360 + 160 * i - player.GetY() + fix, MapImg[1], TRUE);
 		}
 	}
 
 	//クリア演出
-	if (EndAnim) 
+	if (boss)
 	{
 		int Anim = (EndAnim - 120) / 60;
 		if (2 < Anim)Anim = 2;
@@ -568,7 +576,8 @@ void GameMainScene::Draw() const
 		int ImgX = BLOCK_SIZE * 6.5 - player.GetX() + SCREEN_WIDTH / 2;
 		int ImgY = BLOCK_SIZE * 7.5 - player.GetY() + SCREEN_HEIGHT / 2 + 360;
 
-		if (0 <= Anim && 120 <= EndAnim) DrawRotaGraph(ImgX, ImgY, 0.5, 0, ClearImg[Anim], true);
+		if (0 <= Anim && 120 <= EndAnim && 0 < EndAnim) DrawRotaGraph(ImgX, ImgY, 0.5, 0, ClearImg[Anim + 1], true);
+		else DrawRotaGraph(ImgX, ImgY, 0.5, 0, ClearImg[0], true);
 	}
 	
 	if (Level % 10 == 0 && SafeZone)
@@ -653,8 +662,15 @@ void GameMainScene::Draw() const
 	}
 
 	ui.Draw();
+
 	if (UpGrade)ui.UpGradeDraw();
-	if (Pause)ui.PauseDraw();
+
+	if (Pause)
+	{
+		SetDrawBright(255, 255, 255);
+		ui.PauseDraw();
+		SetDrawBright(Bright, Bright, Bright);
+	}
 
 	//階層表示
 	DrawRotaGraph(1040, 80, 4, 0, Chara[1], TRUE);
@@ -992,7 +1008,7 @@ void GameMainScene::MakeMap()
 	}
 	else 
 	{
-	player.SetY(BLOCK_SIZE * 9.5);
+	player.SetY(BLOCK_SIZE * 9.5 + BLOCK_SIZE / 2 - player.GetHeight() / 2);
 
 	Space = 0;
 	for (int i = 0; i < MAP_HEIGHT; i++)

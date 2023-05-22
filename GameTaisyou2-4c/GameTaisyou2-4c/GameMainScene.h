@@ -65,7 +65,7 @@ private:
 	int B_font;
 	int F_font;
 	int Chara[28];		//文字
-	int ClearImg[3];
+	int ClearImg[4];	//クリア演出
 
 	int DoorSE;
 	int NextMapSE;

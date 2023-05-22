@@ -19,6 +19,8 @@ HowToMap::HowToMap(int BgmSet[7])
 	player.SetMapData(MapData);
 
 	//enemy2.SetMapData(MapData);
+
+	backimg = LoadGraph("images/howtoback.png");
 	
 	LoadDivGraph("images/HowToBlock.png", 2, 2, 1, 160, 160, MapImg);
 	MapImg[2] = 0;
@@ -173,13 +175,15 @@ AbstractScene* HowToMap::Update()
 
 void HowToMap::Draw() const
 {
+	//背景
+	DrawGraph(0, 0, backimg, true);
 
 	//柱を描画する
-	DrawGraph(BLOCK_SIZE * 22 - player.GetX() - 15, 360 + BLOCK_SIZE * 8 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 28 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 35 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 38 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 43 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 110, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 22 - player.GetX() - 15, 360 + BLOCK_SIZE * 8 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 28 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 35 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 38 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 43 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 120, MapImg[3], TRUE);
 
 	//ブロックを描画する
 	for (int i = 0; i < MAP_HEIGHT; i++)

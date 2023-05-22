@@ -19,6 +19,8 @@ private:
 	int Block;				//ブロック
 	int HowToImg[13];		//操作説明画像
 
+	int backimg;			//背景
+
 	int Phase = 0;				//進行度
 	int Anim = 0;				//説明アニメーション
 	int PhaseCount = 0;			//フェーズ進行時アニメーション
