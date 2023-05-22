@@ -18,6 +18,8 @@ private:
 	int direction;		//�G�̌���
 
 	int Power;			//�U����
+	bool Death = false;			//撃破演出に移行
+	int DeathAnim = 0;		//撃破演出
 
 	//�s������---------------
 	int Movecnt = 0;			//�ړ��؂�ւ�����
@@ -75,6 +77,7 @@ private:
 	int ClawSE;
 	int PounceSE;
 	int RoarSE;
+	int DeathSE;
 
 
 public:

@@ -21,7 +21,6 @@ private:
 	int DodgeSE;
 	int DefenseSE;
 
-
 	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス
@@ -34,6 +33,8 @@ private:
 	int ArmAngle_L, ArmAngle_R;
 
 	bool Move = true;	//入力受付
+	int EndMove = 0;	//クリア演出
+
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
 	float Dodgespd;	//回避速度

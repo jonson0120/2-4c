@@ -6,7 +6,7 @@ class Title : public AbstractScene {
 private:
 	enum class TITLE_MENU {
 		START,
-		Debug
+		END
 	};
 
 	TITLE_MENU Menu_Number;
@@ -29,8 +29,11 @@ private:
 	bool Tutorial_flg;
 
 	int click_sound;
+
+	int BgmSet[7];	//読み込まれたBGMデータ
+
 public:
-	Title();
+	Title(int BgmSet[7]);
 
 	~Title() {};
 

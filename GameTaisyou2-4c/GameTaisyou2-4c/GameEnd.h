@@ -6,9 +6,10 @@ private:
 	int GameEndImage;
 	int GameClearBGM;
 
+	int BgmSet[7];
 public:
 	~GameEnd() {};
-	GameEnd();
+	GameEnd(int BgmSet[7]);
 
 	//�`��ȊO�̍X�V���������
 	virtual AbstractScene* Update() override;

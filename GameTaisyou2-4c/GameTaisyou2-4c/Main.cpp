@@ -24,8 +24,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     //後で使うよ
 
-    SceneManager sceneMng((AbstractScene*)new Title());
-  
+    //音声データを読み込む
+    int BgmSet[7];
+ 
+    BgmSet[TITLE] = LoadSoundMem("sound/TitleBGM.mp3");
+    BgmSet[HOWTO] = LoadSoundMem("sound/Tutorial2.mp3");
+    BgmSet[DUNGEON] = LoadSoundMem("sound/Dungeon.mp3");
+    BgmSet[BOSS] = LoadSoundMem("sound/BOSS.mp3");
+    BgmSet[SAFEZONE] = LoadSoundMem("sound/SafeZone.mp3");
+    BgmSet[GAMECLEAR] = LoadSoundMem("sound/GameClear.mp3");
+    BgmSet[GAMEOVER] = LoadSoundMem("sound/GameOver.mp3");
+
+    SceneManager sceneMng((AbstractScene*)new Title(BgmSet));
 
     Fps fps;
 
