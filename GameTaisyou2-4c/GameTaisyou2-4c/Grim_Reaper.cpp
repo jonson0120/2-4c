@@ -41,6 +41,8 @@ Grim_Reaper::Grim_Reaper(int level) : Enemy()
 
 	direction = 0;
 
+	E_Count = 0;
+
 	E_AttackFlg = FALSE;
 
 	Attack = 0;
@@ -147,10 +149,10 @@ void Grim_Reaper::Update(Player* player)
 		}
 	}
 
-	//プレイヤーに当たった時攻撃
-	if (enex == player->GetX() && eney == player->GetY())
+	//プレイヤーが近づくと増加
+	if (enex == (player->GetX() * 1.1) && eney == (player->GetY() * 1.1))
 	{
-		//player->HitEnemy(1);
+		E_Count++;
 	}
 
 	if (HitCool)HitCool--;
@@ -302,6 +304,17 @@ bool Grim_Reaper::EnemyAttack(int x, int y)
 		Dis = (int)sqrt((int)(DisX + DisY));
 		if (Dis < 20)return true;
 		else return false;
+
+		if (E_Count == 20)
+		{
+			float DisX = pow(finX - x, 2);
+			float DisY = pow(finY - y, 2);
+			Dis = (int)sqrt((int)(DisX + DisY));
+			if (Dis < 20)return true;
+			else return false;
+		}
+		E_Count = 0;
 	}
+
 	else return false;
 }

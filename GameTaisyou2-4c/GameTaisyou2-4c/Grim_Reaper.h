@@ -18,6 +18,7 @@ private:
 
 	int Power;			//攻撃力
 	
+	int E_Count;		//プレイヤーが近づいた時増加する値
 
 	bool E_AttackFlg;
 	int Attack;			//攻撃アニメーション
