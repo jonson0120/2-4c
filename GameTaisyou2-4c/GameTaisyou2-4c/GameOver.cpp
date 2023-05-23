@@ -19,6 +19,8 @@ GameOver::GameOver(int BgmSet[7])
 	ChangeVolumeSoundMem(255 * 70 / 100, GameOverBGM);
 	PlaySoundMem(GameOverBGM, DX_PLAYTYPE_LOOP);
 
+	SetDrawBright(255, 255, 255);
+
 }
 
 AbstractScene* GameOver::Update()

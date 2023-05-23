@@ -34,6 +34,8 @@ HowToMap::HowToMap(int BgmSet[7])
 	MapImg[6] = weed[1];
 	MapImg[7] = weed[2];
 
+	MapImg[8]= LoadGraph("images/signboard.png");
+
 	Block= LoadGraph("images/singleblock.png");
 
 	LoadDivGraph("images/methot.png", 12, 5, 3, 192, 160, HowToImg);
@@ -126,7 +128,7 @@ AbstractScene* HowToMap::Update()
 	{
 		Phase++;
 	}
-	else if (7 <= Phase && Phase <= 9 && player.GetX() / BLOCK_SIZE == 46 && 120 < player.GetX() % BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+	else if (7 <= Phase && Phase <= 9 && player.GetX() / BLOCK_SIZE == 46 && 120 < player.GetX() % BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_B) && !player.GetTurn())
 	{
 		if (PhaseCount == 0)
 		{
@@ -204,6 +206,7 @@ void HowToMap::Draw() const
 	if (MapData[8][47] == 0)DrawGraph(160 * (4 + 47) - player.GetX(), 360 + 160 * 8 - player.GetY() + 150, MapImg[7 - weed] , TRUE);
 
 	DrawGraph(160 * (4 + 10) - player.GetX(), 360 + 160 * 8 - player.GetY() + 150, MapImg[4], TRUE);
+	DrawGraph(160 * (4 + 7) - player.GetX(), 360 + 160 * 8 - player.GetY() + 150, MapImg[8], TRUE);
 
 	if (!Getted)DrawRotaGraph(BLOCK_SIZE * (MAP_WIDTH_T - 5 + 0.5) - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * (MAP_HEIGHT - 2 + 0.5) - player.GetY() + SCREEN_HEIGHT / 2 + 45,  1, 0, Dagger[0], true);
 	else DrawRotaGraph(BLOCK_SIZE * (MAP_WIDTH_T - 5 + 0.5) - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * (MAP_HEIGHT - 2 + 0.5) - player.GetY() + SCREEN_HEIGHT / 2 + 45, 1, 0, Dagger[1], true);

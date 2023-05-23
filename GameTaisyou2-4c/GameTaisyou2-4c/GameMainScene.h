@@ -24,10 +24,12 @@ private:
 
 	int Level;		//階層
 	bool SafeZone;	//安全地帯に入るとtrue
+	bool Death = false;		//死ぬとtrue
 	bool UpGrade = false;	//アップグレードメニューを開くとtrue
 	bool Pause = false;		//ポーズメニューを開くとtrue
 	bool ClearGame = false;	//ボスを倒せばtrue
 
+	int DeathAnim = 0;	//ゲームオーバー演出に使う
 	int EndAnim = 0;	//ゲームクリア演出に使う
 
 	int time;
@@ -65,7 +67,8 @@ private:
 	int B_font;
 	int F_font;
 	int Chara[28];		//文字
-	int ClearImg[4];	//クリア演出
+	int ClearImg[4];	//クリア演出画像
+	int DeathImg;		//ゲームオーバー演出画像
 
 	int DoorSE;
 	int NextMapSE;

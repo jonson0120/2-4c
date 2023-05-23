@@ -115,6 +115,7 @@ public:
 	int GetShard() { return stat.Shard; }
 
 	int GetWall() { return wall; }
+	bool GetTurn() { return TurnFlg; }
 	//-----------------------------------------
 
 	//ステータス変化

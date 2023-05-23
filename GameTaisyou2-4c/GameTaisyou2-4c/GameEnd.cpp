@@ -96,19 +96,19 @@ void GameEnd::Draw()const
 	if (2 <= Scene)
 	{
 		DrawRotaGraph(StrPos, 200, 1, 0, String[2], true);
-		DrawRotaGraph(StrPos, 400, 1, 0, String[3], true);
 	}
 
 	//アニメーション：主人公
 	int Step = Anim / 30 % 4;
-	DrawGraph(MainPos, SCREEN_HEIGHT - BLOCK_SIZE - 100 + 2, BootyImg[Step], true);
+	DrawRotaGraph(MainPos, SCREEN_HEIGHT - BLOCK_SIZE / 2 * 1.5 - 75 + 3, 1.5, 0, BootyImg[Step], true);
 
 	//アニメーション：地面
-	Step = BlockPos % BLOCK_SIZE;	//地面が動く
+	Step = BlockPos % (int)(BLOCK_SIZE * 1.5);	//地面が動く
 	for (int i = 0; i < 10; i++)
 	{
-		DrawGraph(BLOCK_SIZE * (i - 1) - Step, SCREEN_HEIGHT - BLOCK_SIZE, Block[0], true);
+		DrawRotaGraph(BLOCK_SIZE * 1.5 *(i - 1) - Step, SCREEN_HEIGHT, 1.5, 0, Block[0], true);
 	}
 	/*DrawString(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,"GameOver",GetColor(255,0,0));*/
 
+	if (Anim % 60 < 30 && 3 == Scene) DrawRotaGraph(SCREEN_WIDTH / 2, 680, 0.5, 0, String[3], true);
 }

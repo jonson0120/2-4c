@@ -71,6 +71,7 @@ GameMainScene::GameMainScene(int BgmSet[7])
 	{
 		if (item[i] != nullptr)
 		{
+
 			item[i]->SetMapData(MapData);
 			item[i]->SetItem();
 		}
@@ -94,6 +95,7 @@ GameMainScene::GameMainScene(int BgmSet[7])
 	LoadDivGraph("images/alphabet.png", 28, 7, 4, 10, 12, Chara);
 
 	LoadDivGraph("images/Clear.png", 4, 4, 1, 800, 800, ClearImg);
+	DeathImg = LoadGraph("images/ghost.png");
 
 	count = 0;
 
@@ -150,10 +152,29 @@ AbstractScene* GameMainScene::Update()
 		{
 			StopSoundMem(DungeonBGM);
 			StopSoundMem(BossBGM);
-			return new GameOver(BgmSet);
+			Death = true;
 		}
 
-		if ((!MoveStop_flg || Bright == 0) && !UpGrade)
+		if (Death) 
+		{
+			DeathAnim++;
+
+			// フェードアウト処理
+			if (DeathAnim % 5 == 0 && 120 < DeathAnim) {
+				// 描画輝度をセット
+				SetDrawBright(Bright, Bright, Bright);
+				Bright -= Bright_minus;
+			}
+			if (Bright <= 0)
+			{
+				StopSoundMem(NextMapSE);
+				StopSoundMem(DungeonBGM);
+				StopSoundMem(BossBGM);
+				return new GameOver(BgmSet);
+			}
+		}
+
+		if ((!MoveStop_flg || Bright == 0) && !UpGrade && !Death)
 		{
 			if (player.WaitSearch())SearchEnemy();
 			player.Update();
@@ -178,7 +199,7 @@ AbstractScene* GameMainScene::Update()
 			if (enemy[i] != nullptr && !MoveStop_flg)
 			{
 				enemy[i]->Update(&player);
-				if (enemy[i]->EnemyAttack(player.GetX(), player.GetY()) && !player.GetCool())
+				if (!Death && enemy[i]->EnemyAttack(player.GetX(), player.GetY()) && !player.GetCool())
 				{
 					//ダメージの種類を取る　0：普通に受けた　1：回避した　2：バリアで防いだ
 					int damage = player.HitEnemy(enemy[i]->GetPower(), enemy[i]->E_GetX());
@@ -463,6 +484,14 @@ AbstractScene* GameMainScene::Update()
 			}
 		}
 
+		if (CheckHitKey(KEY_INPUT_E) && CheckHitKey(KEY_INPUT_N) && CheckHitKey(KEY_INPUT_D))
+		{
+			StopSoundMem(NextMapSE);
+			StopSoundMem(DungeonBGM);
+			StopSoundMem(BossBGM);
+			return new GameEnd(BgmSet);
+		}
+
 #endif // DEBUG
 
 	}
@@ -601,7 +630,8 @@ void GameMainScene::Draw() const
 	}
 
 	//プレイヤー描画
-	player.Draw(boss);
+	if (!Death)player.Draw(boss);
+	else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - DeathAnim * 2, 1, 0, DeathImg, true);
 
 	//敵描画
 	for (int i = 0; i < ENEMY_MAX; i++)
