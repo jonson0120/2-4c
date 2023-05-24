@@ -297,7 +297,7 @@ AbstractScene* GameMainScene::Update()
 					{
 						if (item[j] == nullptr)
 						{
-							item[j] = new Shard({ treasurebox[i]->Box_GetX(), treasurebox[i]->Box_GetY() });
+							item[j] = new Shard({ treasurebox[i]->lid_GetX(), treasurebox[i]->lid_GetY() });
 							item[j]->SetMapData(MapData);
 							Drop++;
 						}

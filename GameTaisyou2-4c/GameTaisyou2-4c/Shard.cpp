@@ -17,8 +17,6 @@ Shard::Shard(Range position)
 	if (GetRand(1))Slide *= -1;
 
 	pos = position;
-	pos.Y += Height / 2;
-
 }
 
 void Shard::Update(Player* player)
@@ -35,7 +33,6 @@ void Shard::Update(Player* player)
 	}
 
 	//�������̈ړ�
-	pos.X += Slide;
 	while ((!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
 			!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE]))
 	{
@@ -47,6 +44,7 @@ void Shard::Update(Player* player)
 	{
 		pos.X--;
 	}
+	pos.X += Slide;
 
 	//�����ƃW�����v
 	// 
