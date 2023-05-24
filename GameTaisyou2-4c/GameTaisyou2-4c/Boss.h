@@ -12,7 +12,6 @@ private:
 	int EImages[10];		//�摜
 	int Anim;			//�A�j���[�V����
 
-	int DropItem_Image;	//�h���b�v�A�C�e��
 	int enex, eney;		//X,Y���W
 	int Width, Height;	//�G�̍���
 	int direction;		//�G�̌���

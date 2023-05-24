@@ -1265,7 +1265,7 @@ void GameMainScene::ExitCheck() {
 						if (enemy[i] != nullptr)break;
 						if (i == 9)Exit_flg = true;
 					}
-					PlaySoundMem(NextMapSE, DX_PLAYTYPE_BACK);
+					if (!CheckSoundMem(NextMapSE))PlaySoundMem(NextMapSE, DX_PLAYTYPE_BACK);
 					MoveStop_flg = true;
 				}
 			}

@@ -22,7 +22,7 @@ GameEnd::GameEnd(int BgmSet[7])
 	//画像ロード
 	LoadDivGraph("images/booty.png", 4, 4, 1, 145, 100, BootyImg);
 	LoadDivGraph("images/HowToBlock.png", 2, 2, 1, 160, 160, Block);
-	LoadDivGraph("images/credit.png", 4, 2, 2, 700, 270, String);
+	LoadDivGraph("images/credit.png", 6, 3, 2, 700, 270, String);
 
 	PlaySoundMem(GameClearBGM, DX_PLAYTYPE_LOOP);
 
@@ -90,12 +90,13 @@ void GameEnd::Draw()const
 	//アニメーション：文字
 	if (Scene == 1)
 	{
-		DrawRotaGraph(StrPos, 300, 1, 0, String[0], true);
-		DrawRotaGraph(StrPos + 700, 300, 1, 0, String[1], true);
+		DrawRotaGraph(StrPos, 350, 1, 0, String[0], true);
+		DrawRotaGraph(StrPos + 700, 200, 1, 0, String[1], true);
+		DrawRotaGraph(StrPos + 700, 500, 1, 0, String[2], true);
 	}
 	if (2 <= Scene)
 	{
-		DrawRotaGraph(StrPos, 200, 1, 0, String[2], true);
+		DrawRotaGraph(StrPos, 200, 1, 0, String[3], true);
 	}
 
 	//アニメーション：主人公
@@ -110,5 +111,5 @@ void GameEnd::Draw()const
 	}
 	/*DrawString(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,"GameOver",GetColor(255,0,0));*/
 
-	if (Anim % 60 < 30 && 3 == Scene) DrawRotaGraph(SCREEN_WIDTH / 2, 680, 0.5, 0, String[3], true);
+	if (3 == Scene) DrawRotaGraph(SCREEN_WIDTH / 2, 680, 0.5, 0, String[4 + (Anim / 30 % 2)], true);
 }

@@ -20,7 +20,7 @@ private:
 	//画像
 	int BootyImg[4];	//荷車を引く主人公
 	int Block[2];		//地面
-	int String[4];		//文字
+	int String[6];		//文字
 
 	int BgmSet[7];
 public:

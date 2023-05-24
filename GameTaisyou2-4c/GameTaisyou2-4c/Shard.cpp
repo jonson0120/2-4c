@@ -17,7 +17,7 @@ Shard::Shard(Range position)
 	if (GetRand(1))Slide *= -1;
 
 	pos = position;
-	pos.Y -= Height / 2;
+	pos.Y += Height / 2;
 
 }
 

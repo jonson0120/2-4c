@@ -8,7 +8,6 @@
 //private:
 //	int image;			//画像
 //	int E2Images[2];		//画像
-//	int DropItem_Image;	//ドロップアイテム
 //	int ene2x, ene2y;		//X,Y座標
 //	int Width, Height;	//敵の高さ
 //	int direction;		//敵の向き

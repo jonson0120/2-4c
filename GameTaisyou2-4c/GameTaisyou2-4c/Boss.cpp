@@ -14,8 +14,6 @@ Boss::Boss(int level) : Enemy()
 {
 	image = 0;
 
-	DropItem_Image = LoadGraph("shard.png", TRUE);
-
 	//�G���W
 	enex = 0;
 	eney = 0;

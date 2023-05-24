@@ -12,7 +12,6 @@ private:
 	int EImages[3];		//画像
 	int Anim;			//アニメーション
 
-	int DropItem_Image;	//ドロップアイテム
 	int enex, eney;		//X,Y座標
 	int Width, Height;	//敵の高さ
 	int direction;		//敵の向き
