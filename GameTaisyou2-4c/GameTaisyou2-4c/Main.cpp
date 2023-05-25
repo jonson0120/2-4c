@@ -22,6 +22,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     SetFontSize(20);  //文字サイズを設定
 
+    SetWindowIconID(333);
+
     //後で使うよ
 
     SceneManager sceneMng((AbstractScene*)new Title());
