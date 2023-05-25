@@ -15,6 +15,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_COLOR_BIT_16);
 
     ChangeWindowMode(TRUE);		//ウィンドウモードで起動
+    SetWindowIconID(01);
 
     if (DxLib_Init() == -1) return -1;	//DXライブラリの初期化処理
 

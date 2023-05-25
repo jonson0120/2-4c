@@ -70,6 +70,8 @@ private:
 	int ClearImg[4];	//クリア演出画像
 	int DeathImg;		//ゲームオーバー演出画像
 
+	int DepthImg[2];	//深度表示画像
+
 	int DoorSE;
 	int NextMapSE;
 	int AttackSE;

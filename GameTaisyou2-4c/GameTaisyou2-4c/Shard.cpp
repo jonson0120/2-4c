@@ -32,6 +32,7 @@ void Shard::Update(Player* player)
 		Getted = true;
 	}
 
+	pos.X += Slide;
 	//�������̈ړ�
 	while ((!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
 			!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE]))
@@ -40,11 +41,10 @@ void Shard::Update(Player* player)
 	}
 
 	while (!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE] ||
-		!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
+		   !MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
 	{
 		pos.X--;
 	}
-	pos.X += Slide;
 
 	//�����ƃW�����v
 	// 
@@ -59,14 +59,21 @@ void Shard::Update(Player* player)
 			fall = fallinit;
 		}
 	}
-	pos.Y += fall;
 
 	//�ʒu����
 
+	pos.Y += fall;
 	while (!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
 		!MapData[(pos.Y + Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
 	{
 		pos.Y--;
+		Slide = 0;
+		fall = 0;
+	}
+	while (!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X - Width / 2) / BLOCK_SIZE] ||
+		!MapData[(pos.Y - Height / 2) / BLOCK_SIZE][(pos.X + Width / 2) / BLOCK_SIZE])
+	{
+		pos.Y++;
 		Slide = 0;
 		fall = 0;
 	}

@@ -194,6 +194,7 @@
     <ClInclude Include="HowToMap.h" />
     <ClInclude Include="HowToPlayer.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="Slime.h" />
@@ -207,6 +208,9 @@
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

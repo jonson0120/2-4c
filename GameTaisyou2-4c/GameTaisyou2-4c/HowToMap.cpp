@@ -163,12 +163,6 @@ AbstractScene* HowToMap::Update()
 		NextMap();
 	}
 
-	if (CheckHitKey(KEY_INPUT_Q))
-	{
-		if (Phase < 7)Phase = 7;
-		player.SetX(BLOCK_SIZE * 45);
-	}
-
 	if (GoMain_flg)return new GameMainScene(BgmSet);
 	if (GoTitle_flg)return new Title(BgmSet);
 

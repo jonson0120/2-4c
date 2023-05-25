@@ -168,6 +168,19 @@ public:
 	//シャード取得
 	void AddShard() {PlaySoundMem(ShardSE, DX_PLAYTYPE_BACK); stat.Shard++; }
 
+	//状態リセット
+	void ResetPosition() 
+	{
+		Attack = 0;
+		TurnFlg = false;
+
+		Arm_L = { SCREEN_WIDTH / 2 + 13, SCREEN_HEIGHT / 2 };
+		ArmAngle_L = 0;
+
+		Arm_R = { SCREEN_WIDTH / 2 - 12, SCREEN_HEIGHT / 2 };
+		ArmAngle_R = 0;
+	}
+
 	//体力強化
 	void StrHP(int add) 
 	{
@@ -189,7 +202,7 @@ public:
 		stat.PotionPower += 0.05;
 	}
 
-	//シャード使用
+	//状態リセットシャード使用
 	bool UseShard(int amount) { 
 
 		if (amount <= stat.Shard) {

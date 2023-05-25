@@ -110,6 +110,9 @@ GameMainScene::GameMainScene(int BgmSet[7])
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 	DoorIcon[3] = LoadGraph("images/ItemIcon.png");
 
+	DepthImg[0] = LoadGraph("images/depth.png");
+	DepthImg[1] = LoadGraph("images/depthicon.png");
+
 	Restarea = LoadGraph("images/Restarea.png");
 
 	DoorSE = LoadSoundMem("sound/Door.mp3");
@@ -141,6 +144,8 @@ GameMainScene::GameMainScene(int BgmSet[7])
 
 	ChangeVolumeSoundMem(255 * 80 / 100, DungeonBGM);
 	PlaySoundMem(DungeonBGM, DX_PLAYTYPE_LOOP);
+
+	player.ResetPosition();
 }
 
 AbstractScene* GameMainScene::Update() 
@@ -165,7 +170,7 @@ AbstractScene* GameMainScene::Update()
 				SetDrawBright(Bright, Bright, Bright);
 				Bright -= Bright_minus;
 			}
-			if (Bright <= 0)
+			if (Bright <= 0 && 300 < DeathAnim)
 			{
 				StopSoundMem(NextMapSE);
 				StopSoundMem(DungeonBGM);
@@ -174,7 +179,7 @@ AbstractScene* GameMainScene::Update()
 			}
 		}
 
-		if ((!MoveStop_flg || Bright == 0) && !UpGrade && !Death)
+		if (!MoveStop_flg && !UpGrade && !Death)
 		{
 			if (player.WaitSearch())SearchEnemy();
 			player.Update();
@@ -631,7 +636,7 @@ void GameMainScene::Draw() const
 
 	//プレイヤー描画
 	if (!Death)player.Draw(boss);
-	else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - DeathAnim * 2, 1, 0, DeathImg, true);
+	else DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - DeathAnim * 2 + fix, 1, 0, DeathImg, true);
 
 	//敵描画
 	for (int i = 0; i < ENEMY_MAX; i++)
@@ -707,6 +712,10 @@ void GameMainScene::Draw() const
 	DrawRotaGraph(1210, 80, 4, 0, Chara[5], TRUE);
 	DrawRotaGraph(1155, 60, 6.0, 0, hierarchy_font[Level % 10], TRUE);
 	DrawRotaGraph(1095, 60, 6.0, 0, hierarchy_font[Level / 10 % 10], TRUE);
+
+	//深度表示
+	DrawGraph(SCREEN_WIDTH - 50, 120, DepthImg[0], true);
+	DrawRotaGraph(SCREEN_WIDTH - 75, 120 - 2 + (Level * 10), 1, 0, DepthImg[1], true);
 
 #ifdef DEBUG
 
@@ -892,6 +901,9 @@ void GameMainScene::MakeMap()
 		  {1,1,1}, },
 	};
 	parts_max = sizeof(map_parts) / sizeof(*map_parts);
+
+	if (MAP_WIDTH < MaplimitX)MaplimitX = MAP_WIDTH;
+	if (MAP_HEIGHT < MaplimitY)MaplimitY = MAP_HEIGHT;
 
 	//出口生成チェック
 	bool MakeExit = false;
@@ -1121,6 +1133,7 @@ void GameMainScene::NextMap() {
 		if (Bright <= 0)
 		{
 			MakeMap_flg = true;
+			player.ResetPosition();
 
 			if (SafeZone)SafeZone = false;
 			else if (++Level % 10 == 0)SafeZone = true;
@@ -1148,13 +1161,6 @@ void GameMainScene::NextMap() {
 		{
 			if (MaplimitX - 2 == MaplimitY)MaplimitY++;
 			else MaplimitX++;
-		}
-
-		if (SafeZone == true) {
-
-		}
-		if (Level % 10 == 1) {
-			
 		}
 
 		MapExitX = 0;

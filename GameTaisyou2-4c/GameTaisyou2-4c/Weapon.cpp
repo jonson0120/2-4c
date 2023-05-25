@@ -191,18 +191,19 @@ void Weapon::Draw(Range Player)const
 {
 	DrawRotaGraph(pos.X - Player.X + (SCREEN_WIDTH / 2), pos.Y - Player.Y + (SCREEN_HEIGHT / 2), size, 0, image, TRUE);
 
+	//パッシブウィンドウ表示
 	if (CanGet)
 	{
 		int x = pos.X - Player.X + (SCREEN_WIDTH / 2);
 		int y = pos.Y - Player.Y + (SCREEN_HEIGHT / 2) - Height;
 		DrawRotaGraph(x, y, 1, 0, icon, TRUE);
-		DrawRotaGraph(x, y - 50, 1, 0, passiveimg[7], TRUE);
+		DrawRotaGraph(x + 2, y - 50 + 9, 1, 0, passiveimg[7], TRUE);
 		for (int i = 0; i < 4; i++)
 		{
 			if (passive[i].Kinds != NONE) 
 			{
-				DrawRotaGraph2(x - 55, y - 77 + (18 * i), 0, 9, 1, 0, passiveimg[passive[i].Kinds], true);
-				DrawRotaGraph(x + 40, y - 77 + (18 * i), 1, 0, numimg[passive[i].Effect], true);
+				DrawRotaGraph2(x - 55, y - 77 + (18 * i) + 5, 0, 9, 1, 0, passiveimg[passive[i].Kinds], true);
+				DrawRotaGraph(x + 40, y - 77 + (18 * i) + 5, 1, 0, numimg[passive[i].Effect], true);
 			}
 		}
 	}
