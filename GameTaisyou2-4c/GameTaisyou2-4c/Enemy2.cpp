@@ -12,8 +12,6 @@
 //{
 //	//image = 0;
 //
-//	DropItem_Image = LoadGraph("shard.png", TRUE);
-//
 //	ene2x = 0;
 //	ene2y = 0;
 //
@@ -143,13 +141,6 @@
 //		DrawRotaGraph(ene2x - x + (SCREEN_WIDTH / 2), ene2y - y + (SCREEN_HEIGHT / 2), 1.0, 0, image, TRUE);
 //	}
 //
-//	//if (Enemy2_Hp == 0)
-//	//{
-//	//	DeleteGraph(E2Images[0]);
-//
-//	//	DrawExtendGraph(ene2x - (Width / 2) - x + (SCREEN_WIDTH / 2), ene2y - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-//	//		ene2x + (Width / 2) - x + (SCREEN_WIDTH / 2), ene2y + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
-//	//}
 //
 //	DrawFormatString(100, 100, 0xffffff, "%.1f", fall);
 //

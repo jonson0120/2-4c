@@ -5,9 +5,11 @@ class GameOver :public AbstractScene
 private:
 	int GameOverImage;
 	int GameOverBGM;
+
+	int BgmSet[7];
 public:
 	~GameOver() {};
-	GameOver();
+	GameOver(int BgmSet[7]);
 
 	//�`��ȊO�̍X�V���������
 	virtual AbstractScene* Update() override;

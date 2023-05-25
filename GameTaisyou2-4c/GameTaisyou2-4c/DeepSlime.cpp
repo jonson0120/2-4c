@@ -14,7 +14,6 @@ DeepSlime::DeepSlime(int level) : Enemy()
 {
 	image = 0;
 
-	DropItem_Image = LoadGraph("shard.png", TRUE);
 
 	//敵座標
 	enex = 0;

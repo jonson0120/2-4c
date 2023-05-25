@@ -21,7 +21,6 @@ private:
 	int DodgeSE;
 	int DefenseSE;
 
-
 	int Walk;	//歩行アニメーション管理
 
 	Stat stat;	//ステータス
@@ -34,6 +33,8 @@ private:
 	int ArmAngle_L, ArmAngle_R;
 
 	bool Move = true;	//入力受付
+	int EndMove = 0;	//クリア演出
+
 	float speedinit;	//移動速度最大
 	float speed;	//移動速度
 	float Dodgespd;	//回避速度
@@ -167,6 +168,19 @@ public:
 	//シャード取得
 	void AddShard() {PlaySoundMem(ShardSE, DX_PLAYTYPE_BACK); stat.Shard++; }
 
+	//状態リセット
+	void ResetPosition() 
+	{
+		Attack = 0;
+		TurnFlg = false;
+
+		Arm_L = { SCREEN_WIDTH / 2 + 13, SCREEN_HEIGHT / 2 };
+		ArmAngle_L = 0;
+
+		Arm_R = { SCREEN_WIDTH / 2 - 12, SCREEN_HEIGHT / 2 };
+		ArmAngle_R = 0;
+	}
+
 	//体力強化
 	void StrHP(int add) 
 	{
@@ -188,7 +202,7 @@ public:
 		stat.PotionPower += 0.05;
 	}
 
-	//シャード使用
+	//状態リセットシャード使用
 	bool UseShard(int amount) { 
 
 		if (amount <= stat.Shard) {

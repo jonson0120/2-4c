@@ -14,8 +14,6 @@ Bomber::Bomber() : Enemy()
 {
 	image = 0;
 
-	DropItem_Image = LoadGraph("shard.png", TRUE);
-
 	enex = 0;
 	eney = 0;
 
@@ -218,14 +216,6 @@ void Bomber::Draw(int x, int y) const
 			//else if (fall < 0) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[3], TRUE, Turnflg, false);
 			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[2], TRUE, Turnflg, false);
 		}
-	}
-
-	if (Enemy_Hp == 0)
-	{
-		DeleteGraph(EImages[0]);
-
-		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
 	}
 
 	//DrawFormatString(100, 100, 0xffffff, "%.1f", fall);

@@ -184,14 +184,15 @@ void Player::ChangeEquip(weapons get, Passive passive[4]) {
 }
 
 void Player::Update() {
+
 	InitPad();
 
 	float Maxspeed = speedinit;	//最大速度
 	float CorSpeed = 1;			//移動速度補正
 
 	//壁面移動・Aボタン長押しで処理に入る
-	if (PAD_INPUT::OnClick(XINPUT_BUTTON_A) || (wall && PAD_INPUT::OnPressed(XINPUT_BUTTON_A)) ||
-											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2) && Move)
+	if ((PAD_INPUT::OnClick(XINPUT_BUTTON_A) || (wall && PAD_INPUT::OnPressed(XINPUT_BUTTON_A)) ||
+											   (jump && PAD_INPUT::OnPressed(XINPUT_BUTTON_A) && JoypadY >= MARGIN * 2)) && Move)
 	{
 		//壁面移動・左壁
 		//壁面移動中か左側が壁なら入る
@@ -263,6 +264,8 @@ void Player::Update() {
 	else wall = 0;
 
 		//横移動
+	if (Move)
+	{
 		//スティック入力時
 		if (JoypadX >= MARGIN && Move) {
 			if (wall != 1 && wall != 2)speed += 0.5;	//移動量を加算
@@ -275,7 +278,7 @@ void Player::Update() {
 			if (!wall)Walk++;							//歩行アニメーション進行
 		}
 		//非スティック入力時
-		else 
+		else
 		{
 			//移動速度を0に近づける
 			if (speed < 0 && 0 < ++speed) {
@@ -287,6 +290,52 @@ void Player::Update() {
 			}
 			Walk = 0;	//歩行アニメーションリセット
 		}
+	}
+		//クリア演出・中央に向かって歩く
+	else if (!Move)
+	{
+		EndMove++;
+		if (EndMove < 120)
+		{
+			//横移動
+			//スティック入力時
+			if (x < BLOCK_SIZE * 5.5) {
+				speed += 0.5;	//移動量を加算
+				TurnFlg = FALSE;				//向きを変える
+				Walk++;							//歩行アニメーション進行
+			}
+			else if (BLOCK_SIZE * 7.5 < x) {
+				speed -= 0.5;	//移動量を減算
+				TurnFlg = TRUE;				//向きを変える
+				Walk++;							//歩行アニメーション進行
+			}
+			//非スティック入力時
+			else
+			{
+				//移動速度を0に近づける
+				if (speed < 0 && 0 < ++speed) {
+					speed = 0;
+				}
+
+				if (0 < speed && --speed < 0) {
+					speed = 0;
+				}
+				Walk = 0;	//歩行アニメーションリセット
+			}
+		}
+		else
+		{
+			//移動速度を0に近づける
+			if (speed < 0 && 0 < ++speed) {
+				speed = 0;
+			}
+
+			if (0 < speed && --speed < 0) {
+				speed = 0;
+			}
+			Walk = 0;	//歩行アニメーションリセット
+		}
+	}
 
 		if (40 <= Walk)Walk = 0;
 

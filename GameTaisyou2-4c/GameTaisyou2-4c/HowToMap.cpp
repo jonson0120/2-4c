@@ -10,7 +10,7 @@
 #include<stdlib.h>
 
 
-HowToMap::HowToMap()
+HowToMap::HowToMap(int BgmSet[7])
 {
 
 	MapExitX = 0;
@@ -19,6 +19,8 @@ HowToMap::HowToMap()
 	player.SetMapData(MapData);
 
 	//enemy2.SetMapData(MapData);
+
+	backimg = LoadGraph("images/howtoback.png");
 	
 	LoadDivGraph("images/HowToBlock.png", 2, 2, 1, 160, 160, MapImg);
 	MapImg[2] = 0;
@@ -31,6 +33,8 @@ HowToMap::HowToMap()
 	MapImg[5] = weed[0];
 	MapImg[6] = weed[1];
 	MapImg[7] = weed[2];
+
+	MapImg[8]= LoadGraph("images/signboard.png");
 
 	Block= LoadGraph("images/singleblock.png");
 
@@ -55,8 +59,6 @@ HowToMap::HowToMap()
 	LoadDivGraph("images/Gauge.png", 2, 2, 1, 34, 34, DoorIcon);
 	DoorIcon[2] = LoadGraph("images/DoorIcon.png");
 
-	TutorialBGM = LoadSoundMem("sound/Tutorial2.mp3");
-	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
 
 	Exit_flg = false;
 	Anim_flg = false;
@@ -65,10 +67,19 @@ HowToMap::HowToMap()
 	MoveStop_flg = true;
 	Pressed_flg = false;
 
+	this->BgmSet[TITLE] = BgmSet[TITLE];
+	this->BgmSet[HOWTO] = BgmSet[HOWTO];
+	this->BgmSet[DUNGEON] = BgmSet[DUNGEON];
+	this->BgmSet[BOSS] = BgmSet[BOSS];
+	this->BgmSet[SAFEZONE] = BgmSet[SAFEZONE];
+	this->BgmSet[GAMECLEAR] = BgmSet[GAMECLEAR];
+	this->BgmSet[GAMEOVER] = BgmSet[GAMEOVER];
+
+	TutorialBGM = BgmSet[HOWTO];
+	WeaponSE = LoadSoundMem("sound/WeaponPickup.mp3");
+
 	ChangeVolumeSoundMem(255 * 70 / 100, TutorialBGM);
 	PlaySoundMem(TutorialBGM, DX_PLAYTYPE_LOOP);
-
-
 }
 
 AbstractScene* HowToMap::Update()
@@ -117,7 +128,7 @@ AbstractScene* HowToMap::Update()
 	{
 		Phase++;
 	}
-	else if (7 <= Phase && Phase <= 9 && player.GetX() / BLOCK_SIZE == 46 && 120 < player.GetX() % BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_B))
+	else if (7 <= Phase && Phase <= 9 && player.GetX() / BLOCK_SIZE == 46 && 120 < player.GetX() % BLOCK_SIZE && PAD_INPUT::OnClick(XINPUT_BUTTON_B) && !player.GetTurn())
 	{
 		if (PhaseCount == 0)
 		{
@@ -152,27 +163,23 @@ AbstractScene* HowToMap::Update()
 		NextMap();
 	}
 
-	if (CheckHitKey(KEY_INPUT_Q))
-	{
-		if (Phase < 7)Phase = 7;
-		player.SetX(BLOCK_SIZE * 45);
-	}
-
-	if (GoMain_flg)return new GameMainScene();
-	if (GoTitle_flg)return new Title();
+	if (GoMain_flg)return new GameMainScene(BgmSet);
+	if (GoTitle_flg)return new Title(BgmSet);
 
 	return this;
 }
 
 void HowToMap::Draw() const
 {
+	//背景
+	DrawGraph(0, 0, backimg, true);
 
 	//柱を描画する
-	DrawGraph(BLOCK_SIZE * 22 - player.GetX() - 15, 360 + BLOCK_SIZE * 8 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 28 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 35 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 38 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 110, MapImg[3], TRUE);
-	DrawGraph(BLOCK_SIZE * 43 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 110, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 22 - player.GetX() - 15, 360 + BLOCK_SIZE * 8 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 28 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 35 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 38 - player.GetX() - 15, 360 + BLOCK_SIZE * 7 - player.GetY() + 120, MapImg[3], TRUE);
+	DrawGraph(BLOCK_SIZE * 43 - player.GetX() - 15, 360 + BLOCK_SIZE * 6 - player.GetY() + 120, MapImg[3], TRUE);
 
 	//ブロックを描画する
 	for (int i = 0; i < MAP_HEIGHT; i++)
@@ -193,6 +200,7 @@ void HowToMap::Draw() const
 	if (MapData[8][47] == 0)DrawGraph(160 * (4 + 47) - player.GetX(), 360 + 160 * 8 - player.GetY() + 150, MapImg[7 - weed] , TRUE);
 
 	DrawGraph(160 * (4 + 10) - player.GetX(), 360 + 160 * 8 - player.GetY() + 150, MapImg[4], TRUE);
+	DrawGraph(160 * (4 + 7) - player.GetX(), 360 + 160 * 8 - player.GetY() + 150, MapImg[8], TRUE);
 
 	if (!Getted)DrawRotaGraph(BLOCK_SIZE * (MAP_WIDTH_T - 5 + 0.5) - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * (MAP_HEIGHT - 2 + 0.5) - player.GetY() + SCREEN_HEIGHT / 2 + 45,  1, 0, Dagger[0], true);
 	else DrawRotaGraph(BLOCK_SIZE * (MAP_WIDTH_T - 5 + 0.5) - player.GetX() + SCREEN_WIDTH / 2, BLOCK_SIZE * (MAP_HEIGHT - 2 + 0.5) - player.GetY() + SCREEN_HEIGHT / 2 + 45, 1, 0, Dagger[1], true);

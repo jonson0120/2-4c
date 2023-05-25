@@ -24,6 +24,7 @@
     <ProjectGuid>{b8620dd3-e6fb-48ad-bfc2-2640da7aca14}</ProjectGuid>
     <RootNamespace>GameTaisyou24c</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>tombofbeast</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -175,7 +176,6 @@
     <ClCompile Include="potion.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="KeyManager.cpp" />
-    <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="UI.cpp" />
@@ -196,7 +196,6 @@
     <ClInclude Include="HowToPlayer.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="Slime.h" />
@@ -207,7 +206,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="potion.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="TestMap.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />

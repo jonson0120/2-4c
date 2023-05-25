@@ -13,8 +13,6 @@ Grim_Reaper::Grim_Reaper(int level) : Enemy()
 {
 	image = 0;
 
-	DropItem_Image = LoadGraph("images/shard.png", TRUE);
-
 	enex = 0;
 	eney = 0;
 
@@ -192,14 +190,6 @@ void Grim_Reaper::Draw(int x, int y) const
 			if (Attack < 60) DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
 			else DrawRotaGraph(enex - x + (SCREEN_WIDTH / 2), eney - y + (SCREEN_HEIGHT / 2), 1.0, 0, EImages[WalkAnim], TRUE, Turnflg, false);
 		}
-	}
-
-	if (Enemy_Hp == 0)
-	{
-		DeleteGraph(EImages[0]);
-
-		DrawExtendGraph(enex - (Width / 2) - x + (SCREEN_WIDTH / 2), eney - (Height / 2) - y + (SCREEN_HEIGHT / 2),
-			enex + (Width / 2) - x + (SCREEN_WIDTH / 2), eney + (Height / 2) - y + (SCREEN_HEIGHT / 2), DropItem_Image, TRUE);
 	}
 
 	if (E_AttackFlg == true && Attack >= 120)
