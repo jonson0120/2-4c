@@ -23,7 +23,7 @@
 #include"Weapon.h"
 #include"Shard.h"
 
-#define DEBUG
+//#define DEBUG
 
 GameMainScene::GameMainScene(int BgmSet[7])
 {
